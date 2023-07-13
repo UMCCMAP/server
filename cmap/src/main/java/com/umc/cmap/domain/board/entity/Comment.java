@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,10 +27,17 @@ public class Comment extends BaseTimeEntity {
 
     private String comment_content;
 
+    private Timestamp removedAt;
+
     @Builder
     public Comment(User user, Board board, String comment_content) {
         this.board = board;
         this.user = user;
         this.comment_content = comment_content;
     }
+
+    public void removeComment(){
+        this.removedAt = new Timestamp(System.currentTimeMillis());
+    }
+
 }

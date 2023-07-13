@@ -4,6 +4,8 @@ import com.umc.cmap.config.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.sql.Timestamp;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -28,6 +30,8 @@ public class Board extends BaseTimeEntity {
     @Setter
     private Role role;
 
+    private Timestamp removedAt;
+
     @Builder
     public Board(User user, Cafe cafe, String boardTitle, String boardContent, Role role) {
         this.user = user;
@@ -36,4 +40,9 @@ public class Board extends BaseTimeEntity {
         this.boardContent = boardContent;
         this.role = role;
     }
+
+    public void removeBoard(){
+        this.removedAt = new Timestamp(System.currentTimeMillis());
+    }
+
 }
