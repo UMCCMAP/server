@@ -8,14 +8,14 @@ import lombok.Setter;
 public class Board extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long boardIdx;
+    private Long idx;
 
-    @ManyToOne
-    @JoinColumn(name="userIdx")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_idx")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name="cafeIdx")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="cafe_idx")
     private Cafe cafe;
 
     private String boardTitle;
