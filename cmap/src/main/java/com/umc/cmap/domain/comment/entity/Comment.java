@@ -1,6 +1,7 @@
-package com.umc.cmap.domain.board.entity;
+package com.umc.cmap.domain.comment.entity;
 
 import com.umc.cmap.config.BaseTimeEntity;
+import com.umc.cmap.domain.board.entity.Board;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
