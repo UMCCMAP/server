@@ -27,7 +27,6 @@ public class Board extends BaseTimeEntity {
     private String boardContent;
 
     @Enumerated(EnumType.STRING)
-    @Setter
     private Role role;
 
     private Timestamp removedAt;
