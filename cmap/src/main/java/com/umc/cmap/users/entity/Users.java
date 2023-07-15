@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -20,6 +21,8 @@ public class Users {
     private String user_name;
     private String email;
     private String password;
+
+    @Length(min=2, max = 10)
     private String nickname;
     private String login_method;
 
