@@ -1,4 +1,4 @@
-package com.umc.cmap.cafe.entity;
+package com.umc.cmap.domain.cafe.entity;
 
 import com.umc.cmap.config.BaseTimeEntity;
 import jakarta.persistence.*;

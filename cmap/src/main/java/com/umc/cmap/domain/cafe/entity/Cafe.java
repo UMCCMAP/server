@@ -1,4 +1,4 @@
-package com.umc.cmap.cafe.entity;
+package com.umc.cmap.domain.cafe.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
