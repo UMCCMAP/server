@@ -1,4 +1,4 @@
-package com.umc.cmap.domain.board.users;
+package com.umc.cmap.domain.board.users.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
