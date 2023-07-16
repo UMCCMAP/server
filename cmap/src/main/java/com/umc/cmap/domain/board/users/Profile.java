@@ -36,5 +36,4 @@ public class Profile {
         this.cafe_img = cafe_img;
         this.cafe_info = cafe_info;
     }
-
 }
