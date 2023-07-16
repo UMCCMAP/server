@@ -1,4 +1,4 @@
-package com.umc.cmap.domain.board.users.entity;
+package com.umc.cmap.domain.users.entity;
 
 
 import com.umc.cmap.config.BaseTimeEntity;
