@@ -1,5 +1,6 @@
 package com.umc.cmap.domain.board.users;
 
+
 import com.umc.cmap.config.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
