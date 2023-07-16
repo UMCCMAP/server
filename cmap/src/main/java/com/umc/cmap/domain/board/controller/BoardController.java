@@ -2,6 +2,7 @@ package com.umc.cmap.domain.board.controller;
 
 import com.umc.cmap.config.BaseException;
 import com.umc.cmap.config.BaseResponse;
+import com.umc.cmap.domain.board.dto.BoardResponseDto;
 import com.umc.cmap.domain.board.entity.Board;
 import com.umc.cmap.domain.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +30,7 @@ public class BoardController {
      * @throws BaseException
      */
     @GetMapping
-    public BaseResponse<Page<Board>> getBoard(@PageableDefault(size = 4,
-                                                sort = "idx", direction = DESC)
-                                                  Pageable pageable) throws BaseException {
+    public BaseResponse<Page<BoardResponseDto>> getBoard(@PageableDefault(size = 4, sort = "idx", direction = DESC) Pageable pageable) throws BaseException {
         return new BaseResponse<>(boardService.getBoardList(pageable));
     }
 }
