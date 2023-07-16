@@ -6,14 +6,15 @@ import com.umc.cmap.domain.board.entity.Board;
 import com.umc.cmap.domain.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,8 +22,16 @@ import java.util.List;
 public class BoardController {
     private final BoardService boardService;
 
+    /**
+     * 게시판 main page 불러오기
+     * @param pageable
+     * @return
+     * @throws BaseException
+     */
     @GetMapping
-    public BaseResponse<Page<Board>> getBoard(Pageable pageable) throws BaseException {
+    public BaseResponse<Page<Board>> getBoard(@PageableDefault(size = 4,
+                                                sort = "idx", direction = DESC)
+                                                  Pageable pageable) throws BaseException {
         return new BaseResponse<>(boardService.getBoardList(pageable));
     }
 }
