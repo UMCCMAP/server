@@ -21,9 +21,4 @@ public class BaseTimeEntity {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
-<<<<<<< HEAD
 }
-=======
-        }
-        >>>>>>> bc1776997c1f7939eb996448e3dff12a04b81381
-
