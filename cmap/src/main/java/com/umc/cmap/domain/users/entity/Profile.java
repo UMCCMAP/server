@@ -15,13 +15,13 @@ public class Profile {
     @Column(name="profile_idx")
     private Long idx;
 
-    private String user_img;
+    private String userImg;
 
-    private String user_info;
+    private String userInfo;
 
-    private String cafe_img;
+    private String cafeImg;
 
-    private String cafe_info;
+    private String cafeInfo;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_idx")
