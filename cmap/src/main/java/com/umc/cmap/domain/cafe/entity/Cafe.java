@@ -1,4 +1,5 @@
 package com.umc.cmap.domain.cafe.entity;
+
 import com.umc.cmap.config.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -25,13 +26,17 @@ public class Cafe extends BaseTimeEntity {
     @Column(name="cafe_info")
     private String info;
 
+    @Embedded
+    private Coordinate coordinate;
+
 
     @Builder
-    public Cafe(Long idx, String name, String location, String info) {
+    public Cafe(Long idx, String name, String location, String info,Coordinate coordinate) {
         this.idx = idx;
         this.name = name;
         this.location = location;
         this.info = info;
+        this.coordinate = coordinate;
     }
 
 }

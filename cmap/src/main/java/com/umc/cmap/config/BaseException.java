@@ -1,6 +1,5 @@
 package com.umc.cmap.config;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,5 +8,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class BaseException extends Exception{
+
     private BaseResponse status;
+
+
+
 }
