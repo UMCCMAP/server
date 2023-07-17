@@ -31,9 +31,9 @@ public class Profile {
     @Builder
     public Profile(String user_img, String user_info, String cafe_img, String cafe_info, Users user){
         this.user = user;
-        this.user_img = user_img;
-        this.user_info = user_info;
-        this.cafe_img = cafe_img;
-        this.cafe_info = cafe_info;
+        this.userImg = userImg;
+        this.userInfo = userInfo;
+        this.cafeImg = cafeImg;
+        this.cafeInfo = cafeInfo;
     }
 }
