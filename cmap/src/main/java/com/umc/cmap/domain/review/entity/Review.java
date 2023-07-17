@@ -17,10 +17,10 @@ public class Review {
     private Long idx;
 
     @Embedded
-    private Comment comment;
+    private Content content;
 
     private Double score;
-    private Status status;
+    private Boolean isDeleted;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx")
@@ -31,11 +31,11 @@ public class Review {
     private Cafe cafe;
 
     @Builder
-    public Review(User user, Cafe cafe, Comment comment, Double score) {
+    public Review(User user, Cafe cafe, Content content, Double score) {
         this.user = user;
         this.cafe = cafe;
-        this.comment = comment;
+        this.content = content;
         this.score = score;
-        this.status = Status.ACTIVE;
+        this.isDeleted = false;
     }
 }

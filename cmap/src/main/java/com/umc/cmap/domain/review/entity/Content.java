@@ -8,12 +8,12 @@ import lombok.NoArgsConstructor;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment extends BaseTimeEntity {
+public class Content extends BaseTimeEntity {
 
     private String content;
 
     @Builder
-    public Comment(String content) {
+    public Content(String content) {
         this.content = content;
     }
 
