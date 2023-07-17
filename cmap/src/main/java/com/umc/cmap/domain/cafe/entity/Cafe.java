@@ -34,5 +34,4 @@ public class Cafe extends BaseTimeEntity {
         this.info = info;
     }
 
-
 }

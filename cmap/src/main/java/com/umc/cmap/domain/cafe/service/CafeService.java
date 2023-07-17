@@ -17,11 +17,20 @@ public class CafeService {
 
     private final CafeRepository cafeRepository;
 
-    @SneakyThrows
+    /*@SneakyThrows
     public Cafe getCafeById(Long idx) {
         return cafeRepository.findById(idx)
                 .orElseThrow(() -> new BaseException(new BaseResponse<>(BaseResponseStatus.CAFE_NOT_FOUND)));
+    }*/
+
+
+
+    public Cafe getCafeById(Long idx) throws BaseException {
+        return cafeRepository.findById(idx)
+                .orElseThrow(() -> new BaseException(new BaseResponse<>(BaseResponseStatus.CAFE_NOT_FOUND)));
     }
+
+
 
 
     public List<Cafe> getAllCafes() {
@@ -32,7 +41,7 @@ public class CafeService {
         return cafeRepository.save(cafe);
     }
 
-    public Cafe updateCafe(Long idx, Cafe cafe) {
+    public Cafe updateCafe(Long idx, Cafe cafe) throws BaseException {
         Cafe existingCafe = getCafeById(idx);
 
         Cafe updatedCafe = Cafe.builder()
@@ -45,7 +54,8 @@ public class CafeService {
         return cafeRepository.save(updatedCafe);
     }
 
-      Cafe cafe = getCafeById(idx);
+    public void deleteCafe(Long idx) throws BaseException {
+        Cafe cafe = getCafeById(idx);
         cafeRepository.delete(cafe);
     }
 }
