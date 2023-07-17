@@ -2,7 +2,7 @@ package com.umc.cmap.domain.users.entity;
 
 
 import com.umc.cmap.config.BaseTimeEntity;
-import com.umc.cmap.domain.boaard.entity.Role;
+import com.umc.cmap.domain.board.entity.Role;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
