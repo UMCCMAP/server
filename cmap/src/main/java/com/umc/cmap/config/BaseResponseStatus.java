@@ -25,7 +25,7 @@ public enum BaseResponseStatus {
     // Common
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
 
-    CAFE_NOT_FOUND(false,7000 ,"카페를 찾을수 없습니다." ),
+    CAFE_NOT_FOUND(false,3100 ,"카페를 찾을수 없습니다." ),
 
     /**
      * 4000 : Database, Server 오류
