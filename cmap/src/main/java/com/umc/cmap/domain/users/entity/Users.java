@@ -29,14 +29,13 @@ public class Users extends BaseTimeEntity{
     @Length(min=2, max=10)
     private String nickname;
 
-    @Enumerated(EnumType.String)
+    @Enumerated(EnumType.STRING)
     private Role role;
     
 
 
     @Builder
-    public Users(Long id, String name, String email, String password, String nickname, Role role){
-        this.idx=idx;
+    public Users(String name, String email, String password, String nickname, Role role){
         this.name=name;
         this.email=email;
         this.password=password;
