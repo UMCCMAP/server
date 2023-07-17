@@ -2,14 +2,13 @@ package com.umc.cmap.domain.cafe.entity;
 
 import com.umc.cmap.config.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
 @Table(name = "cafe")
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Cafe extends BaseTimeEntity {
 
     @Id
