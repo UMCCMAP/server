@@ -9,9 +9,8 @@ import com.umc.cmap.domain.review.entity.Review;
 import com.umc.cmap.domain.review.entity.ReviewImage;
 import com.umc.cmap.domain.review.repository.ReviewImageRepository;
 import com.umc.cmap.domain.review.repository.ReviewRepository;
-import com.umc.cmap.domain.users.entity.User;
-import com.umc.cmap.domain.users.repository.UserRepository;
-import org.assertj.core.api.Assertions;
+import com.umc.cmap.domain.user.entity.User;
+import com.umc.cmap.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
