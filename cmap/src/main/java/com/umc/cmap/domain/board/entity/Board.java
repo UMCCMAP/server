@@ -46,4 +46,5 @@ public class Board extends BaseTimeEntity {
         this.removedAt = new Timestamp(System.currentTimeMillis());
     }
 
+
 }
