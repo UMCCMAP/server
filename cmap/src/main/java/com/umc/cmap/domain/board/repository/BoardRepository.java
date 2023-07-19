@@ -9,5 +9,4 @@ import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Board> findAll(Pageable pageable);
-    Optional<Board> findByBoardIdx(Long idx);
 }
