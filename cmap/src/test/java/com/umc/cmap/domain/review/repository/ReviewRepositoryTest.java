@@ -44,7 +44,7 @@ class ReviewRepositoryTest {
 
         Cafe cafe = Cafe.builder()
                 .name("cafe-name")
-                .information("cafe-information")
+                .info("cafe-information")
                 .build();
         cafeRepository.save(cafe);
         Review review = Review.builder()

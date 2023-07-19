@@ -25,17 +25,13 @@ public class Cafe extends BaseTimeEntity {
     @Column(name="cafe_info")
     private String info;
 
-    @Embedded
-    private Coordinate coordinate;
-
 
     @Builder
-    public Cafe(Long idx, String name, String location, String info,Coordinate coordinate) {
+    public Cafe(Long idx, String name, String location, String info) {
         this.idx = idx;
         this.name = name;
         this.location = location;
         this.info = info;
-        this.coordinate = coordinate;
     }
 
 }

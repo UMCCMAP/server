@@ -1,4 +1,4 @@
-package com.umc.cmap.domain.users.entity;
+package com.umc.cmap.domain.user.entity;
 
 
 import com.umc.cmap.config.BaseTimeEntity;
@@ -14,7 +14,7 @@ import org.hibernate.validator.constraints.Length;
 @Entity
 @Getter
 @Table(name = "Users")
-public class Users extends BaseTimeEntity{
+public class User extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="user_idx")
@@ -29,13 +29,13 @@ public class Users extends BaseTimeEntity{
     @Length(min=2, max=10)
     private String nickname;
 
-    @Enumerated(EnumType.String)
+    @Enumerated(EnumType.STRING)
     private Role role;
     
 
 
     @Builder
-    public Users(Long id, String name, String email, String password, String nickname, Role role){
+    public User(Long id, String name, String email, String password, String nickname, Role role){
         this.idx=idx;
         this.name=name;
         this.email=email;
