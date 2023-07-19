@@ -35,21 +35,21 @@ public class BoardController {
      * 게시글 작성
      * @param request
      * @throws BaseException
-     */
+     *//*
     @PostMapping("/posting")
     public void writeBoard(@RequestBody BoardWriteRequset request) throws BaseException {
         boardService.writeBoard(request);
-    }
+    }*/
 
     /**
      * 게시글 화면
      */
-
+/*
     @GetMapping("/mypost")
     public BaseResponse<BoardMyPostResponse> getMyPost(@PathVariable Long id) throws BaseException {
         return new BaseResponse<>(boardService.getMyPost(id));
     }
-
+*/
     /**
      * 게시글 공감
      */
