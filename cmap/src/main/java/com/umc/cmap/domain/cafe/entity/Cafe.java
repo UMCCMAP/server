@@ -1,37 +1,29 @@
 package com.umc.cmap.domain.cafe.entity;
 
-import com.umc.cmap.config.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "cafe")
-//@RequiredArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Cafe extends BaseTimeEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-
-    @Column(name="cafe_idx")
+public class Cafe {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cafe_idx")
     private Long idx;
 
-    @Column(name="cafe_name")
     private String name;
 
-    private String location;
-
-    @Column(name="cafe_info")
-    private String info;
+    @Embedded
+    private Coordinate coordinate;
 
 
     @Builder
-    public Cafe(Long idx, String name, String location, String info) {
-        this.idx = idx;
+    public Cafe(String name, Coordinate coordinate, String information) {
         this.name = name;
-        this.location = location;
-        this.info = info;
+        this.coordinate = coordinate;
     }
 
 }

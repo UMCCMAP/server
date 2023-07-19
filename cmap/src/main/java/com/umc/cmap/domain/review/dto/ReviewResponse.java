@@ -2,7 +2,7 @@ package com.umc.cmap.domain.review.dto;
 
 import com.umc.cmap.domain.review.entity.Content;
 import com.umc.cmap.domain.review.entity.ReviewImage;
-import com.umc.cmap.domain.user.entity.User;
+import com.umc.cmap.domain.users.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
