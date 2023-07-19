@@ -1,14 +1,17 @@
 package com.umc.cmap.domain.board.service;
 
 import com.umc.cmap.config.BaseException;
+import com.umc.cmap.config.BaseResponseStatus;
 import com.umc.cmap.domain.board.dto.BoardMyPostResponse;
 import com.umc.cmap.domain.board.dto.BoardResponse;
 import com.umc.cmap.domain.board.dto.BoardWriteRequset;
 import com.umc.cmap.domain.board.entity.Board;
+import com.umc.cmap.domain.board.entity.Role;
 import com.umc.cmap.domain.board.repository.BoardRepository;
+import com.umc.cmap.domain.cafe.entity.Cafe;
+import com.umc.cmap.domain.user.entity.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.apache.bcel.generic.IINC;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -37,10 +40,18 @@ public class BoardService {
      * @return
      */
     public Long writeBoard(BoardWriteRequset request) throws BaseException {
+        User user = userRepository.findById(request.getUserIdx())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+
+        Cafe cafe = cafeRepository.findById(request.getCafeIdx())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_CAFE));
+
         Board board = Board.builder()
+                .user(user)
+                .cafe(cafe)
                 .boardTitle(request.getBoardTitle())
                 .boardContent(request.getBoardContent())
-                // Cafe 정보 등록 로직은 추가 구현 필요
+                .role(Role.ROLE_USER)
                 .build();
 
         Board savedBoard = boardRepository.save(board);

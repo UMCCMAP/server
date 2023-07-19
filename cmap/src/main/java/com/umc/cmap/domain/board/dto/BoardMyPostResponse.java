@@ -19,7 +19,7 @@ public class BoardMyPostResponse {
     private String boardContent;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private String nickName;
+    private Long userIdx;
 
     public BoardMyPostResponse(Board board) {
         this.idx = board.getIdx();
@@ -28,6 +28,6 @@ public class BoardMyPostResponse {
         this.boardContent = board.getBoardContent();
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
-        this.nickName = board.getUser().getNickname();
+        this.userIdx = board.getUser().getIdx();
     }
 }
