@@ -2,6 +2,7 @@ package com.umc.cmap.domain.board.controller;
 
 import com.umc.cmap.config.BaseException;
 import com.umc.cmap.config.BaseResponse;
+import com.umc.cmap.domain.board.dto.BoardMyPostResponse;
 import com.umc.cmap.domain.board.dto.BoardResponse;
 import com.umc.cmap.domain.board.dto.BoardWriteRequset;
 import com.umc.cmap.domain.board.service.BoardService;
@@ -15,12 +16,12 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/board")
+@RequestMapping("board")
 public class BoardController {
     private final BoardService boardService;
 
     /**
-     * 게시판 main page 불러오기
+     * 게시판 메인
      * @param pageable
      * @return
      * @throws BaseException
@@ -30,8 +31,35 @@ public class BoardController {
         return new BaseResponse<>(boardService.getBoardList(pageable));
     }
 
-    @PostMapping("/newpost")
+    /**
+     * 게시글 작성
+     * @param request
+     * @throws BaseException
+     */
+    @PostMapping("/posting")
     public void writeBoard(@RequestBody BoardWriteRequset request) throws BaseException {
         boardService.writeBoard(request);
     }
+
+    /**
+     * 게시글 화면
+     */
+
+    @GetMapping("/mypost")
+    public BaseResponse<BoardMyPostResponse> getMyPost(Long idx) throws BaseException {
+        return new BaseResponse<>(boardService.getMyPost(idx));
+    }
+
+    /**
+     * 게시글 공감
+     */
+
+    /**
+     * 게시글 삭제
+     */
+
+    /**
+     * 게시글 수정
+     */
+
 }
