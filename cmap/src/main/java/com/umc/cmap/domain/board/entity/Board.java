@@ -1,6 +1,7 @@
 package com.umc.cmap.domain.board.entity;
 
 import com.umc.cmap.config.BaseTimeEntity;
+import com.umc.cmap.domain.cafe.entity.Cafe;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -43,5 +44,6 @@ public class Board extends BaseTimeEntity {
     public void removeBoard(){
         this.removedAt = new Timestamp(System.currentTimeMillis());
     }
+
 
 }

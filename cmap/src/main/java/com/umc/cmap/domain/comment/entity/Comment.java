@@ -41,4 +41,5 @@ public class Comment extends BaseTimeEntity {
         this.removedAt = new Timestamp(System.currentTimeMillis());
     }
 
+
 }
