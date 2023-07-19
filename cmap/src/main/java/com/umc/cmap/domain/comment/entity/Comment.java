@@ -2,6 +2,7 @@ package com.umc.cmap.domain.comment.entity;
 
 import com.umc.cmap.config.BaseTimeEntity;
 import com.umc.cmap.domain.board.entity.Board;
+import com.umc.cmap.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -40,5 +41,6 @@ public class Comment extends BaseTimeEntity {
     public void removeComment(){
         this.removedAt = new Timestamp(System.currentTimeMillis());
     }
+
 
 }
