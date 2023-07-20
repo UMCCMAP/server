@@ -34,22 +34,25 @@ public class BoardController {
     /**
      * 게시글 작성
      * @param request
+     * @return
      * @throws BaseException
-     *//*
+     */
     @PostMapping("/posting")
-    public void writeBoard(@RequestBody BoardWriteRequset request) throws BaseException {
-        boardService.writeBoard(request);
-    }*/
+    public BaseResponse<Long> writeBoard(@RequestBody BoardWriteRequset request) throws BaseException {
+        return new BaseResponse<>(boardService.writeBoard(request));
+    }
 
     /**
      * 게시글 화면
+     * @param boardIdx
+     * @return
+     * @throws BaseException
      */
-/*
     @GetMapping("/mypost")
-    public BaseResponse<BoardMyPostResponse> getMyPost(@PathVariable Long id) throws BaseException {
-        return new BaseResponse<>(boardService.getMyPost(id));
+    public BaseResponse<BoardMyPostResponse> getMyPost(@PathVariable Long boardIdx) throws BaseException {
+        return new BaseResponse<>(boardService.getMyPost(boardIdx));
     }
-*/
+
     /**
      * 게시글 공감
      */
