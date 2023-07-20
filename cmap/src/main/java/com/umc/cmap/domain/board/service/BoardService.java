@@ -12,15 +12,15 @@ import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.repository.CafeRepository;
 import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-@Transactional
+@Transactional(readOnly=true)
 public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
@@ -44,6 +44,7 @@ public class BoardService {
      * @return
      * @throws BaseException
      */
+    @Transactional
     public Long writeBoard(BoardWriteRequset request) throws BaseException {
         User user = userRepository.findById(request.getUser().getIdx())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
