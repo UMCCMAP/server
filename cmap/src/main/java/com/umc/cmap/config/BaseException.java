@@ -8,5 +8,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class BaseException extends Exception{
-    private BaseResponseStatus status;
+
+    private BaseResponse status;
+
+
+
 }

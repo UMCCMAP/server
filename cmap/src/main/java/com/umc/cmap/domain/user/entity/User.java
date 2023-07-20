@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
-import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -35,6 +34,7 @@ public class User extends BaseTimeEntity{
     private Role role;
 
 
+  
     @Builder
     public User(String name, String email, String password, String nickname, Role role){
         this.name=name;
@@ -44,9 +44,10 @@ public class User extends BaseTimeEntity{
         this.role=role;
     }
 
+
     public User update(String name){
         this.name=name;
-
         return this;
     }
+
 }
