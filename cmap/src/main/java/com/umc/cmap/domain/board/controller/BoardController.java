@@ -48,7 +48,7 @@ public class BoardController {
      * @return
      * @throws BaseException
      */
-    @GetMapping("/mypost")
+    @GetMapping("/mypost/{boardIdx}")
     public BaseResponse<BoardMyPostResponse> getMyPost(@PathVariable Long boardIdx) throws BaseException {
         return new BaseResponse<>(boardService.getMyPost(boardIdx));
     }
