@@ -29,7 +29,7 @@ public class Profile {
 
 
     @Builder
-    public Profile(String user_img, String user_info, String cafe_img, String cafe_info, User user){
+    public Profile(String userImg, String userInfo, String cafeImg, String cafeInfo, User user){
         this.user = user;
         this.userImg = userImg;
         this.userInfo = userInfo;
