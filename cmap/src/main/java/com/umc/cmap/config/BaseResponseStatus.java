@@ -28,6 +28,8 @@ public enum BaseResponseStatus {
 
 
     CAFE_NOT_FOUND(false, 3100, "카페를 찾을수 없습니다."),
+    CAFE_THEME_NOT_FOUND(false,3101,"카페 테마를 찾을 수 없습니다"),
+    THEME_NOT_FOUND(false,3102,"존재하지 않는 테마 이름"),
 
 
     /**
@@ -35,6 +37,7 @@ public enum BaseResponseStatus {
      */
     DATABASE_ERROR(false, 4000, "데이터베이스 연결에 실패하였습니다."),
     SERVER_ERROR(false, 4001, "서버와의 연결에 실패하였습니다.");
+
     // 5000 : 필요시 만들어서 쓰세요
     // 6000 : 필요시 만들어서 쓰세요
     private final boolean isSuccess;

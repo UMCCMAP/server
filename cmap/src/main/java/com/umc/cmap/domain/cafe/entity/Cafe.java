@@ -1,8 +1,12 @@
 package com.umc.cmap.domain.cafe.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.umc.cmap.config.BaseTimeEntity;
+import com.umc.cmap.domain.theme.entity.CafeTheme;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -25,13 +29,39 @@ public class Cafe extends BaseTimeEntity {
     @Column(name="cafe_info")
     private String info;
 
+    @Embedded
+    private Coordinate coordinate;
 
+
+        @Builder
+        public Cafe(Long idx, String name, String location, String info,Coordinate coordinate,CafeTheme cafeTheme) {
+            this.idx = idx;
+            this.name = name;
+            this.location = location;
+            this.info = info;
+            this.coordinate = coordinate;
+            this.cafeTheme=cafeTheme;
+        }
+
+
+
+/*
     @Builder
-    public Cafe(Long idx, String name, String location, String info) {
+    public Cafe(Long idx, String name, String location, String info,CafeTheme cafeTheme) {
         this.idx = idx;
         this.name = name;
         this.location = location;
         this.info = info;
+        this.cafeTheme=cafeTheme;
+    }
+*/
+    //@JsonIgnore
+    @JsonManagedReference
+    @OneToOne(mappedBy = "cafe",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private CafeTheme cafeTheme;
+
+    public CafeTheme getCafeTheme() {
+        return this.cafeTheme;
     }
 
 }

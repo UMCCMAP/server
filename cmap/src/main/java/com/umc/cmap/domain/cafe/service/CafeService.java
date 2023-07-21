@@ -6,7 +6,6 @@ import com.umc.cmap.config.BaseResponseStatus;
 import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.repository.CafeRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,12 +15,6 @@ import java.util.List;
 public class CafeService {
 
     private final CafeRepository cafeRepository;
-
-    /*@SneakyThrows
-    public Cafe getCafeById(Long idx) {
-        return cafeRepository.findById(idx)
-                .orElseThrow(() -> new BaseException(new BaseResponse<>(BaseResponseStatus.CAFE_NOT_FOUND)));
-    }*/
 
 
 
