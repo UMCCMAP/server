@@ -50,4 +50,16 @@ public class ReviewService {
         return cafeRepository.findById(idx).orElseThrow(EntityNotFoundException::new);
     }
 
+    @Transactional
+    public void update(Long reviewIdx, ReviewRequest param) {
+        Review review = reviewRepository.findById(reviewIdx).orElseThrow(EntityNotFoundException::new);
+        review.update(param);
+        updateReviewImages(param.getImageUrls(), review);
+    }
+
+    @Transactional
+    public void updateReviewImages(List<String> urls, Review review) {
+        reviewImageRepository.deleteAll(reviewImageRepository.findAllByReviewIdx(review.getIdx()));
+        saveImages(urls, review);
+    }
 }
