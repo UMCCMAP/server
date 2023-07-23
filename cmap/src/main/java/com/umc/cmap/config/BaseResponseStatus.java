@@ -23,9 +23,11 @@ public enum BaseResponseStatus {
      */
     // Common
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
-    NOT_FOUND_USER(false,3001,"유저를 찾을 수 없습니다."),
-    NOT_FOUND_CAFE(false,3002,"카페를 찾을 수 없습니다."),
-    NOT_FOUND_BOARD(false,3003,"게시글을 찾을 수 없습니다."),
+  
+    CAFE_NOT_FOUND(false, 3100, "카페를 찾을수 없습니다."),
+    CAFE_THEME_NOT_FOUND(false,3101,"카페 테마를 찾을 수 없습니다"),
+    THEME_NOT_FOUND(false,3102,"존재하지 않는 테마 이름"),
+
 
     /**
      * 4000 : Database, Server 오류
@@ -33,6 +35,7 @@ public enum BaseResponseStatus {
     DATABASE_ERROR(false, 4000, "데이터베이스 연결에 실패하였습니다."),
     SERVER_ERROR(false, 4001, "서버와의 연결에 실패하였습니다.")
     ;
+
     // 5000 : 필요시 만들어서 쓰세요
     // 6000 : 필요시 만들어서 쓰세요
     private final boolean isSuccess;
