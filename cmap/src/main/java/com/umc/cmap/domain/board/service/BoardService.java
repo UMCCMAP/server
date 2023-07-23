@@ -77,6 +77,9 @@ public class BoardService {
 
     /**
      * 게시글 삭제
+     * @param boardIdx
+     * @return
+     * @throws BaseException
      */
     public String deletePost(Long boardIdx) throws BaseException {
         Board board = boardRepository.findById(boardIdx)

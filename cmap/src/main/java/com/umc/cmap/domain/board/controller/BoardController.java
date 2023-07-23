@@ -60,6 +60,9 @@ public class BoardController {
 
     /**
      * 게시글 삭제
+     * @param boardIdx
+     * @return
+     * @throws BaseException
      */
     @PatchMapping("/posts/{boardIdx}")
     public BaseResponse<String> deletePost(@PathVariable Long boardIdx) throws BaseException {
