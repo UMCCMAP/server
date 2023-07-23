@@ -47,9 +47,9 @@ public class BoardService {
     @Transactional
     public Long writeBoard(BoardWriteRequset request) throws BaseException {
         User user = userRepository.findById(request.getUser().getIdx())
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
         Cafe cafe = cafeRepository.findById(request.getCafe().getIdx())
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_CAFE));
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_NOT_FOUND));
 
         Board board = Board.builder()
                 .user(user)
@@ -73,6 +73,16 @@ public class BoardService {
         Board board = boardRepository.findById(boardIdx)
                 .orElseThrow(() -> new IllegalArgumentException("Board not found with id: " + boardIdx));
         return new BoardMyPostResponse(board);
+    }
+
+    /**
+     * 게시글 삭제
+     */
+    public String deletePost(Long boardIdx) throws BaseException {
+        Board board = boardRepository.findById(boardIdx)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
+        boardRepository.deleteById(boardIdx);
+        return "게시글 삭제에 성공했습니다.";
     }
 
 }

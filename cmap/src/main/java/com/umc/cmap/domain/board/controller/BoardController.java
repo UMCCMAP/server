@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
@@ -60,6 +61,10 @@ public class BoardController {
     /**
      * 게시글 삭제
      */
+    @PatchMapping("/posts/{boardIdx}")
+    public BaseResponse<String> deletePost(@PathVariable Long boardIdx) throws BaseException {
+        return new BaseResponse<>(boardService.deletePost(boardIdx));
+    }
 
     /**
      * 게시글 수정
