@@ -28,7 +28,8 @@ public enum BaseResponseStatus {
     CAFE_THEME_NOT_FOUND(false,3101,"카페 테마를 찾을 수 없습니다"),
     THEME_NOT_FOUND(false,3102,"존재하지 않는 테마 이름"),
 
-    USER_NOT_FOUND(false, 3200, "유저를 찾을 수 없습니다.");
+    USER_NOT_FOUND(false, 3200, "유저를 찾을 수 없습니다."),
+    POST_NOT_FOUND(false, 3201, "게시글을 찾을 수 없습니다."),
 
 
     /**
