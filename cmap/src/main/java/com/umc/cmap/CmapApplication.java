@@ -10,5 +10,4 @@ public class CmapApplication {
     public static void main(String[] args) {
         SpringApplication.run(CmapApplication.class, args);
     }
-
 }
