@@ -72,5 +72,9 @@ public class BoardController {
     /**
      * 게시글 수정
      */
+    @PatchMapping("/posts/{boardIdx}/postModifying")
+    public BaseResponse<String> modifyPost(@PathVariable Long boardIdx) throws BaseException {
+        return new BaseResponse<>(boardService.modifyPost(boardIdx));
+    }
 
 }

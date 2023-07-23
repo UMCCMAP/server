@@ -88,4 +88,17 @@ public class BoardService {
         return "게시글 삭제에 성공했습니다.";
     }
 
+    /**
+     * 게시글 수정
+     * @param boardIdx
+     * @return
+     * @throws BaseException
+     */
+    public String modifyPost(Long boardIdx) throws BaseException {
+        Board board = boardRepository.findById(boardIdx)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
+        boardRepository.deleteById(boardIdx);
+        return "게시글 삭제에 성공했습니다.";
+    }
+
 }
