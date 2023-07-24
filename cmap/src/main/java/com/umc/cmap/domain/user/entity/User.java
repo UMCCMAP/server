@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Getter
@@ -31,16 +32,22 @@ public class User extends BaseTimeEntity{
 
     @Enumerated(EnumType.STRING)
     private Role role;
-    
 
 
+  
     @Builder
-    public User(Long id, String name, String email, String password, String nickname, Role role){
-        this.idx=idx;
+    public User(String name, String email, String password, String nickname, Role role){
         this.name=name;
         this.email=email;
         this.password=password;
         this.nickname=nickname;
         this.role=role;
     }
+
+
+    public User update(String name){
+        this.name=name;
+        return this;
+    }
+
 }
