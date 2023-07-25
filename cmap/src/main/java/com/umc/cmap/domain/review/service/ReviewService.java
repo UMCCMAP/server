@@ -34,6 +34,11 @@ public class ReviewService {
                 .map(r -> mapper.toResponse(r, reviewImageRepository.findAllByReviewIdx(r.getIdx()))).toList();
     }
 
+    public ReviewResponse getOne(Long id) {
+        Review review = reviewRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        return mapper.toResponse(review, reviewImageRepository.findAllByReviewIdx(id));
+    }
+
     @Transactional
     public void save(Long cafeIdx, ReviewRequest param) {
         param.setCafe(getCafeEntity(cafeIdx));
@@ -53,7 +58,7 @@ public class ReviewService {
     @Transactional
     public void update(Long reviewIdx, ReviewRequest param) {
         Review review = reviewRepository.findById(reviewIdx).orElseThrow(EntityNotFoundException::new);
-        review.update(param);
+        review.update(param.getContent(), param.getScore());
         updateReviewImages(param.getImageUrls(), review);
     }
 
@@ -62,4 +67,6 @@ public class ReviewService {
         reviewImageRepository.deleteAll(reviewImageRepository.findAllByReviewIdx(review.getIdx()));
         saveImages(urls, review);
     }
+
+
 }
