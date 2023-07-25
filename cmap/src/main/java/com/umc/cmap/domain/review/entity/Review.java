@@ -40,8 +40,8 @@ public class Review extends BaseTimeEntity {
         this.isDeleted = false;
     }
 
-    public void update(ReviewRequest param){
-        this.content = param.getContent();
-        this.score = param.getScore();
+    public void update(String content, Double score){
+        this.content = content;
+        this.score = score;
     }
 }
