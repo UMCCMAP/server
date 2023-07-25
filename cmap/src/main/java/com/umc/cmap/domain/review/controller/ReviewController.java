@@ -29,6 +29,12 @@ public class ReviewController {
         return reviewService.getAll(cafeIndex, pageable);
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{cafeIndex}/reviews/{reviewId}")
+    public ReviewResponse getOne(@PathVariable Long reviewId) {
+        return reviewService.getOne(reviewId);
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{cafeIndex}/review")
     public void create(@PathVariable Long cafeIndex, @RequestBody @Valid final ReviewRequest dto) {
