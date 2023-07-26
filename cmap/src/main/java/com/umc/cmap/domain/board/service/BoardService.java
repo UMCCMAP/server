@@ -2,6 +2,7 @@ package com.umc.cmap.domain.board.service;
 
 import com.umc.cmap.config.BaseException;
 import com.umc.cmap.config.BaseResponseStatus;
+import com.umc.cmap.domain.board.dto.BoardModifyRequest;
 import com.umc.cmap.domain.board.dto.BoardMyPostResponse;
 import com.umc.cmap.domain.board.dto.BoardResponse;
 import com.umc.cmap.domain.board.dto.BoardWriteRequset;
@@ -46,9 +47,9 @@ public class BoardService {
      */
     @Transactional
     public Long writeBoard(BoardWriteRequset request) throws BaseException {
-        User user = userRepository.findById(request.getUser().getIdx())
+        User user = userRepository.findById(request.getUserIdx())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
-        Cafe cafe = cafeRepository.findById(request.getCafe().getIdx())
+        Cafe cafe = cafeRepository.findById(request.getCafeIdx())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_NOT_FOUND));
 
         Board board = Board.builder()
@@ -94,11 +95,13 @@ public class BoardService {
      * @return
      * @throws BaseException
      */
-    public String modifyPost(Long boardIdx) throws BaseException {
+    public String modifyPost(Long boardIdx, BoardModifyRequest request) throws BaseException {
         Board board = boardRepository.findById(boardIdx)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
+        Cafe cafe = cafeRepository.findById(request.getCafe().getIdx())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_NOT_FOUND));
         boardRepository.deleteById(boardIdx);
-        return "게시글 삭제에 성공했습니다.";
+        return "게시글 수정에 성공했습니다.";
     }
 
 }

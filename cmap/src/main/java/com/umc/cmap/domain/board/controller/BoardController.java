@@ -2,6 +2,7 @@ package com.umc.cmap.domain.board.controller;
 
 import com.umc.cmap.config.BaseException;
 import com.umc.cmap.config.BaseResponse;
+import com.umc.cmap.domain.board.dto.BoardModifyRequest;
 import com.umc.cmap.domain.board.dto.BoardMyPostResponse;
 import com.umc.cmap.domain.board.dto.BoardResponse;
 import com.umc.cmap.domain.board.dto.BoardWriteRequset;
@@ -73,8 +74,8 @@ public class BoardController {
      * 게시글 수정
      */
     @PatchMapping("/posts/{boardIdx}/postModifying")
-    public BaseResponse<String> modifyPost(@PathVariable Long boardIdx) throws BaseException {
-        return new BaseResponse<>(boardService.modifyPost(boardIdx));
+    public BaseResponse<String> modifyPost(@PathVariable Long boardIdx, @RequestBody BoardModifyRequest request) throws BaseException {
+        return new BaseResponse<>(boardService.modifyPost(boardIdx, request));
     }
 
 }

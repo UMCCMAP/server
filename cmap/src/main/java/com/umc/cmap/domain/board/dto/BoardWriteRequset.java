@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardWriteRequset {
-    private User user;
-    private Cafe cafe;
+    private Long userIdx;
+    private Long cafeIdx;
     private String boardTitle;
     private String boardContent;
 }
