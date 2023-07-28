@@ -5,7 +5,7 @@ import com.umc.cmap.config.BaseResponseStatus;
 import com.umc.cmap.domain.board.dto.BoardModifyRequest;
 import com.umc.cmap.domain.board.dto.BoardMyPostResponse;
 import com.umc.cmap.domain.board.dto.BoardResponse;
-import com.umc.cmap.domain.board.dto.BoardWriteRequset;
+import com.umc.cmap.domain.board.dto.BoardWriteRequest;
 import com.umc.cmap.domain.board.entity.Board;
 import com.umc.cmap.domain.board.entity.Role;
 import com.umc.cmap.domain.board.repository.BoardRepository;
@@ -46,7 +46,7 @@ public class BoardService {
      * @throws BaseException
      */
     @Transactional
-    public Long writeBoard(BoardWriteRequset request) throws BaseException {
+    public Long writeBoard(BoardWriteRequest request) throws BaseException {
         User user = userRepository.findById(request.getUserIdx())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
         Cafe cafe = cafeRepository.findById(request.getCafeIdx())
@@ -98,7 +98,7 @@ public class BoardService {
     public String modifyPost(Long boardIdx, BoardModifyRequest request) throws BaseException {
         Board board = boardRepository.findById(boardIdx)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
-        Cafe cafe = cafeRepository.findById(request.getCafe().getIdx())
+        Cafe cafe = cafeRepository.findById(request.getCafeIdx())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_NOT_FOUND));
         boardRepository.deleteById(boardIdx);
         return "게시글 수정에 성공했습니다.";
