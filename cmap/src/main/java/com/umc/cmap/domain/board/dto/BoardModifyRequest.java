@@ -12,8 +12,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardModifyRequest {
-    private User user;
-    private Cafe cafe;
+    private Long userIdx;
+    private Long cafeIdx;
     private String boardTitle;
     private String boardContent;
 }
