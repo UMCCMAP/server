@@ -95,6 +95,7 @@ public class BoardService {
      * @return
      * @throws BaseException
      */
+    @Transactional
     public String modifyPost(Long boardIdx, BoardModifyRequest request) throws BaseException {
         Board board = boardRepository.findById(boardIdx)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
