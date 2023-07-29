@@ -8,11 +8,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.Length;
 
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@DynamicUpdate
 @Getter
 @Table(name = "Users")
 public class User extends BaseTimeEntity{
@@ -34,7 +36,6 @@ public class User extends BaseTimeEntity{
     private Role role;
 
 
-  
     @Builder
     public User(String name, String email, String password, String nickname, Role role){
         this.name=name;
@@ -44,10 +45,12 @@ public class User extends BaseTimeEntity{
         this.role=role;
     }
 
-
     public User update(String name){
         this.name=name;
         return this;
     }
 
+    public void setNickname(String nickname){
+        this.nickname=nickname;
+    }
 }

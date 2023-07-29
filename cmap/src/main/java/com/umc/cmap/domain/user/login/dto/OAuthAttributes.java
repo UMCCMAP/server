@@ -20,7 +20,16 @@ public class OAuthAttributes {
         if("naver".equals(registrationId)){
             return ofNaver("id", attributes);
         }
-        return ofKakao("id", attributes);
+        return ofGoogle(userNameAttributeName, attributes);
+    }
+
+    private static OAuthAttributes ofGoogle(String userNameAttributeName, Map<String, Object> attributes){
+        return OAuthAttributes.builder()
+                .name((String) attributes.get("name"))
+                .email((String) attributes.get("email"))
+                .attributes(attributes)
+                .nameAttributeKey(userNameAttributeName)
+                .build();
     }
 
     private static OAuthAttributes ofNaver(String userNameAttributeName, Map<String, Object> attributes){
@@ -34,17 +43,6 @@ public class OAuthAttributes {
                 .build();
     }
 
-    private static OAuthAttributes ofKakao(String userNameAttributeName, Map<String, Object> attributes){
-        Map<String, Object> response = (Map<String, Object>) attributes.get("kakao_account");
-        Map<String, Object> account = (Map<String, Object>) attributes.get("profile");
-
-        return OAuthAttributes.builder()
-                .name((String) response.get("nickname"))
-                .email((String) response.get("email"))
-                .attributes(response)
-                .nameAttributeKey(userNameAttributeName)
-                .build();
-    }
 
     public User toEntity(){
         return User.builder()
