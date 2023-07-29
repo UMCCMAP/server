@@ -82,10 +82,11 @@ public class BoardService {
      * @return
      * @throws BaseException
      */
+    @Transactional
     public String deletePost(Long boardIdx) throws BaseException {
         Board board = boardRepository.findById(boardIdx)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
-        boardRepository.deleteById(boardIdx);
+        board.removeBoard();
         return "게시글 삭제에 성공했습니다.";
     }
 
