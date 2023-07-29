@@ -100,7 +100,10 @@ public class BoardService {
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
         Cafe cafe = cafeRepository.findById(request.getCafeIdx())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_NOT_FOUND));
-        boardRepository.deleteById(boardIdx);
+        board = board.modifyPost(cafe, request.getBoardTitle(), request.getBoardContent());
+
+        boardRepository.save(board);
+
         return "게시글 수정에 성공했습니다.";
     }
 
