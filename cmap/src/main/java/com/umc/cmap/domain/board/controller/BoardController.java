@@ -55,10 +55,6 @@ public class BoardController {
     }
 
     /**
-     * 게시글 공감
-     */
-
-    /**
      * 게시글 삭제
      * @param boardIdx
      * @return
