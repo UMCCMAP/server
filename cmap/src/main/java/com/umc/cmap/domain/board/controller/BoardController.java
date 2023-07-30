@@ -2,9 +2,10 @@ package com.umc.cmap.domain.board.controller;
 
 import com.umc.cmap.config.BaseException;
 import com.umc.cmap.config.BaseResponse;
+import com.umc.cmap.domain.board.dto.BoardModifyRequest;
 import com.umc.cmap.domain.board.dto.BoardMyPostResponse;
 import com.umc.cmap.domain.board.dto.BoardResponse;
-import com.umc.cmap.domain.board.dto.BoardWriteRequset;
+import com.umc.cmap.domain.board.dto.BoardWriteRequest;
 import com.umc.cmap.domain.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,7 +17,7 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("board")
+@RequestMapping("/board")
 public class BoardController {
     private final BoardService boardService;
 
@@ -38,7 +39,7 @@ public class BoardController {
      * @throws BaseException
      */
     @PostMapping("/posting")
-    public BaseResponse<Long> writeBoard(@RequestBody BoardWriteRequset request) throws BaseException {
+    public BaseResponse<Long> writeBoard(@RequestBody BoardWriteRequest request) throws BaseException {
         return new BaseResponse<>(boardService.writeBoard(request));
     }
 
@@ -54,15 +55,22 @@ public class BoardController {
     }
 
     /**
-     * 게시글 공감
-     */
-
-    /**
      * 게시글 삭제
+     * @param boardIdx
+     * @return
+     * @throws BaseException
      */
+    @PatchMapping("/posts/{boardIdx}")
+    public BaseResponse<String> deletePost(@PathVariable Long boardIdx) throws BaseException {
+        return new BaseResponse<>(boardService.deletePost(boardIdx));
+    }
 
     /**
      * 게시글 수정
      */
+    @PatchMapping("/posts/{boardIdx}/postModifying")
+    public BaseResponse<String> modifyPost(@PathVariable Long boardIdx, @RequestBody BoardModifyRequest request) throws BaseException {
+        return new BaseResponse<>(boardService.modifyPost(boardIdx, request));
+    }
 
 }

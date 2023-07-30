@@ -2,9 +2,10 @@ package com.umc.cmap.domain.board.service;
 
 import com.umc.cmap.config.BaseException;
 import com.umc.cmap.config.BaseResponseStatus;
+import com.umc.cmap.domain.board.dto.BoardModifyRequest;
 import com.umc.cmap.domain.board.dto.BoardMyPostResponse;
 import com.umc.cmap.domain.board.dto.BoardResponse;
-import com.umc.cmap.domain.board.dto.BoardWriteRequset;
+import com.umc.cmap.domain.board.dto.BoardWriteRequest;
 import com.umc.cmap.domain.board.entity.Board;
 import com.umc.cmap.domain.board.entity.Role;
 import com.umc.cmap.domain.board.repository.BoardRepository;
@@ -45,11 +46,11 @@ public class BoardService {
      * @throws BaseException
      */
     @Transactional
-    public Long writeBoard(BoardWriteRequset request) throws BaseException {
-        User user = userRepository.findById(request.getUser().getIdx())
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
-        Cafe cafe = cafeRepository.findById(request.getCafe().getIdx())
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_CAFE));
+    public Long writeBoard(BoardWriteRequest request) throws BaseException {
+        User user = userRepository.findById(request.getUserIdx())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
+        Cafe cafe = cafeRepository.findById(request.getCafeIdx())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_NOT_FOUND));
 
         Board board = Board.builder()
                 .user(user)
@@ -73,6 +74,37 @@ public class BoardService {
         Board board = boardRepository.findById(boardIdx)
                 .orElseThrow(() -> new IllegalArgumentException("Board not found with id: " + boardIdx));
         return new BoardMyPostResponse(board);
+    }
+
+    /**
+     * 게시글 삭제
+     * @param boardIdx
+     * @return
+     * @throws BaseException
+     */
+    @Transactional
+    public String deletePost(Long boardIdx) throws BaseException {
+        Board board = boardRepository.findById(boardIdx)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
+        board.removeBoard();
+        return "게시글 삭제에 성공했습니다.";
+    }
+
+    /**
+     * 게시글 수정
+     * @param boardIdx
+     * @return
+     * @throws BaseException
+     */
+    @Transactional
+    public String modifyPost(Long boardIdx, BoardModifyRequest request) throws BaseException {
+        Board board = boardRepository.findById(boardIdx)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
+        Cafe cafe = cafeRepository.findById(request.getCafeIdx())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_NOT_FOUND));
+        board.modifyPost(cafe, request.getBoardTitle(), request.getBoardContent());
+
+        return "게시글 수정에 성공했습니다.";
     }
 
 }

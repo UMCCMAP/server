@@ -46,5 +46,10 @@ public class Board extends BaseTimeEntity {
         this.removedAt = new Timestamp(System.currentTimeMillis());
     }
 
+    public void modifyPost(Cafe cafe, String boardTitle, String boardContent) {
+        this.cafe = cafe;
+        this.boardTitle = boardTitle;
+        this.boardContent = boardContent;
+    }
 
 }

@@ -5,13 +5,15 @@ import com.umc.cmap.domain.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BoardWriteRequset {
-    private User user;
-    private Cafe cafe;
+public class BoardModifyRequest {
+    private Long userIdx;
+    private Long cafeIdx;
     private String boardTitle;
     private String boardContent;
 }
