@@ -38,7 +38,7 @@ public class BoardController {
      * @return
      * @throws BaseException
      */
-    @PostMapping("/posting")
+    @PostMapping
     public BaseResponse<Long> writeBoard(@RequestBody BoardWriteRequest request) throws BaseException {
         return new BaseResponse<>(boardService.writeBoard(request));
     }
@@ -49,7 +49,7 @@ public class BoardController {
      * @return
      * @throws BaseException
      */
-    @GetMapping("/mypost/{boardIdx}")
+    @GetMapping("/{boardIdx}")
     public BaseResponse<BoardMyPostResponse> getMyPost(@PathVariable Long boardIdx) throws BaseException {
         return new BaseResponse<>(boardService.getMyPost(boardIdx));
     }
@@ -60,7 +60,7 @@ public class BoardController {
      * @return
      * @throws BaseException
      */
-    @PatchMapping("/posts/{boardIdx}")
+    @PatchMapping("/{boardIdx}")
     public BaseResponse<String> deletePost(@PathVariable Long boardIdx) throws BaseException {
         return new BaseResponse<>(boardService.deletePost(boardIdx));
     }
@@ -68,7 +68,7 @@ public class BoardController {
     /**
      * 게시글 수정
      */
-    @PatchMapping("/posts/{boardIdx}/postModifying")
+    @PatchMapping("/{boardIdx}")
     public BaseResponse<String> modifyPost(@PathVariable Long boardIdx, @RequestBody BoardModifyRequest request) throws BaseException {
         return new BaseResponse<>(boardService.modifyPost(boardIdx, request));
     }
