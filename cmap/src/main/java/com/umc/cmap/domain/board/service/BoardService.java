@@ -1,6 +1,7 @@
 package com.umc.cmap.domain.board.service;
 
 import com.umc.cmap.config.BaseException;
+import com.umc.cmap.config.BaseResponse;
 import com.umc.cmap.config.BaseResponseStatus;
 import com.umc.cmap.domain.board.dto.BoardModifyRequest;
 import com.umc.cmap.domain.board.dto.BoardMyPostResponse;
@@ -35,7 +36,7 @@ public class BoardService {
      * @throws BaseException
      */
     public Page<BoardResponse> getBoardList(Pageable pageable) throws BaseException {
-        Page<Board> boardPage = boardRepository.findAll(pageable);
+        Page<Board> boardPage = boardRepository.findAllByRemovedAtIsNull(pageable);
         return boardPage.map(board -> new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), board.getCreatedAt()));
     }
 
@@ -72,7 +73,8 @@ public class BoardService {
      */
     public BoardMyPostResponse getMyPost(Long boardIdx) throws BaseException {
         Board board = boardRepository.findById(boardIdx)
-                .orElseThrow(() -> new IllegalArgumentException("Board not found with id: " + boardIdx));
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
+        if(board.isDeleted()) { throw new BaseException(BaseResponseStatus.POST_DELETED); }
         return new BoardMyPostResponse(board);
     }
 
