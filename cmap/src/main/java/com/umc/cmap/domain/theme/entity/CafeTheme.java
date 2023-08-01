@@ -11,7 +11,6 @@ import lombok.*;
 @Getter
 @Setter
 @Table(name = "cafetheme")
-//@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @RequiredArgsConstructor
 public class CafeTheme {
 

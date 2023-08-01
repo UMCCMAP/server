@@ -1,7 +1,6 @@
 package com.umc.cmap.domain.theme.service;
 
 import com.umc.cmap.config.BaseException;
-import com.umc.cmap.config.BaseResponse;
 import com.umc.cmap.config.BaseResponseStatus;
 import com.umc.cmap.domain.theme.entity.Theme;
 import com.umc.cmap.domain.theme.repository.ThemeRepository;
@@ -9,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
 
 @Service
 @Transactional
@@ -27,14 +25,13 @@ public class ThemeService {
         return themeRepository.save(theme);
     }
 
-
     public List<Theme> getAllThemes() {
         return themeRepository.findAll();
     }
 
     public Theme getThemeByName(String name) throws BaseException {
         return themeRepository.findByName(name)
-                .orElseThrow(() -> new BaseException(new BaseResponse<>(BaseResponseStatus.CAFE_THEME_NOT_FOUND)));
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_THEME_NOT_FOUND));
     }
 
     public Theme updateTheme(String name, String newThemeName) throws BaseException {
