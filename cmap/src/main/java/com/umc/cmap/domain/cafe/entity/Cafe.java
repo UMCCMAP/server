@@ -48,26 +48,6 @@ public class Cafe extends BaseTimeEntity {
         return this.cafeTheme != null && this.cafeTheme.getTheme() != null ? this.cafeTheme.getTheme().getName() : null;
     }
 
-    /*
-    @Embedded
-    private Coordinate coordinate;
-
-
-        @Builder
-        public Cafe(Long idx, String name, String location, String info,
-                    Coordinate coordinate,CafeTheme cafeTheme,boolean visited) {
-            this.idx = idx;
-            this.name = name;
-            this.location = location;
-            this.info = info;
-            this.coordinate = coordinate;
-            this.cafeTheme=cafeTheme;
-            this.visited=visited;
-        }
-
-     */
-
-
     @Builder
     public Cafe(Long idx, String name, String location,
                 String info,CafeTheme cafeTheme,Boolean visited,Boolean wantToVisit) {
