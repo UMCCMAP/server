@@ -8,8 +8,12 @@ import com.umc.cmap.domain.board.dto.BoardMyPostResponse;
 import com.umc.cmap.domain.board.dto.BoardResponse;
 import com.umc.cmap.domain.board.dto.BoardWriteRequest;
 import com.umc.cmap.domain.board.entity.Board;
+import com.umc.cmap.domain.board.entity.BoardTag;
 import com.umc.cmap.domain.board.entity.Role;
+import com.umc.cmap.domain.board.entity.Tag;
 import com.umc.cmap.domain.board.repository.BoardRepository;
+import com.umc.cmap.domain.board.repository.BoardTagRepository;
+import com.umc.cmap.domain.board.repository.TagRepository;
 import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.repository.CafeRepository;
 import com.umc.cmap.domain.user.entity.User;
@@ -20,11 +24,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly=true)
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final BoardTagRepository boardTagRepository;
+    private final TagRepository tagRepository;
     private final UserRepository userRepository;
     private final CafeRepository cafeRepository;
 
@@ -37,7 +46,8 @@ public class BoardService {
      */
     public Page<BoardResponse> getBoardList(Pageable pageable) throws BaseException {
         Page<Board> boardPage = boardRepository.findAllByRemovedAtIsNull(pageable);
-        return boardPage.map(board -> new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), board.getCreatedAt()));
+        List<Map<Long,String>> tags = tagRepository.findAllTags();
+        return boardPage.map(board -> new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tags, board.getCreatedAt()));
     }
 
     /**
@@ -107,6 +117,18 @@ public class BoardService {
         board.modifyPost(cafe, request.getBoardTitle(), request.getBoardContent());
 
         return "게시글 수정에 성공했습니다.";
+    }
+
+    public Map<Long, String> getTags(Long boardIdx) throws BaseException {
+        Map<Long, String> tagIdxName = new HashMap<>();
+        List<Long> tagIdxList = boardTagRepository.findTagIdxListByBoardIdx(boardIdx);
+        tagIdxList.forEach(tagIdx -> {
+            Optional<Tag> tagOptional = tagRepository.findById(tagIdx);
+            tagOptional.ifPresent(tag -> {
+                tagIdxName.put(tag.getId(), tag.getTagName());
+            });
+        });
+        return tagIdxName;
     }
 
 }
