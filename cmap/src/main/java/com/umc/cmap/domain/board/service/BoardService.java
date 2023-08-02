@@ -125,7 +125,7 @@ public class BoardService {
         tagIdxList.forEach(tagIdx -> {
             Optional<Tag> tagOptional = tagRepository.findById(tagIdx);
             tagOptional.ifPresent(tag -> {
-                tagIdxName.put(tag.getId(), tag.getTagName());
+                tagIdxName.put(tag.getIdx(), tag.getTagName());
             });
         });
         return tagIdxName;
