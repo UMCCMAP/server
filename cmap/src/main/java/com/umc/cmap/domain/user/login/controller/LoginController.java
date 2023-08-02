@@ -6,12 +6,14 @@ import com.umc.cmap.domain.user.login.service.CustomOAuth2UserService;
 import com.umc.cmap.domain.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
@@ -39,14 +41,30 @@ public class LoginController {
     }
 
 
+    @GetMapping("/users/nickname")
+    public String showNicknamePage(){
+        return "users/nickname";
+    }
+
     @PostMapping("/users/nickname")
-    public String nickname(@RequestParam("nickname") String nickname){
+    public String nickname(@NotNull @RequestParam("nickname") String nickname, RedirectAttributes redirectAttributes){
+        if (nickname.trim().isEmpty()) {
+            // 닉네임이 비어있는 경우
+            redirectAttributes.addFlashAttribute("errorMessage", "닉네임을 입력해주세요.");
+            return "redirect:/users/nickname";
+        }
+        else if(userRepository.findByNickname(nickname).isPresent()){
+            //중복 처리
+            redirectAttributes.addFlashAttribute("errorMessage", "이미 사용 중인 닉네임입니다.");
+            return "redirect:/users/nickname";
+        }
 
         SessionUser loginUser = (SessionUser) httpSession.getAttribute("loginUser");
         userService.setNickname(loginUser.getEmail(), nickname);
 
         return "redirect:/main";
     }
+
 
     @GetMapping("/")
     public String logout(HttpServletRequest request){
