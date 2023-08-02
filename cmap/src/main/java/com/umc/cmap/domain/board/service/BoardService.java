@@ -58,7 +58,7 @@ public class BoardService {
                 .cafe(cafe)
                 .boardTitle(request.getBoardTitle())
                 .boardContent(request.getBoardContent())
-                .role(Role.ROLE_USER)
+                .role(Role.USER)
                 .build();
 
         Board savedBoard = boardRepository.save(board);

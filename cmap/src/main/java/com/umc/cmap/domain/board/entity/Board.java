@@ -25,7 +25,6 @@ public class Board extends BaseTimeEntity {
     private Cafe cafe;
 
     private String boardTitle;
-
     private String boardContent;
 
     @Enumerated(EnumType.STRING)
