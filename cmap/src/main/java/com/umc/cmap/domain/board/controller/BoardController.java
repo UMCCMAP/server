@@ -60,7 +60,7 @@ public class BoardController {
      * @return
      * @throws BaseException
      */
-    @PatchMapping("/{boardIdx}")
+    @DeleteMapping("/{boardIdx}")
     public BaseResponse<String> deletePost(@PathVariable Long boardIdx) throws BaseException {
         return new BaseResponse<>(boardService.deletePost(boardIdx));
     }
