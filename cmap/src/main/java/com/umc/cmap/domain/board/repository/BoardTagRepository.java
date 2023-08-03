@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface BoardTagRepository extends JpaRepository<BoardTag, Long> {
     List<BoardTag> findTagIdxListByBoardIdx(Long boardIdx);
-    List<Board> findBoardByTagIn(List<Long> tagIdxList);
-    List<Long> findTagIdxByBoardIdx(Long boardIdx); // 반환 타입을 List<Long>으로 변경
+    @Query("SELECT DISTINCT boardTag.board FROM BoardTag boardTag WHERE boardTag.tag.idx IN :tagIdxList")
+    List<Board> findBoardByTagIn(@Param("tagIdxList") List<Long> tagIdxList);
+    @Query("SELECT boardTag.tag.idx FROM BoardTag boardTag WHERE boardTag.board.idx = :boardIdx")
+    List<Long> findTagIdxByBoardIdx(@Param("boardIdx") Long boardIdx);
 }

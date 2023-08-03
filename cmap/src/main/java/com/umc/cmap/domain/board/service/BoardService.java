@@ -93,7 +93,7 @@ public class BoardService {
         List<Long> result = new ArrayList<>();
 
         for (Board board : boards) {
-            List<Long> tagsForBoard = boardTagRepository.findTagByBoardIdx(board.getIdx());
+            List<Long> tagsForBoard = boardTagRepository.findTagIdxByBoardIdx(board.getIdx());
             if (tagsForBoard.containsAll(tagIdxList)) { result.add(board.getIdx()); }
         }
         return result;
