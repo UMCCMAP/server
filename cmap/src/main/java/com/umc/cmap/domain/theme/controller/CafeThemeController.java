@@ -24,29 +24,16 @@ public class CafeThemeController {
         return ResponseEntity.ok(cafeThemes);
     }
 
-/*
-    @GetMapping("/{cafeThemeId}")  //{cafeThemeId}
-    public ResponseEntity<CafeTheme> getCafeThemeById(@PathVariable Long cafeThemeId) throws BaseException {
-        CafeTheme cafeTheme = cafeThemeService.getCafeThemeById(cafeThemeId);
-        return ResponseEntity.ok(cafeTheme);
-    }
-*/
     @GetMapping("/{cafeThemeId}")
     public ResponseEntity<CafeTheme> getCafeThemeById(@PathVariable Long cafeThemeId) throws BaseException {
         CafeTheme cafeTheme = cafeThemeService.getCafeThemeById(cafeThemeId);
         if (cafeTheme == null) {
-            throw new BaseException(new BaseResponse<>(BaseResponseStatus.CAFE_THEME_NOT_FOUND));
+            throw new BaseException(BaseResponseStatus.CAFE_THEME_NOT_FOUND);
         }
         return ResponseEntity.ok(cafeTheme);
     }
 
-    /*
-    @PostMapping
-    public ResponseEntity<CafeTheme> createCafeTheme(@RequestBody CafeTheme cafeTheme) {
-        CafeTheme createdCafeTheme = cafeThemeService.createCafeTheme(cafeTheme);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdCafeTheme);
-    }
-*/
+
     @PostMapping
     public ResponseEntity<CafeTheme> createCafeTheme(@RequestBody CafeThemeRequest request) throws BaseException {
         String themeName = request.getThemeName();
@@ -56,20 +43,12 @@ public class CafeThemeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCafeTheme);
     }
 
-
-
-
-
-
-
-
     @PutMapping("/{cafeThemeId}")
     public ResponseEntity<CafeTheme> updateCafeTheme(@PathVariable Long cafeThemeId, @RequestBody CafeTheme cafeTheme) throws BaseException {
         CafeTheme updatedCafeTheme = cafeThemeService.updateCafeTheme(cafeThemeId, cafeTheme);
         return ResponseEntity.ok(updatedCafeTheme);
     }
 
-    
 
     @DeleteMapping("/{cafeThemeId}")
     public ResponseEntity<Void> deleteCafeTheme(@PathVariable Long cafeThemeId) throws BaseException {
@@ -78,8 +57,8 @@ public class CafeThemeController {
     }
 
     @ExceptionHandler(BaseException.class)
-    public ResponseEntity<BaseResponse<?>> handleBaseException(BaseException ex) {
-        BaseResponse<?> response = ex.getStatus();
+    public ResponseEntity<BaseResponse<BaseResponseStatus>> handleBaseException(BaseException ex) {
+        BaseResponse<BaseResponseStatus> response = new BaseResponse<>(ex.getStatus());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

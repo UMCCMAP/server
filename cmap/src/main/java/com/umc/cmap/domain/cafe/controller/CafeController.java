@@ -2,14 +2,18 @@ package com.umc.cmap.domain.cafe.controller;
 
 import com.umc.cmap.config.BaseException;
 import com.umc.cmap.config.BaseResponse;
+import com.umc.cmap.config.BaseResponseStatus;
 import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.service.CafeService;
+import com.umc.cmap.domain.filter.service.CafeFilterService;
+import com.umc.cmap.domain.theme.repository.ThemeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Random;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,6 +21,9 @@ import java.util.List;
 public class CafeController {
 
     private final CafeService cafeService;
+    private final CafeFilterService cafeFilterService;
+    private final ThemeRepository themeRepository;
+
 
     @GetMapping
     public List<Cafe> getAllCafes() {
@@ -48,10 +55,34 @@ public class CafeController {
         return ResponseEntity.noContent().build();
     }
 
+
     @ExceptionHandler(BaseException.class)
-    public ResponseEntity<BaseResponse<?>> handleBaseException(BaseException ex) {
-        BaseResponse<?> response = ex.getStatus();
+    public ResponseEntity<BaseResponse<BaseResponseStatus>> handleBaseException(BaseException ex) {
+        BaseResponse<BaseResponseStatus> response = new BaseResponse<>(ex.getStatus());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @GetMapping("/visited")
+    public List<Cafe> getVisitedCafes() throws BaseException {
+        return cafeService.getVisitedCafes();
+    }
+
+    @GetMapping("/wantToVisit")
+    public List<Cafe> getWantToVisitCafes() throws BaseException {
+        return cafeService.getWantToVisitCafes();
+    }
+
+
+    @GetMapping("/filter")
+    public ResponseEntity<Cafe> getCafeByTheme(@RequestParam("theme") String themeName) throws BaseException {
+        List<Cafe> cafesWithTheme = cafeService.getCafesByTheme(themeName);
+
+        int randomIndex = new Random().nextInt(cafesWithTheme.size());
+        Cafe randomCafe = cafesWithTheme.get(randomIndex);
+
+        return ResponseEntity.ok(randomCafe);
+    }
+
+
 
 }
