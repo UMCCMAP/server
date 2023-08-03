@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardMyPostResponse {
-    private Long idx;                   // boardIdx
+    private Long idx;
     private String cafeName;
     private String name;
     private String boardTitle;

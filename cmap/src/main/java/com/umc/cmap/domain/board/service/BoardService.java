@@ -36,7 +36,7 @@ public class BoardService {
     public Page<BoardResponse> getBoardList(Pageable pageable) throws BaseException {
         Page<Board> boardPage = boardRepository.findAllByRemovedAtIsNull(pageable);
 
-        HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoardList(boardPage); // 수정된 부분
+        HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoardList(boardPage);
         List<TagDto> tagNames = tagRepository.findAllTags();
         return boardPage.map(board -> new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, tagNames, board.getCreatedAt()));
     }
