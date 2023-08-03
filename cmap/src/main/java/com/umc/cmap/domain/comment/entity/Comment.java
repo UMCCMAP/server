@@ -27,15 +27,15 @@ public class Comment extends BaseTimeEntity {
     @JoinColumn(name="user_idx")
     private User user;
 
-    private String comment_content;
+    private String content;
 
     private Timestamp removedAt;
 
     @Builder
-    public Comment(User user, Board board, String comment_content) {
+    public Comment(User user, Board board, String content) {
         this.board = board;
         this.user = user;
-        this.comment_content = comment_content;
+        this.content = content;
     }
 
     public void removeComment(){
