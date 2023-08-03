@@ -10,4 +10,6 @@ import java.util.Map;
 public interface TagRepository extends JpaRepository<Tag, Long> {
     @Query("SELECT idx, tagName FROM Tag")
     List<Map<Long, String>> findAllTags();
+
+    List<Tag> findAllByTagIdxIn(List<Long> tagIdx);
 }

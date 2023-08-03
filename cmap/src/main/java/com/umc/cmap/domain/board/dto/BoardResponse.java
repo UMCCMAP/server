@@ -15,14 +15,14 @@ public class BoardResponse {
     private Long idx;
     private String boardTitle;
     private String boardContent;
-    private List<Map<Long,String>> tags;
+    private List<Map<Long,String>> tagNames;
     private LocalDateTime createdAt;
 
-    public BoardResponse(Long idx, String boardTitle, String boardContent, List<Map<Long,String>> tags, LocalDateTime createdAt) {
+    public BoardResponse(Long idx, String boardTitle, String boardContent, List<Map<Long,String>> tagNames, LocalDateTime createdAt) {
         this.idx = idx;
         this.boardTitle = boardTitle;
         this.boardContent = boardContent;
-        this.tags = tags;
+        this.tagNames = tagNames;
         this.createdAt = createdAt;
     }
 }

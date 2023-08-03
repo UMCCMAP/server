@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RestController
@@ -28,8 +30,13 @@ public class BoardController {
      * @throws BaseException
      */
     @GetMapping
-    public BaseResponse<Page<BoardResponse>> getBoard(@PageableDefault(size = 4, sort = "idx", direction = DESC) Pageable pageable) throws BaseException {
-        return new BaseResponse<>(boardService.getBoardList(pageable));
+    public BaseResponse<Page<BoardResponse>> getBoard(@PageableDefault(size = 4, sort = "idx", direction = DESC) Pageable pageable,
+                                                      @RequestParam(required = false) List<Long> tagIdx) throws BaseException {
+        if (tagIdx != null && !tagIdx.isEmpty()) {
+            return new BaseResponse<>(boardService.getBoardListWithTags(pageable, tagIdx));
+        } else {
+            return new BaseResponse<>(boardService.getBoardList(pageable));
+        }
     }
 
     /**

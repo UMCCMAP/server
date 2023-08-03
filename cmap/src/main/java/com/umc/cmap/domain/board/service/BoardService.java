@@ -39,16 +39,56 @@ public class BoardService {
 
 
     /**
-     * 게시판 메인 화면
+     * 게시판 메인 화면 (특정 태그 선택 X)
      * @param pageable
      * @return
      * @throws BaseException
      */
     public Page<BoardResponse> getBoardList(Pageable pageable) throws BaseException {
         Page<Board> boardPage = boardRepository.findAllByRemovedAtIsNull(pageable);
-        List<Map<Long,String>> tags = tagRepository.findAllTags();
-        return boardPage.map(board -> new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tags, board.getCreatedAt()));
+        List<Map<Long,String>> tagNames = tagRepository.findAllTags();
+        return boardPage.map(board -> new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagNames, board.getCreatedAt()));
     }
+
+    /**
+     * 게시판 메인 화면 (특정 태그 선택 O)
+     * @param pageable
+     * @param tagIdx
+     * @return
+     * @throws BaseException
+     */
+    public Page<BoardResponse> getBoardListWithTags(Pageable pageable, List<Long> tagIdx) throws BaseException {
+        List<Tag> tags = tagRepository.findAllByTagIdxIn(tagIdx);
+        List<Long> boardIdx = boardTagRepository.findBoardIdxByTagIn(tags);
+        Page<Board> boardPage = boardRepository.findByIdxInAndRemovedAtIsNull(boardIdx, pageable);
+        List<Map<Long,String>> tagNames = tagRepository.findAllTags();
+        return boardPage.map(board -> new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagNames, board.getCreatedAt()));
+    }
+
+    /**
+     * 태그들 가져오는 코드 - 해당 boardIdx에 연관된 tagIdx를 받아오고, 이를 이용해서 tagName까지 리턴
+     * 게시글 불러올 때 사용할 예정
+     */
+    public Map<Long, List<Map<Long, String>>> getTagsForBoardList(List<Long> boardIdxList) throws BaseException {
+        return boardIdxList.stream().collect(Collectors.toMap(
+                boardIdx -> boardIdx,
+                boardIdx -> tagRepository.findAllByBoardIdx(boardIdx).stream()
+                        .map(tag -> Map.of(tag.getIdx(), tag.getTagName()))
+                        .collect(Collectors.toList())
+        ));
+    }
+    /*
+    public Map<Long, String> getTags(Long boardIdx) throws BaseException {
+        Map<Long, String> tagIdxName = new HashMap<>();
+        List<Long> tagIdxList = boardTagRepository.findTagIdxListByBoardIdx(boardIdx);
+        tagIdxList.forEach(tagIdx -> {
+            Optional<Tag> tagOptional = tagRepository.findById(tagIdx);
+            tagOptional.ifPresent(tag -> {
+                tagIdxName.put(tag.getIdx(), tag.getTagName());
+            });
+        });
+        return tagIdxName;
+    }*/
 
     /**
      * 게시글 작성
@@ -117,18 +157,6 @@ public class BoardService {
         board.modifyPost(cafe, request.getBoardTitle(), request.getBoardContent());
 
         return "게시글 수정에 성공했습니다.";
-    }
-
-    public Map<Long, String> getTags(Long boardIdx) throws BaseException {
-        Map<Long, String> tagIdxName = new HashMap<>();
-        List<Long> tagIdxList = boardTagRepository.findTagIdxListByBoardIdx(boardIdx);
-        tagIdxList.forEach(tagIdx -> {
-            Optional<Tag> tagOptional = tagRepository.findById(tagIdx);
-            tagOptional.ifPresent(tag -> {
-                tagIdxName.put(tag.getIdx(), tag.getTagName());
-            });
-        });
-        return tagIdxName;
     }
 
 }
