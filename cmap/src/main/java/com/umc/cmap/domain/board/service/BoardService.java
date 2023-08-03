@@ -16,6 +16,7 @@ import com.umc.cmap.domain.cafe.repository.CafeRepository;
 import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -57,16 +58,45 @@ public class BoardService {
      * @throws BaseException
      */
     public Page<BoardResponse> getBoardListWithTags(Pageable pageable, List<Long> tagIdx) throws BaseException {
-        List<Tag> tags = tagRepository.findAllByIdxIn(tagIdx);
-        List<BoardTag> boardTags = boardTagRepository.findBoardIdxByTagIn(tags);
+        /* tagIdx에 해당하는 tag 객체를 다 가져옴
+        List<Tag> tags = tagRepository.findAllByIdxIn(tagIdx);*/
+
+        // tagIdx를 모두 포함한 boardIdx를 가져옴
+        List<Long> boardIdxInBoardTag = findBoardIdxByAllTags(tagIdx);
+        /* List<BoardTag> boardTags = boardTagRepository.findBoardIdxByTagIn(tags);
         List<Long> boardIdx = boardTags.stream()
                 .map(boardTag -> boardTag.getBoard().getIdx())
-                .collect(Collectors.toList());
-        Page<Board> boardPage = boardRepository.findByIdxInAndRemovedAtIsNull(boardIdx, pageable);
+                .collect(Collectors.toList());*/
+
+        // tagIdx를 모두 포함한 boardIdx를 가지고 removedAt이 null인 board객체들을 paging
+        Page<Board> boardPage = boardRepository.findByIdxInAndRemovedAtIsNull(boardIdxInBoardTag, pageable);
         // 고칠 부분
         HashMap<Long,List<HashMap<Long,String>>> tagList = getTagsForBoardList(boardPage);
         List<TagDto> tagNames = tagRepository.findAllTags();
         return boardPage.map(board -> new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, tagNames, board.getCreatedAt()));
+    }
+    /*
+    public Page<BoardResponse> getBoardListWithTags(Pageable pageable, List<Long> tagIdx) throws BaseException {
+        List<Tag> tags = tagRepository.findAllByIdxIn(tagIdx);
+        List<BoardTag> filteredBoardTags = boardTagRepository.findBoardIdxByAllTags(tags);
+        List<Long> boardIdx = filteredBoardTags.stream()
+                .map(boardTag -> boardTag.getBoard().getIdx())
+                .collect(Collectors.toList());
+        Page<Board> boardPage = boardRepository.findByIdxInAndRemovedAtIsNull(boardIdx, pageable);
+        HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoardList(boardPage);
+        List<TagDto> tagNames = tagRepository.findAllTags();
+        return boardPage.map(board -> new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, tagNames, board.getCreatedAt()));
+    }*/
+
+    public List<Long> findBoardIdxByAllTags(List<Long> tagIdxList) {
+        List<Board> boards = boardTagRepository.findBoardByTagIn(tagIdxList);
+        List<Long> result = new ArrayList<>();
+
+        for (Board board : boards) {
+            List<Long> tagsForBoard = boardTagRepository.findTagByBoardIdx(board.getIdx());
+            if (tagsForBoard.containsAll(tagIdxList)) { result.add(board.getIdx()); }
+        }
+        return result;
     }
 
     /**

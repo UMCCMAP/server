@@ -1,6 +1,7 @@
 package com.umc.cmap.domain.board.repository;
 
 import com.umc.cmap.domain.board.dto.TagDto;
+import com.umc.cmap.domain.board.entity.BoardTag;
 import com.umc.cmap.domain.board.entity.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
