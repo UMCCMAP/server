@@ -31,6 +31,10 @@ public class Comment extends BaseTimeEntity {
 
     private Timestamp removedAt;
 
+    public void delete(){
+        this.removedAt = new Timestamp(System.currentTimeMillis());
+    }
+
     @Builder
     public Comment(User user, Board board, String content) {
         this.board = board;
