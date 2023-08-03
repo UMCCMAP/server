@@ -15,6 +15,7 @@ import com.umc.cmap.domain.cafe.repository.CafeRepository;
 import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,21 +36,27 @@ public class BoardService {
 
     public Page<BoardResponse> getBoardList(Pageable pageable) throws BaseException {
         Page<Board> boardPage = boardRepository.findAllByRemovedAtIsNull(pageable);
-
-        HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoardList(boardPage);
-        List<TagDto> tagNames = tagRepository.findAllTags();
-        return boardPage.map(board -> new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, tagNames, board.getCreatedAt()));
+        List<BoardResponse> boardResponses = new ArrayList<>();
+        for (Board board : boardPage) {
+            HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(board.getIdx());
+            List<TagDto> tagNames = tagRepository.findAllTags();
+            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, tagNames, board.getCreatedAt());
+            boardResponses.add(boardResponse);
+        }
+        return new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements());
     }
 
     public Page<BoardResponse> getBoardListWithTags(Pageable pageable, List<Long> tagIdx) throws BaseException {
         List<Long> boardIdxInBoardTag = findBoardIdxByAllTags(tagIdx);
-
         Page<Board> boardPage = boardRepository.findByIdxInAndRemovedAtIsNull(boardIdxInBoardTag, pageable);
-        // 고칠 부분
-        HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoardList(boardPage);
         List<TagDto> tagNames = tagRepository.findAllTags();
-
-        return boardPage.map(board -> new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, tagNames, board.getCreatedAt()));
+        List<BoardResponse> boardResponses = new ArrayList<>();
+        for (Board board : boardPage) {
+            HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(board.getIdx());
+            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, tagNames, board.getCreatedAt());
+            boardResponses.add(boardResponse);
+        }
+        return new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements());
     }
 
     public List<Long> findBoardIdxByAllTags(List<Long> tagIdxList) {
@@ -63,19 +70,17 @@ public class BoardService {
         return result;
     }
 
-    public HashMap<Long, List<HashMap<Long, String>>> getTagsForBoardList(Page<Board> boardPage) throws BaseException {
+    public HashMap<Long, List<HashMap<Long, String>>> getTagsForBoard(Long boardIdx) throws BaseException {
         HashMap<Long, List<HashMap<Long, String>>> result = new HashMap<>();
-        for (Board board : boardPage) {
-            List<BoardTag> boardTags = boardTagRepository.findTagIdxListByBoardIdx(board.getIdx());
-            List<HashMap<Long, String>> tagsList = new ArrayList<>();
-            for (BoardTag boardTag : boardTags) {
-                Tag tag = boardTag.getTag();
-                HashMap<Long, String> tagMap = new HashMap<>();
-                tagMap.put(tag.getIdx(), tag.getTagName());
-                tagsList.add(tagMap);
-            }
-            result.put(board.getIdx(), tagsList);
+        List<BoardTag> boardTags = boardTagRepository.findTagIdxListByBoardIdx(boardIdx);
+        List<HashMap<Long, String>> tagsList = new ArrayList<>();
+        for (BoardTag boardTag : boardTags) {
+            Tag tag = boardTag.getTag();
+            HashMap<Long, String> tagMap = new HashMap<>();
+            tagMap.put(tag.getIdx(), tag.getTagName());
+            tagsList.add(tagMap);
         }
+        result.put(boardIdx, tagsList);
         return result;
     }
 
