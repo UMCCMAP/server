@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Optional;
 
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User>{
@@ -38,7 +39,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, usernameAttributeName, oAuth2User.getAttributes());
 
         User user = saveOrUpdate(attributes);
-        httpSession.setAttribute("user", new SessionUser(user.getName(), user.getEmail()));
+        httpSession.setAttribute("loginUser", new SessionUser(user.getName(), user.getEmail()));
 
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority((user.getRole().getKey()))),
@@ -47,12 +48,20 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         );
     }
 
-
     private User saveOrUpdate(OAuthAttributes attributes){
         User user = userRepository.findByEmail((attributes.getEmail()))
                 .map(entity -> entity.update(attributes.getName()))
                 .orElse(attributes.toEntity());
 
         return userRepository.save(user);
+    }
+
+    public void setNickname(String email, String nickname){
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if(optionalUser.isPresent()){
+            User user = optionalUser.get();
+            user.setNickname(nickname);
+            userRepository.save(user);
+        }
     }
 }

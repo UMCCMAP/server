@@ -23,7 +23,7 @@ public class Profile {
 
     private String cafeInfo;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="user_idx")
     private User user;
 
