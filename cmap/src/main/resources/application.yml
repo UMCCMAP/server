@@ -1,4 +1,15 @@
 spring:
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/cmap
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+      format_sql: true
   servlet:
     multipart:
       max-file-size: 10MB
@@ -12,8 +23,3 @@ cloud:
     credentials:
       accessKey: ${ ACCESS-KEY }
       secretKey: ${ SECRET-KEY }
-    region:
-      static: ${ STATIC }
-    stack:
-      auto: false
-

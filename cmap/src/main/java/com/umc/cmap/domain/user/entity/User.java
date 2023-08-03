@@ -1,4 +1,4 @@
-package com.umc.cmap.domain.users.entity;
+package com.umc.cmap.domain.user.entity;
 
 
 import com.umc.cmap.config.BaseTimeEntity;
@@ -8,13 +8,16 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.Length;
+
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@DynamicUpdate
 @Getter
 @Table(name = "Users")
-public class Users extends BaseTimeEntity{
+public class User extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="user_idx")
@@ -29,18 +32,25 @@ public class Users extends BaseTimeEntity{
     @Length(min=2, max=10)
     private String nickname;
 
-    @Enumerated(EnumType.String)
+    @Enumerated(EnumType.STRING)
     private Role role;
-    
 
 
     @Builder
-    public Users(Long id, String name, String email, String password, String nickname, Role role){
-        this.idx=idx;
+    public User(String name, String email, String password, String nickname, Role role){
         this.name=name;
         this.email=email;
         this.password=password;
         this.nickname=nickname;
         this.role=role;
+    }
+
+    public User update(String name){
+        this.name=name;
+        return this;
+    }
+
+    public void setNickname(String nickname){
+        this.nickname=nickname;
     }
 }

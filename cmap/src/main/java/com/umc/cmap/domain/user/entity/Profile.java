@@ -1,4 +1,4 @@
-package com.umc.cmap.domain.users.entity;
+package com.umc.cmap.domain.user.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -23,13 +23,13 @@ public class Profile {
 
     private String cafeInfo;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="user_idx")
-    private Users user;
+    private User user;
 
 
     @Builder
-    public Profile(String user_img, String user_info, String cafe_img, String cafe_info, Users user){
+    public Profile(String userImg, String userInfo, String cafeImg, String cafeInfo, User user){
         this.user = user;
         this.userImg = userImg;
         this.userInfo = userInfo;
