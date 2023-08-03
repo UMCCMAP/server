@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -34,35 +35,36 @@ public class BoardService {
     private final CafeRepository cafeRepository;
 
 
-    public Page<BoardResponse> getBoardList(Pageable pageable) throws BaseException {
+    public BoardListResponse getBoardList(Pageable pageable) throws BaseException {
         Page<Board> boardPage = boardRepository.findAllByRemovedAtIsNull(pageable);
         List<BoardResponse> boardResponses = new ArrayList<>();
         for (Board board : boardPage) {
             HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(board.getIdx());
-            List<TagDto> tagNames = tagRepository.findAllTags();
-            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, tagNames, board.getCreatedAt());
+            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, board.getCreatedAt());
             boardResponses.add(boardResponse);
         }
-        return new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements());
+        List<TagDto> tagNames = tagRepository.findAllTags();
+        Page<BoardResponse> pagedBoardResponses = new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements());
+        return new BoardListResponse(pagedBoardResponses, tagNames);
     }
 
-    public Page<BoardResponse> getBoardListWithTags(Pageable pageable, List<Long> tagIdx) throws BaseException {
+    public BoardListResponse getBoardListWithTags(Pageable pageable, List<Long> tagIdx) throws BaseException {
         List<Long> boardIdxInBoardTag = findBoardIdxByAllTags(tagIdx);
         Page<Board> boardPage = boardRepository.findByIdxInAndRemovedAtIsNull(boardIdxInBoardTag, pageable);
         List<TagDto> tagNames = tagRepository.findAllTags();
         List<BoardResponse> boardResponses = new ArrayList<>();
         for (Board board : boardPage) {
             HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(board.getIdx());
-            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, tagNames, board.getCreatedAt());
+            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, board.getCreatedAt());
             boardResponses.add(boardResponse);
         }
-        return new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements());
+        Page<BoardResponse> pagedBoardResponses = new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements());
+        return new BoardListResponse(pagedBoardResponses, tagNames);
     }
 
     public List<Long> findBoardIdxByAllTags(List<Long> tagIdxList) {
         List<Board> boards = boardTagRepository.findBoardByTagIn(tagIdxList);
         List<Long> result = new ArrayList<>();
-
         for (Board board : boards) {
             List<Long> tagsForBoard = boardTagRepository.findTagIdxByBoardIdx(board.getIdx());
             if (new HashSet<>(tagsForBoard).containsAll(tagIdxList)) { result.add(board.getIdx()); }
@@ -71,15 +73,16 @@ public class BoardService {
     }
 
     public HashMap<Long, List<HashMap<Long, String>>> getTagsForBoard(Long boardIdx) throws BaseException {
-        HashMap<Long, List<HashMap<Long, String>>> result = new HashMap<>();
         List<BoardTag> boardTags = boardTagRepository.findTagIdxListByBoardIdx(boardIdx);
-        List<HashMap<Long, String>> tagsList = new ArrayList<>();
-        for (BoardTag boardTag : boardTags) {
-            Tag tag = boardTag.getTag();
-            HashMap<Long, String> tagMap = new HashMap<>();
-            tagMap.put(tag.getIdx(), tag.getTagName());
-            tagsList.add(tagMap);
-        }
+        List<HashMap<Long, String>> tagsList = boardTags.stream()
+                .map(boardTag -> {
+                    Tag tag = boardTag.getTag();
+                    HashMap<Long, String> tagMap = new HashMap<>();
+                    tagMap.put(tag.getIdx(), tag.getTagName());
+                    return tagMap;
+                })
+                .collect(Collectors.toList());
+        HashMap<Long, List<HashMap<Long, String>>> result = new HashMap<>();
         result.put(boardIdx, tagsList);
         return result;
     }

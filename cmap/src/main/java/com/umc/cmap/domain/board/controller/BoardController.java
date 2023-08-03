@@ -2,10 +2,7 @@ package com.umc.cmap.domain.board.controller;
 
 import com.umc.cmap.config.BaseException;
 import com.umc.cmap.config.BaseResponse;
-import com.umc.cmap.domain.board.dto.BoardModifyRequest;
-import com.umc.cmap.domain.board.dto.BoardMyPostResponse;
-import com.umc.cmap.domain.board.dto.BoardResponse;
-import com.umc.cmap.domain.board.dto.BoardWriteRequest;
+import com.umc.cmap.domain.board.dto.*;
 import com.umc.cmap.domain.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,8 +22,8 @@ public class BoardController {
 
 
     @GetMapping
-    public BaseResponse<Page<BoardResponse>> getBoard(@PageableDefault(size = 4, sort = "idx", direction = DESC) Pageable pageable,
-                                                      @RequestParam(required = false) List<Long> tagIdx) throws BaseException {
+    public BaseResponse<BoardListResponse> getBoard(@PageableDefault(size = 4, sort = "idx", direction = DESC) Pageable pageable,
+                                                    @RequestParam(required = false) List<Long> tagIdx) throws BaseException {
         if (tagIdx != null && !tagIdx.isEmpty()) {
             return new BaseResponse<>(boardService.getBoardListWithTags(pageable, tagIdx));
         } else {

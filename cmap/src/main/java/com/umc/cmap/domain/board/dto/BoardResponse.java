@@ -16,15 +16,13 @@ public class BoardResponse {
     private String boardTitle;
     private String boardContent;
     private HashMap<Long, List<HashMap<Long, String>>> tagList;
-    private List<TagDto> tagNames;
     private LocalDateTime createdAt;
 
-    public BoardResponse(Long idx, String boardTitle, String boardContent, HashMap<Long, List<HashMap<Long, String>>> tagList, List<TagDto> tagNames, LocalDateTime createdAt) {
+    public BoardResponse(Long idx, String boardTitle, String boardContent, HashMap<Long, List<HashMap<Long, String>>> tagList, LocalDateTime createdAt) {
         this.idx = idx;
         this.boardTitle = boardTitle;
         this.boardContent = boardContent;
         this.tagList = tagList;
-        this.tagNames = tagNames;
         this.createdAt = createdAt;
     }
 }
