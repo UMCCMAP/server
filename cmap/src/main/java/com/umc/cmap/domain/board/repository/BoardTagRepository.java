@@ -9,6 +9,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface BoardTagRepository extends JpaRepository<BoardTag, Long> {
-    List<Long> findTagIdxListByBoardIdx(Long boardIdx);
-    List<Long> findBoardIdxByTagIn(List<Tag> tag);
+    List<BoardTag> findTagIdxListByBoardIdx(Long boardIdx);
+    List<BoardTag> findBoardIdxByTagIn(List<Tag> tag);
 }

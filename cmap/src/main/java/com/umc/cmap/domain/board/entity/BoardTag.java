@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class BoardTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "board_tag_idx")
     private Long idx;
 
     @ManyToOne

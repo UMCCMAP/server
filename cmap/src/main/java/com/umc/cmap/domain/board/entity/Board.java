@@ -14,6 +14,7 @@ import java.sql.Timestamp;
 public class Board extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "board_idx")
     private Long idx;
 
     @ManyToOne(fetch = FetchType.LAZY)
