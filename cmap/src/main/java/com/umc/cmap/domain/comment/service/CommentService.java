@@ -55,4 +55,19 @@ public class CommentService {
         return authService.getUser();
     }
 
+    @Transactional
+    public void update(Long commentIdx, UpdateCommentRequest param) {
+        getEntity(commentIdx).update(param.getContent());
+
+    }
+
+    private Comment getEntity(Long commentIdx) {
+        return commentRepository.findById(commentIdx).orElseThrow(EntityNotFoundException::new);
+    }
+
+    @Transactional
+    public void delete(Long commentIdx) {
+        getEntity(commentIdx).delete();
+    }
+
 }
