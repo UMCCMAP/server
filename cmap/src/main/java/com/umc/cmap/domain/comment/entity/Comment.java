@@ -20,20 +20,16 @@ public class Comment extends BaseTimeEntity {
     private Long idx;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="board_idx")
+    @JoinColumn(name = "board_idx")
     private Board board;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_idx")
+    @JoinColumn(name = "user_idx")
     private User user;
 
     private String content;
 
     private Timestamp removedAt;
-
-    public void delete(){
-        this.removedAt = new Timestamp(System.currentTimeMillis());
-    }
 
     @Builder
     public Comment(User user, Board board, String content) {
@@ -42,9 +38,12 @@ public class Comment extends BaseTimeEntity {
         this.content = content;
     }
 
-    public void removeComment(){
+    public void delete() {
         this.removedAt = new Timestamp(System.currentTimeMillis());
     }
 
+    public void update(String content) {
+        this.content = content;
+    }
 
 }
