@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,4 +16,5 @@ public class BoardModifyRequest {
     private Long cafeIdx;
     private String boardTitle;
     private String boardContent;
+    private List<Long> tagList;
 }

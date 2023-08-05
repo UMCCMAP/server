@@ -1,5 +1,6 @@
 package com.umc.cmap.domain.board.service;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
 import com.umc.cmap.config.BaseException;
 import com.umc.cmap.config.BaseResponseStatus;
 import com.umc.cmap.domain.board.dto.*;
@@ -62,7 +63,7 @@ public class BoardService {
         return new BoardListResponse(pagedBoardResponses, tagNames);
     }
 
-    public List<Long> findBoardIdxByAllTags(List<Long> tagIdxList) {
+    private List<Long> findBoardIdxByAllTags(List<Long> tagIdxList) {
         List<Board> boards = boardTagRepository.findBoardByTagIn(tagIdxList);
         List<Long> result = new ArrayList<>();
         for (Board board : boards) {
@@ -72,7 +73,7 @@ public class BoardService {
         return result;
     }
 
-    public HashMap<Long, List<HashMap<Long, String>>> getTagsForBoard(Long boardIdx) throws BaseException {
+    private HashMap<Long, List<HashMap<Long, String>>> getTagsForBoard(Long boardIdx) throws BaseException {
         List<BoardTag> boardTags = boardTagRepository.findTagIdxListByBoardIdx(boardIdx);
         List<HashMap<Long, String>> tagsList = boardTags.stream()
                 .map(boardTag -> {
@@ -103,14 +104,26 @@ public class BoardService {
                 .build();
 
         Board savedBoard = boardRepository.save(board);
+        postBoardTagList(request.getTagList(), savedBoard);
+
         return savedBoard.getIdx();
+    }
+
+    private void postBoardTagList(List<Long> tagList, Board board) throws BaseException {
+        for (Long tagIdx : tagList) {
+            Tag tag = tagRepository.findById(tagIdx)
+                    .orElseThrow(() -> new BaseException(BaseResponseStatus.TAG_NOT_FOUND));
+
+            boardTagRepository.save(new BoardTag(board, tag));
+        }
     }
 
     public BoardMyPostResponse getMyPost(Long boardIdx) throws BaseException {
         Board board = boardRepository.findById(boardIdx)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
         if(board.isDeleted()) { throw new BaseException(BaseResponseStatus.POST_DELETED); }
-        return new BoardMyPostResponse(board);
+        HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(board.getIdx());
+        return new BoardMyPostResponse(board, tagList);
     }
 
     @Transactional
@@ -127,9 +140,33 @@ public class BoardService {
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
         Cafe cafe = cafeRepository.findById(request.getCafeIdx())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_NOT_FOUND));
+        modifyTagList(request.getTagList(), board);
         board.modifyPost(cafe, request.getBoardTitle(), request.getBoardContent());
 
         return "게시글 수정에 성공했습니다.";
+    }
+
+    private void modifyTagList(List<Long> tagList, Board board) throws BaseException {
+        List<BoardTag> existingTags = boardTagRepository.findTagIdxListByBoardIdx(board.getIdx());
+        for (Long tagIdx : tagList) {
+            Tag tag = tagRepository.findById(tagIdx)
+                    .orElseThrow(() -> new BaseException(BaseResponseStatus.TAG_NOT_FOUND));
+            if (!containsTag(existingTags, tagIdx)) {
+                boardTagRepository.save(new BoardTag(board, tag));
+            }
+        }
+        for (BoardTag existingTag : existingTags) {
+            if (!tagList.contains(existingTag.getTag().getIdx())) {
+                boardTagRepository.delete((existingTag));
+            }
+        }
+    }
+
+    private boolean containsTag(List<BoardTag> tags, Long tagIdx) {
+        for (BoardTag tag : tags) {
+            if (tag.getTag().getIdx().equals(tagIdx)) { return true; }
+        }
+        return false;
     }
 
 }
