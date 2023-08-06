@@ -45,4 +45,5 @@ public class ProfileService {
 
 
         return profileMapper.toResponse(profile, profile.getUser().getNickname());
+    }
 }
