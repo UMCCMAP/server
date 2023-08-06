@@ -4,12 +4,10 @@ import com.fasterxml.jackson.databind.ser.Serializers;
 import com.umc.cmap.config.BaseException;
 import com.umc.cmap.config.BaseResponseStatus;
 import com.umc.cmap.domain.board.dto.*;
-import com.umc.cmap.domain.board.entity.Board;
-import com.umc.cmap.domain.board.entity.BoardTag;
-import com.umc.cmap.domain.board.entity.Role;
-import com.umc.cmap.domain.board.entity.Tag;
+import com.umc.cmap.domain.board.entity.*;
 import com.umc.cmap.domain.board.repository.BoardRepository;
 import com.umc.cmap.domain.board.repository.BoardTagRepository;
+import com.umc.cmap.domain.board.repository.LikeBoardRepository;
 import com.umc.cmap.domain.board.repository.TagRepository;
 import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.repository.CafeRepository;
@@ -34,6 +32,7 @@ public class BoardService {
     private final TagRepository tagRepository;
     private final UserRepository userRepository;
     private final CafeRepository cafeRepository;
+    private final LikeBoardRepository likeBoardRepository;
 
 
     public BoardListResponse getBoardList(Pageable pageable) throws BaseException {
@@ -167,6 +166,25 @@ public class BoardService {
             if (tag.getTag().getIdx().equals(tagIdx)) { return true; }
         }
         return false;
+    }
+
+    @Transactional
+    public String likePost(Long boardIdx, Long userIdx) throws BaseException {
+        Board board = boardRepository.findById(boardIdx).orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
+        User user = userRepository.findById(userIdx).orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
+        LikeBoard likeBoard = LikeBoard.builder()
+                .board(board)
+                .user(user)
+                .build();
+        likeBoardRepository.save(likeBoard);
+        return "좋아요";
+    }
+
+    @Transactional
+    public String likePostCancel(Long boardIdx, Long userIdx) throws BaseException {
+        LikeBoard likeBoard = likeBoardRepository.findByBoardIdxAndUserIdx(boardIdx, userIdx);
+        likeBoardRepository.delete(likeBoard);
+        return "좋아요";
     }
 
 }

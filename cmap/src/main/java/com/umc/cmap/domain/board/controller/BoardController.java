@@ -51,4 +51,13 @@ public class BoardController {
         return new BaseResponse<>(boardService.modifyPost(boardIdx, request));
     }
 
+    @PostMapping("/{boardIdx}/like")
+    public BaseResponse<String> likePost(@PathVariable Long boardIdx, Long userIdx, boolean type) throws BaseException {
+        if (!type) {
+            return new BaseResponse<>(boardService.likePostCancel(boardIdx, userIdx));
+        } else {
+            return new BaseResponse<>(boardService.likePost(boardIdx, userIdx));
+        }
+    }
+
 }
