@@ -44,4 +44,8 @@ public class Review extends BaseTimeEntity {
         this.content = content;
         this.score = score;
     }
+
+    public void delete() {
+        this.isDeleted = true;
+    }
 }
