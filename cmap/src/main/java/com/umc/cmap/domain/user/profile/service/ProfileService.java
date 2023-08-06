@@ -21,25 +21,29 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
     private final ProfileMapper profileMapper;
 
-    public ProfileResponse getOne(Long userIdx){
-        Profile profile = profileRepository.findByUserIdx(userIdx).orElseThrow();
-        return profileMapper.toResponse(profile);
+    public ProfileResponse getOne(String userNickname) throws BaseException{
+        User user = userRepository.findByNickname(userNickname)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
+
+        Profile profile = profileRepository.findByUserNickname(userNickname)
+                .orElseGet(() -> profileRepository.save(Profile.builder().user(user).build()));
+        return profileMapper.toResponse(profile, profile.getUser().getNickname());
     }
 
 
     @Transactional
-    public ProfileResponse update(Long userIdx, ProfileRequest request) throws BaseException {
-        User user = userRepository.findByIdx(userIdx)
+    public ProfileResponse update(ProfileRequest request) throws BaseException {
+        User user = userRepository.findByNickname(request.getUserNickname())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
 
-        Profile profile = profileRepository.findByUserIdx(userIdx)
+        Profile profile = profileRepository.findByUserNickname(request.getUserNickname())
                 .orElseGet(() -> profileRepository.save(Profile.builder().user(user).build()));
 
 
-        profile.update(request.getUserImg(), request.getUserInfo(), request.getCafeImg(), request.getCafeInfo());
+        profile.update(request.getUserNickname(), request.getUserImg(), request.getUserInfo(), request.getCafeImg(), request.getCafeInfo());
         profileRepository.save(profile);
 
 
-        return profileMapper.toResponse(profile);
+        return profileMapper.toResponse(profile, profile.getUser().getNickname());
     }
 }
