@@ -40,7 +40,8 @@ public class Profile {
     }
 
 
-    public void update(String userImg, String userInfo, String cafeImg, String cafeInfo){
+    public void update(String userNickname, String userImg, String userInfo, String cafeImg, String cafeInfo){
+        this.user.setNickname(userNickname);
         this.userImg = userImg;
         this.userInfo = userInfo;
         this.cafeImg = cafeImg;
