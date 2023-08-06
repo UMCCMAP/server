@@ -5,8 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
-    Page<Board> findAll(Pageable pageable);
+    Page<Board> findAllByRemovedAtIsNull(Pageable pageable);
+    Page<Board> findByIdxInAndRemovedAtIsNull(List<Long> boardIdx, Pageable pageable);
+
 }

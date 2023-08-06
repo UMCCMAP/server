@@ -14,6 +14,7 @@ import java.sql.Timestamp;
 public class Board extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "board_idx")
     private Long idx;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -25,7 +26,6 @@ public class Board extends BaseTimeEntity {
     private Cafe cafe;
 
     private String boardTitle;
-
     private String boardContent;
 
     @Enumerated(EnumType.STRING)
@@ -42,14 +42,19 @@ public class Board extends BaseTimeEntity {
         this.role = role;
     }
 
+    // 삭제
     public void removeBoard(){
         this.removedAt = new Timestamp(System.currentTimeMillis());
     }
 
+    // 수정
     public void modifyPost(Cafe cafe, String boardTitle, String boardContent) {
         this.cafe = cafe;
         this.boardTitle = boardTitle;
         this.boardContent = boardContent;
     }
+
+    // 삭제 validation
+    public boolean isDeleted() { return removedAt != null; }
 
 }

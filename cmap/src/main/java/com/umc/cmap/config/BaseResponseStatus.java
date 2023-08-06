@@ -34,6 +34,8 @@ public enum BaseResponseStatus {
 
     USER_NOT_FOUND(false, 3200, "유저를 찾을 수 없습니다."),
     POST_NOT_FOUND(false, 3201, "게시글을 찾을 수 없습니다."),
+    POST_DELETED(false, 3202, "삭제된 게시글입니다."),
+    TAG_NOT_FOUND(false, 3203, "태그를 찾을 수 없습니다.."),
 
 
     /**
