@@ -1,23 +1,21 @@
 package com.umc.cmap.domain.review.dto;
 
 import com.umc.cmap.domain.review.entity.ReviewImage;
-import com.umc.cmap.domain.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@Builder
+@Setter
 @AllArgsConstructor
 public class ReviewResponse {
-    private String userName;
-    private String userImg;
-
+    private ReviewWriterResponse userInfo;
     private String content;
     private Double score;
-    private List<ReviewImage> reviewImages;
+    private List<String> imageUrls;
     private LocalDateTime createdAt;
 }
