@@ -8,13 +8,9 @@ import com.umc.cmap.domain.user.profile.dto.ProfileRequest;
 import com.umc.cmap.domain.user.profile.dto.ProfileResponse;
 import com.umc.cmap.domain.user.profile.service.ProfileService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class ProfileController {
     private final ProfileService profileService;
