@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface ProfileRepository  extends JpaRepository<Profile, Long> {
-    Optional<Profile> findByUserName(String userName);
+    Optional<Profile> findByUserNickname(String userNickname);
     Optional<Profile> findByUserIdx(Long userIdx);
 }
