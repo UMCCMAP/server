@@ -32,8 +32,8 @@ public class ProfileService {
 
 
     @Transactional
-    public ProfileResponse update(ProfileRequest request) throws BaseException {
-        User user = userRepository.findByNickname(request.getUserNickname())
+    public ProfileResponse update(String userNickname, ProfileRequest request) throws BaseException {
+        User user = userRepository.findByNickname(userNickname)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
 
         Profile profile = profileRepository.findByUserIdx(user.getIdx())
@@ -45,5 +45,4 @@ public class ProfileService {
 
 
         return profileMapper.toResponse(profile, profile.getUser().getNickname());
-    }
 }
