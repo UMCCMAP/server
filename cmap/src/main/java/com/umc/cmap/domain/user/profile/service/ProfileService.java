@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-@Transactional(readOnly=true)
+@Transactional
 @RequiredArgsConstructor
 public class ProfileService {
     private final UserRepository userRepository;
