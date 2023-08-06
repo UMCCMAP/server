@@ -30,7 +30,7 @@ public class ReviewController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/{cafeIndex}/reviews/{reviewId}")
+    @GetMapping("/cafe-reviews/{reviewId}")
     public ReviewResponse getOne(@PathVariable Long reviewId) {
         return reviewService.getOne(reviewId);
     }
@@ -42,8 +42,14 @@ public class ReviewController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PutMapping("/{cafeIndex}/{reviewIndex}")
+    @PutMapping("/cafe-reviews/{reviewIndex}")
     public void update(@PathVariable Long reviewIndex, @RequestBody @Valid final ReviewRequest dto) {
         reviewService.update(reviewIndex, dto);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/cafe-reviews/{reviewIndex}")
+    public void delete(@PathVariable Long reviewIndex) {
+        reviewService.delete(reviewIndex);
     }
 }
