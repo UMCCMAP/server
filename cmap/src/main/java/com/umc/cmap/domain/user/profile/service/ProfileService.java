@@ -25,7 +25,7 @@ public class ProfileService {
         User user = userRepository.findByNickname(userNickname)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
 
-        Profile profile = profileRepository.findByUserNickname(userNickname)
+        Profile profile = profileRepository.findByUserIdx(user.getIdx())
                 .orElseGet(() -> profileRepository.save(Profile.builder().user(user).build()));
         return profileMapper.toResponse(profile, profile.getUser().getNickname());
     }
@@ -36,7 +36,7 @@ public class ProfileService {
         User user = userRepository.findByNickname(request.getUserNickname())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
 
-        Profile profile = profileRepository.findByUserNickname(request.getUserNickname())
+        Profile profile = profileRepository.findByUserIdx(user.getIdx())
                 .orElseGet(() -> profileRepository.save(Profile.builder().user(user).build()));
 
 
