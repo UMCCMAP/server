@@ -10,6 +10,7 @@ import com.umc.cmap.domain.review.mapper.ReviewMapper;
 import com.umc.cmap.domain.review.repository.ReviewRepository;
 import com.umc.cmap.domain.user.entity.Profile;
 import com.umc.cmap.domain.user.entity.User;
+import com.umc.cmap.domain.user.login.service.AuthService;
 import com.umc.cmap.domain.user.repository.ProfileRepository;
 import com.umc.cmap.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -28,7 +29,7 @@ public class ReviewService {
     private final ReviewImageService imageService;
     private final ReviewRepository reviewRepository;
     private final CafeRepository cafeRepository;
-    private final UserRepository userRepository;
+    private final AuthService authService;
     private final ProfileRepository profileRepository;
     private final ReviewMapper mapper;
 
@@ -57,10 +58,15 @@ public class ReviewService {
         return profile.getUserImg();
     }
 
+    public List<ReviewResponse> getAllUserReviews(Long userIdx, Pageable pageable) {
+        List<Review> reviews = reviewRepository.findAllByUserIdx(userIdx, pageable).stream().filter(r -> !r.getIsDeleted()).toList();
+        return reviews.stream().map(r -> mapper.toResponse(r, imageService.getAll(r.getIdx()), getWriter(r.getUser()))).toList();
+    }
+
     @Transactional
     public void save(Long cafeIdx, ReviewRequest param) {
         param.setCafe(getCafeEntity(cafeIdx));
-        Review review = reviewRepository.save(mapper.toEntity(param, userRepository.findById(1L).get()));  //유저 정보 추가해야 함
+        Review review = reviewRepository.save(mapper.toEntity(param, authService.getUser()));
         imageService.saveAll(param.getImageUrls(), review);
     }
 
