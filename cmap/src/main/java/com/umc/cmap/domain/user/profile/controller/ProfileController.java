@@ -26,7 +26,8 @@ public class ProfileController {
     public String editProfile(@PathVariable String userNickname, @RequestBody ProfileRequest profileRequest) throws BaseException {
         User user = authService.getUser();
         if(user.getNickname().equals(userNickname)){
-            profileService.update(profileRequest);
+            ProfileResponse profileResponse = profileService.update(userNickname, profileRequest);
+            return "redirect:/users/profile/" + profileResponse.getUserNickname();
         }
 
         return "redirect:/users/profile/{userNickname}";
