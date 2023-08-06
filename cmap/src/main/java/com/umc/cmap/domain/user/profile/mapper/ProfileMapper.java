@@ -7,5 +7,5 @@ import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ProfileMapper {
-    ProfileResponse toResponse(Profile profile, Long userIdx);
+    ProfileResponse toResponse(Profile profile, String userNickname);
 }
