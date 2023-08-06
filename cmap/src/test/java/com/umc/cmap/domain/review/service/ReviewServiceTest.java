@@ -52,9 +52,10 @@ class ReviewServiceTest {
 
         Cafe cafe = Cafe.builder()
                 .name("cafe-name")
-                .information("cafe-information")
+                .info("cafe-information")
                 .build();
         cafeRepository.save(cafe);
+
         Review review = Review.builder()
                 .user(user)
                 .cafe(cafe)
@@ -62,6 +63,7 @@ class ReviewServiceTest {
                 .score(4.5)
                 .build();
         reviewRepository.save(review);
+
         ReviewImage image1 = ReviewImage.builder()
                 .imageUrl("review-image-url1.com")
                 .review(review)
@@ -79,7 +81,7 @@ class ReviewServiceTest {
         List<ReviewResponse> result = service.getAll(user.getIdx(), pageable);
 
         //then
-        assertThat(result.get(0).getImages()).contains(image1, image2);
+        assertThat(result.get(0).getImageUrls()).contains(image1.getImageUrl(), image2.getImageUrl());
 
     }
 
@@ -87,7 +89,7 @@ class ReviewServiceTest {
     void 리뷰_저장() {
         Cafe cafe = Cafe.builder()
                 .name("cafe-name")
-                .information("cafe-information")
+                .info("cafe-information")
                 .build();
         cafeRepository.save(cafe);
         String content = "this is content";
@@ -104,7 +106,7 @@ class ReviewServiceTest {
         service.save(cafe.getIdx(), request);
 
         List<Review> reviews = reviewRepository.findAll();
-        assertThat(reviews.stream().anyMatch(r -> r.getContent().toString().equals(content))).isTrue();
+        assertThat(reviews.stream().anyMatch(r -> r.getContent().equals(content))).isTrue();
     }
 
 }
