@@ -35,11 +35,12 @@ class ReviewRepositoryTest {
         User user = User.builder()
                 .name("name1")
                 .email("email1")
-                .password("password1")
-                .nickname("nickname1")
-                .role(Role.ROLE_USER)
+                .password("password")
+                .nickname("nickname")
+                .role(Role.USER)
                 .build();
         userRepository.save(user);
+        System.out.println("--------------저장됨-------------------");
 
         Cafe cafe = Cafe.builder()
                 .name("cafe-name")
