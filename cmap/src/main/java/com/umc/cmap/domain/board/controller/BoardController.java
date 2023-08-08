@@ -5,7 +5,6 @@ import com.umc.cmap.config.BaseResponse;
 import com.umc.cmap.domain.board.dto.*;
 import com.umc.cmap.domain.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +48,15 @@ public class BoardController {
     @PatchMapping("/{boardIdx}")
     public BaseResponse<String> modifyPost(@PathVariable Long boardIdx, @RequestBody BoardModifyRequest request) throws BaseException {
         return new BaseResponse<>(boardService.modifyPost(boardIdx, request));
+    }
+
+    @PostMapping("/{boardIdx}/like")
+    public BaseResponse<String> likePost(@PathVariable Long boardIdx, @RequestBody LikeBoardRequest request) throws BaseException {
+        if (!request.isType()) {
+            return new BaseResponse<>(boardService.likePostCancel(boardIdx, request.getUserIdx()));
+        } else {
+            return new BaseResponse<>(boardService.likePost(boardIdx, request.getUserIdx()));
+        }
     }
 
 }
