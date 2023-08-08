@@ -4,7 +4,9 @@ import com.umc.cmap.domain.review.entity.Review;
 import com.umc.cmap.domain.review.entity.ReviewImage;
 import com.umc.cmap.domain.review.mapper.ReviewImageMapper;
 import com.umc.cmap.domain.review.repository.ReviewImageRepository;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,11 +14,12 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 public class ReviewImageService {
 
-    private final ReviewImageMapper imageMapper;
-    private final ReviewImageRepository reviewImageRepository;
+    ReviewImageMapper imageMapper;
+    ReviewImageRepository reviewImageRepository;
 
 
     @Transactional
