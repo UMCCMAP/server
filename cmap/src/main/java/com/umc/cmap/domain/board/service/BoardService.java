@@ -1,7 +1,6 @@
 package com.umc.cmap.domain.board.service;
 
 import com.umc.cmap.config.BaseException;
-import com.umc.cmap.config.BaseResponse;
 import com.umc.cmap.config.BaseResponseStatus;
 import com.umc.cmap.domain.board.dto.*;
 import com.umc.cmap.domain.board.entity.*;
@@ -44,8 +43,7 @@ public class BoardService {
             boardResponses.add(boardResponse);
         }
         List<TagDto> tagNames = tagRepository.findAllTags();
-        Page<BoardResponse> pagedBoardResponses = new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements());
-        return new BoardListResponse(pagedBoardResponses, tagNames);
+        return new BoardListResponse(new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements()), tagNames);
     }
 
     public BoardListResponse getBoardListWithTags(Pageable pageable, List<Long> tagIdx) throws BaseException {
@@ -58,8 +56,7 @@ public class BoardService {
             BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, board.getCreatedAt());
             boardResponses.add(boardResponse);
         }
-        Page<BoardResponse> pagedBoardResponses = new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements());
-        return new BoardListResponse(pagedBoardResponses, tagNames);
+        return new BoardListResponse(new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements()), tagNames);
     }
 
     private List<Long> findBoardIdxByAllTags(List<Long> tagIdxList) {
@@ -188,7 +185,14 @@ public class BoardService {
     }
 
     public BoardListResponse getBoardBySearch(Pageable pageable, String keyword) throws BaseException {
-        Page<Board> boardList = boardRepository.findByBoardTitleContainingOrBoardContentContainingAndRemovedAtIsNull(keyword, keyword, pageable);
+        Page<Board> boardPage = boardRepository.findByBoardTitleContainingOrBoardContentContainingAndRemovedAtIsNull(keyword, keyword, pageable);
+        List<TagDto> tagNames = tagRepository.findAllTags();
+        List<BoardResponse> boardResponses = new ArrayList<>();
+        for (Board board : boardPage) {
+            HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(board.getIdx());
+            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, board.getCreatedAt());
+            boardResponses.add(boardResponse);
+        }
+        return new BoardListResponse(new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements()), tagNames);
     }
-
 }
