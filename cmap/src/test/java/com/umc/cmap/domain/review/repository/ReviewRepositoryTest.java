@@ -40,7 +40,6 @@ class ReviewRepositoryTest {
                 .role(Role.USER)
                 .build();
         userRepository.save(user);
-        System.out.println("--------------저장됨-------------------");
 
         Cafe cafe = Cafe.builder()
                 .name("cafe-name")
