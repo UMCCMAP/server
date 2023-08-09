@@ -11,4 +11,5 @@ import java.util.List;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findAllByCafeIdx(Long cafeIdx, Pageable pageable);
     List<Review> findAllByUserIdx(Long userIdx, Pageable pageable);
+    Long countByUserIdx(Long userIdx);
 }

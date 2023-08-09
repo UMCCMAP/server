@@ -14,7 +14,9 @@ import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.login.service.AuthService;
 import com.umc.cmap.domain.user.repository.ProfileRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,21 +25,21 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 public class ReviewService {
 
-    private final ReviewImageService imageService;
-    private final ReviewRepository reviewRepository;
-    private final CafeRepository cafeRepository;
-    private final AuthService authService;
-    private final ProfileRepository profileRepository;
-    private final ReviewMapper mapper;
+    ReviewImageService imageService;
+    ReviewRepository reviewRepository;
+    CafeRepository cafeRepository;
+    AuthService authService;
+    ProfileRepository profileRepository;
+    ReviewMapper mapper;
 
 
     public List<ReviewResponse> getAll(Long id, Pageable pageable) {
         List<Review> reviews = reviewRepository.findAllByCafeIdx(id, pageable).stream().filter(r -> !r.getIsDeleted()).toList();
         return reviews.stream().map(r -> mapper.toResponse(r, imageService.getAll(r.getIdx()), getWriter(r.getUser()))).toList();
-
     }
 
     public ReviewResponse getOne(Long id) {
@@ -61,6 +63,10 @@ public class ReviewService {
     public List<ReviewResponse> getAllUserReviews(Long userIdx, Pageable pageable) {
         List<Review> reviews = reviewRepository.findAllByUserIdx(userIdx, pageable).stream().filter(r -> !r.getIsDeleted()).toList();
         return reviews.stream().map(r -> mapper.toResponse(r, imageService.getAll(r.getIdx()), getWriter(r.getUser()))).toList();
+    }
+
+    public Long getUserReviewsCnt(Long userIdx) {
+        return reviewRepository.countByUserIdx(userIdx);
     }
 
     @Transactional
