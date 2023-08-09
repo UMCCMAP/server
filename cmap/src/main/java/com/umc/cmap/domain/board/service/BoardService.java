@@ -12,7 +12,6 @@ import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.repository.CafeRepository;
 import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.login.service.AuthService;
-import com.umc.cmap.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +29,6 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardTagRepository boardTagRepository;
     private final TagRepository tagRepository;
-    private final UserRepository userRepository;
     private final CafeRepository cafeRepository;
     private final LikeBoardRepository likeBoardRepository;
     private final AuthService authService;
@@ -115,12 +113,16 @@ public class BoardService {
         }
     }
 
-    public BoardMyPostResponse getMyPost(Long boardIdx) throws BaseException {
+    public BoardPostViewResponse getPostView(Long boardIdx) throws BaseException {
         Board board = boardRepository.findById(boardIdx)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
+        Long viewer = authService.getUser().getIdx();
+        Long writer = board.getUser().getIdx();
+        boolean canModifyPost = false;
+        if (writer.equals(viewer)) { canModifyPost = true; }
         if(board.isDeleted()) { throw new BaseException(BaseResponseStatus.POST_DELETED); }
         HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(board.getIdx());
-        return new BoardMyPostResponse(board, tagList);
+        return new BoardPostViewResponse(board, tagList, canModifyPost);
     }
 
     @Transactional

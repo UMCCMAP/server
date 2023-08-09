@@ -5,7 +5,6 @@ import com.umc.cmap.config.BaseResponse;
 import com.umc.cmap.domain.board.dto.*;
 import com.umc.cmap.domain.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -37,8 +36,8 @@ public class BoardController {
     }
 
     @GetMapping("/{boardIdx}")
-    public BaseResponse<BoardMyPostResponse> getMyPost(@PathVariable Long boardIdx) throws BaseException {
-        return new BaseResponse<>(boardService.getMyPost(boardIdx));
+    public BaseResponse<BoardPostViewResponse> getMyPost(@PathVariable Long boardIdx) throws BaseException {
+        return new BaseResponse<>(boardService.getPostView(boardIdx));
     }
 
     @DeleteMapping("/{boardIdx}")
