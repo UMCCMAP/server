@@ -18,7 +18,7 @@ public class AuthService {
     private final HttpSession httpSession;
     private final UserRepository userRepository;
 
-    public User getUser() throws BaseException{
+    public User getUser() throws BaseException {
         SessionUser loginUser = (SessionUser) httpSession.getAttribute("loginUser");
         User user = userRepository.findByEmail(loginUser.getEmail())
                     .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));

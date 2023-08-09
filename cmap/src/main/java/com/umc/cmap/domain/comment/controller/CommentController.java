@@ -1,5 +1,6 @@
 package com.umc.cmap.domain.comment.controller;
 
+import com.umc.cmap.config.BaseException;
 import com.umc.cmap.domain.comment.dto.CommentRequest;
 import com.umc.cmap.domain.comment.dto.CommentResponse;
 import com.umc.cmap.domain.comment.dto.UpdateCommentRequest;
@@ -29,7 +30,7 @@ public class CommentController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{postIdx}/comments")
-    public void create(@PathVariable Long postIdx, @RequestBody @Valid final CommentRequest dto) {
+    public void create(@PathVariable Long postIdx, @RequestBody @Valid final CommentRequest dto) throws BaseException {
         service.save(postIdx, dto);
     }
 

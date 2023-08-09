@@ -1,6 +1,7 @@
 package com.umc.cmap.domain.comment.service;
 
 
+import com.umc.cmap.config.BaseException;
 import com.umc.cmap.domain.board.repository.BoardRepository;
 import com.umc.cmap.domain.comment.dto.CommentRequest;
 import com.umc.cmap.domain.comment.dto.CommentResponse;
@@ -46,12 +47,12 @@ public class CommentService {
     }
 
     @Transactional
-    public void save(Long boardIdx, CommentRequest param) {
+    public void save(Long boardIdx, CommentRequest param) throws BaseException {
         param.setBoard(boardRepository.findById(boardIdx).orElseThrow(EntityNotFoundException::new));
         commentRepository.save(mapper.toEntity(param, getLoginUser()));
     }
 
-    private User getLoginUser() {
+    private User getLoginUser() throws BaseException {
         return authService.getUser();
     }
 
