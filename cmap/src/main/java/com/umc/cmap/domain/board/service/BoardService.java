@@ -167,9 +167,9 @@ public class BoardService {
     }
 
     @Transactional
-    public String likePost(Long boardIdx, Long userIdx) throws BaseException {
+    public String likePost(Long boardIdx) throws BaseException {
         Board board = boardRepository.findById(boardIdx).orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
-        User user = userRepository.findById(userIdx).orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
+        User user = authService.getUser();
         LikeBoard likeBoard = LikeBoard.builder()
                 .board(board)
                 .user(user)
@@ -179,7 +179,8 @@ public class BoardService {
     }
 
     @Transactional
-    public String likePostCancel(Long boardIdx, Long userIdx) throws BaseException {
+    public String likePostCancel(Long boardIdx) throws BaseException {
+        Long userIdx = authService.getUser().getIdx();
         LikeBoard likeBoard = likeBoardRepository.findByBoardIdxAndUserIdx(boardIdx, userIdx);
         likeBoardRepository.delete(likeBoard);
         return "좋아요 취소";
