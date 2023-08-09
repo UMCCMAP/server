@@ -1,5 +1,6 @@
 package com.umc.cmap.domain.review.controller;
 
+import com.umc.cmap.config.BaseException;
 import com.umc.cmap.domain.review.dto.ReviewRequest;
 import com.umc.cmap.domain.review.dto.ReviewResponse;
 import com.umc.cmap.domain.review.service.ReviewService;
@@ -37,7 +38,7 @@ public class ReviewController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{cafeIndex}/review")
-    public void create(@PathVariable Long cafeIndex, @RequestBody @Valid final ReviewRequest dto) {
+    public void create(@PathVariable Long cafeIndex, @RequestBody @Valid final ReviewRequest dto) throws BaseException {
         reviewService.save(cafeIndex, dto);
     }
 

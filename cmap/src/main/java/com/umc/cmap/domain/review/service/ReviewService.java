@@ -1,5 +1,6 @@
 package com.umc.cmap.domain.review.service;
 
+import com.umc.cmap.config.BaseException;
 import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.repository.CafeRepository;
 import com.umc.cmap.domain.review.dto.ReviewRequest;
@@ -12,7 +13,6 @@ import com.umc.cmap.domain.user.entity.Profile;
 import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.login.service.AuthService;
 import com.umc.cmap.domain.user.repository.ProfileRepository;
-import com.umc.cmap.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -64,7 +64,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public void save(Long cafeIdx, ReviewRequest param) {
+    public void save(Long cafeIdx, ReviewRequest param) throws BaseException {
         param.setCafe(getCafeEntity(cafeIdx));
         Review review = reviewRepository.save(mapper.toEntity(param, authService.getUser()));
         imageService.saveAll(param.getImageUrls(), review);
