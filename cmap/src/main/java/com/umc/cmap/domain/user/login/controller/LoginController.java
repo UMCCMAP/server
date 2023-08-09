@@ -53,11 +53,6 @@ public class LoginController {
         return "users/nickname";
     }
 
-    @GetMapping("/users/nickname")
-    public String showNicknamePage(){
-        return "users/nickname";
-    }
-
     @PostMapping("/users/nickname")
     public String nickname(@NotNull @RequestParam("nickname") String nickname, RedirectAttributes redirectAttributes) throws BaseException {
         if (nickname.trim().isEmpty()) {
