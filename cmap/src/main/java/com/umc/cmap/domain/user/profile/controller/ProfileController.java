@@ -23,7 +23,7 @@ public class ProfileController {
     private final UserRepository userRepository;
     private final ProfileService profileService;
     private final AuthService authService;
-    private final ReviewRepository reviewService;
+    private final ReviewService reviewService;
 
     @GetMapping("/users/profile/{userNickname}")
     public ProfileResponse profile(@PathVariable String userNickname) throws BaseException{
