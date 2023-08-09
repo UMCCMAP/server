@@ -2,6 +2,7 @@ package com.umc.cmap.domain.theme.controller;
 
 import com.umc.cmap.config.BaseException;
 import com.umc.cmap.config.BaseResponse;
+import com.umc.cmap.config.BaseResponseStatus;
 import com.umc.cmap.domain.theme.controller.request.CafeThemeRequest;
 import com.umc.cmap.domain.theme.entity.Theme;
 import com.umc.cmap.domain.theme.service.ThemeService;
@@ -52,8 +53,8 @@ public class ThemeController {
     }
 
     @ExceptionHandler(BaseException.class)
-    public ResponseEntity<BaseResponse<?>> handleBaseException(BaseException ex) {
-        BaseResponse<?> response = ex.getStatus();
+    public ResponseEntity<BaseResponse<BaseResponseStatus>> handleBaseException(BaseException ex) {
+        BaseResponse<BaseResponseStatus> response = new BaseResponse<>(ex.getStatus());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

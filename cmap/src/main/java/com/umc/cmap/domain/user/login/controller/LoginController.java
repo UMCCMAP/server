@@ -10,10 +10,12 @@ import com.umc.cmap.domain.user.repository.ProfileRepository;
 import com.umc.cmap.domain.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,6 +48,10 @@ public class LoginController {
         return "redirect:/";
     }
 
+    @GetMapping("/users/nickname")
+    public String showNicknamePage(){
+        return "users/nickname";
+    }
 
     @GetMapping("/users/nickname")
     public String showNicknamePage(){
@@ -64,6 +70,7 @@ public class LoginController {
             redirectAttributes.addFlashAttribute("errorMessage", "이미 사용 중인 닉네임입니다.");
             return "redirect:/users/nickname";
         }
+
 
         User user = authService.getUser();
         userService.setNickname(user.getEmail(), nickname);

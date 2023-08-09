@@ -3,8 +3,8 @@ package com.umc.cmap.domain.review.service;
 import com.umc.cmap.domain.board.entity.Role;
 import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.repository.CafeRepository;
+import com.umc.cmap.domain.review.dto.ReviewRequest;
 import com.umc.cmap.domain.review.dto.ReviewResponse;
-import com.umc.cmap.domain.review.entity.Content;
 import com.umc.cmap.domain.review.entity.Review;
 import com.umc.cmap.domain.review.entity.ReviewImage;
 import com.umc.cmap.domain.review.repository.ReviewImageRepository;
@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,16 +52,18 @@ class ReviewServiceTest {
 
         Cafe cafe = Cafe.builder()
                 .name("cafe-name")
-                .information("cafe-information")
+                .info("cafe-information")
                 .build();
         cafeRepository.save(cafe);
+
         Review review = Review.builder()
                 .user(user)
                 .cafe(cafe)
-                .content(new Content("comment-content"))
+                .content("comment-content")
                 .score(4.5)
                 .build();
         reviewRepository.save(review);
+
         ReviewImage image1 = ReviewImage.builder()
                 .imageUrl("review-image-url1.com")
                 .review(review)
@@ -78,8 +81,32 @@ class ReviewServiceTest {
         List<ReviewResponse> result = service.getAll(user.getIdx(), pageable);
 
         //then
-        assertThat(result.get(0).getImages()).contains(image1, image2);
+        assertThat(result.get(0).getImageUrls()).contains(image1.getImageUrl(), image2.getImageUrl());
 
+    }
+
+    @Test
+    void 리뷰_저장() {
+        Cafe cafe = Cafe.builder()
+                .name("cafe-name")
+                .info("cafe-information")
+                .build();
+        cafeRepository.save(cafe);
+        String content = "this is content";
+        List<String> imageUrls = new ArrayList<>();
+        imageUrls.add("https://iamge-url/1");
+        Double score = 4.5;
+
+        ReviewRequest request = ReviewRequest.builder()
+                .score(score)
+                .content(content)
+                .imageUrls(imageUrls)
+                .build();
+
+        service.save(cafe.getIdx(), request);
+
+        List<Review> reviews = reviewRepository.findAll();
+        assertThat(reviews.stream().anyMatch(r -> r.getContent().equals(content))).isTrue();
     }
 
 }

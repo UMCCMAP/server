@@ -3,7 +3,6 @@ package com.umc.cmap.domain.review.repository;
 import com.umc.cmap.domain.board.entity.Role;
 import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.repository.CafeRepository;
-import com.umc.cmap.domain.review.entity.Content;
 import com.umc.cmap.domain.review.entity.Review;
 import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.repository.UserRepository;
@@ -44,13 +43,13 @@ class ReviewRepositoryTest {
 
         Cafe cafe = Cafe.builder()
                 .name("cafe-name")
-                .information("cafe-information")
+                .info("cafe-information")
                 .build();
         cafeRepository.save(cafe);
         Review review = Review.builder()
                 .user(user)
                 .cafe(cafe)
-                .content(new Content("comment-content"))
+                .content("comment-content")
                 .score(4.5)
                 .build();
 
