@@ -11,6 +11,7 @@ import com.umc.cmap.domain.board.repository.TagRepository;
 import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.repository.CafeRepository;
 import com.umc.cmap.domain.user.entity.User;
+import com.umc.cmap.domain.user.login.service.AuthService;
 import com.umc.cmap.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
@@ -32,6 +33,7 @@ public class BoardService {
     private final UserRepository userRepository;
     private final CafeRepository cafeRepository;
     private final LikeBoardRepository likeBoardRepository;
+    private final AuthService authService;
 
 
     public BoardListResponse getBoardList(Pageable pageable) throws BaseException {
@@ -86,8 +88,7 @@ public class BoardService {
 
     @Transactional
     public Long writeBoard(BoardWriteRequest request) throws BaseException {
-        User user = userRepository.findById(request.getUserIdx())
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
+        User user = authService.getUser();
         Cafe cafe = cafeRepository.findById(request.getCafeIdx())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_NOT_FOUND));
 
