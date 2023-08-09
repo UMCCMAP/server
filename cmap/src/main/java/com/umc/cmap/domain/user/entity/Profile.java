@@ -5,8 +5,10 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicUpdate
 @Entity
 @Getter
 public class Profile {
@@ -31,6 +33,15 @@ public class Profile {
     @Builder
     public Profile(String userImg, String userInfo, String cafeImg, String cafeInfo, User user){
         this.user = user;
+        this.userImg = userImg;
+        this.userInfo = userInfo;
+        this.cafeImg = cafeImg;
+        this.cafeInfo = cafeInfo;
+    }
+
+
+    public void update(String userNickname, String userImg, String userInfo, String cafeImg, String cafeInfo){
+        this.user.setNickname(userNickname);
         this.userImg = userImg;
         this.userInfo = userInfo;
         this.cafeImg = cafeImg;
