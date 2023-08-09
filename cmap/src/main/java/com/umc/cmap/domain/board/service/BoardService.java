@@ -177,7 +177,7 @@ public class BoardService {
                 .user(user)
                 .build();
         likeBoardRepository.save(likeBoard);
-        return "좋아요";
+        return "좋아요 성공";
     }
 
     @Transactional
