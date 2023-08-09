@@ -1,6 +1,7 @@
 package com.umc.cmap.domain.board.service;
 
 import com.umc.cmap.config.BaseException;
+import com.umc.cmap.config.BaseResponse;
 import com.umc.cmap.config.BaseResponseStatus;
 import com.umc.cmap.domain.board.dto.*;
 import com.umc.cmap.domain.board.entity.*;
@@ -183,7 +184,11 @@ public class BoardService {
     public String likePostCancel(Long boardIdx, Long userIdx) throws BaseException {
         LikeBoard likeBoard = likeBoardRepository.findByBoardIdxAndUserIdx(boardIdx, userIdx);
         likeBoardRepository.delete(likeBoard);
-        return "좋아요";
+        return "좋아요 취소";
+    }
+
+    public BoardListResponse getBoardBySearch(Pageable pageable, String keyword) throws BaseException {
+        Page<Board> boardList = boardRepository.findByBoardTitleContainingOrBoardContentContainingAndRemovedAtIsNull(keyword, keyword, pageable);
     }
 
 }

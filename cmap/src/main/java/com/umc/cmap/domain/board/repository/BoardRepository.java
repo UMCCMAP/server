@@ -10,5 +10,6 @@ import java.util.List;
 public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Board> findAllByRemovedAtIsNull(Pageable pageable);
     Page<Board> findByIdxInAndRemovedAtIsNull(List<Long> boardIdx, Pageable pageable);
+    Page<Board> findByBoardTitleContainingOrBoardContentContainingAndRemovedAtIsNull(String boardTitle, String boardContent, Pageable pageable);
 
 }
