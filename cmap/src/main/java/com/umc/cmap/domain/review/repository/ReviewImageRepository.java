@@ -9,4 +9,8 @@ import java.util.List;
 @Repository
 public interface ReviewImageRepository extends JpaRepository<ReviewImage, Long> {
     List<ReviewImage> findAllByReviewIdx(Long reviewIdx);
+
+    Long countByReviewIdx(Long reviewIdx);
+
+    ReviewImage findByReviewIdx(Long reviewIdx);
 }
