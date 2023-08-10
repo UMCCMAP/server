@@ -46,10 +46,6 @@ public class ReviewPreviewService {
 
     private String getOneImageUrl(Long reviewIdx) {
         Optional<ReviewImage> image = imageRepository.findFirstByReviewIdx(reviewIdx);
-        String imageUrl = "";
-        if (image.isPresent()) {
-            imageUrl = image.get().getImageUrl();
-        }
-        return imageUrl;
+        return image.map(ReviewImage::getImageUrl).orElse(null);
     }
 }
