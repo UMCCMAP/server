@@ -5,7 +5,6 @@ import com.umc.cmap.config.BaseResponse;
 import com.umc.cmap.domain.board.dto.*;
 import com.umc.cmap.domain.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -37,8 +36,8 @@ public class BoardController {
     }
 
     @GetMapping("/{boardIdx}")
-    public BaseResponse<BoardMyPostResponse> getMyPost(@PathVariable Long boardIdx) throws BaseException {
-        return new BaseResponse<>(boardService.getMyPost(boardIdx));
+    public BaseResponse<BoardPostViewResponse> getMyPost(@PathVariable Long boardIdx) throws BaseException {
+        return new BaseResponse<>(boardService.getPostView(boardIdx));
     }
 
     @DeleteMapping("/{boardIdx}")
@@ -52,11 +51,11 @@ public class BoardController {
     }
 
     @PostMapping("/{boardIdx}/like")
-    public BaseResponse<String> likePost(@PathVariable Long boardIdx, @RequestBody LikeBoardRequest request) throws BaseException {
-        if (!request.isType()) {
-            return new BaseResponse<>(boardService.likePostCancel(boardIdx, request.getUserIdx()));
+    public BaseResponse<String> likePost(@PathVariable Long boardIdx, @RequestParam boolean type) throws BaseException {
+        if (!type) {
+            return new BaseResponse<>(boardService.likePostCancel(boardIdx));
         } else {
-            return new BaseResponse<>(boardService.likePost(boardIdx, request.getUserIdx()));
+            return new BaseResponse<>(boardService.likePost(boardIdx));
         }
     }
 

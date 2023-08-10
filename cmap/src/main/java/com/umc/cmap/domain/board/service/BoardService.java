@@ -1,7 +1,6 @@
 package com.umc.cmap.domain.board.service;
 
 import com.umc.cmap.config.BaseException;
-import com.umc.cmap.config.BaseResponseStatus;
 import com.umc.cmap.domain.board.dto.*;
 import com.umc.cmap.domain.board.entity.*;
 import com.umc.cmap.domain.board.repository.BoardRepository;
@@ -11,7 +10,7 @@ import com.umc.cmap.domain.board.repository.TagRepository;
 import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.repository.CafeRepository;
 import com.umc.cmap.domain.user.entity.User;
-import com.umc.cmap.domain.user.repository.UserRepository;
+import com.umc.cmap.domain.user.login.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import static com.umc.cmap.config.BaseResponseStatus.*;
 
 @RequiredArgsConstructor
 @Service
@@ -29,9 +29,9 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardTagRepository boardTagRepository;
     private final TagRepository tagRepository;
-    private final UserRepository userRepository;
     private final CafeRepository cafeRepository;
     private final LikeBoardRepository likeBoardRepository;
+    private final AuthService authService;
 
 
     public BoardListResponse getBoardList(Pageable pageable) throws BaseException {
@@ -86,10 +86,9 @@ public class BoardService {
 
     @Transactional
     public Long writeBoard(BoardWriteRequest request) throws BaseException {
-        User user = userRepository.findById(request.getUserIdx())
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
+        User user = authService.getUser();
         Cafe cafe = cafeRepository.findById(request.getCafeIdx())
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(CAFE_NOT_FOUND));
 
         Board board = Board.builder()
                 .user(user)
@@ -108,24 +107,26 @@ public class BoardService {
     private void postBoardTagList(List<Long> tagList, Board board) throws BaseException {
         for (Long tagIdx : tagList) {
             Tag tag = tagRepository.findById(tagIdx)
-                    .orElseThrow(() -> new BaseException(BaseResponseStatus.TAG_NOT_FOUND));
+                    .orElseThrow(() -> new BaseException(TAG_NOT_FOUND));
 
             boardTagRepository.save(new BoardTag(board, tag));
         }
     }
 
-    public BoardMyPostResponse getMyPost(Long boardIdx) throws BaseException {
+    public BoardPostViewResponse getPostView(Long boardIdx) throws BaseException {
         Board board = boardRepository.findById(boardIdx)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
-        if(board.isDeleted()) { throw new BaseException(BaseResponseStatus.POST_DELETED); }
+                .orElseThrow(() -> new BaseException(POST_NOT_FOUND));
+        boolean canModifyPost = checkUser(board.getUser().getIdx());
+        if(board.isDeleted()) { throw new BaseException(POST_DELETED); }
         HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(board.getIdx());
-        return new BoardMyPostResponse(board, tagList);
+        return new BoardPostViewResponse(board, tagList, canModifyPost);
     }
 
     @Transactional
     public String deletePost(Long boardIdx) throws BaseException {
         Board board = boardRepository.findById(boardIdx)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(POST_NOT_FOUND));
+        if (!checkUser(board.getUser().getIdx())) { throw new BaseException(DONT_HAVE_ACCESS); }
         board.removeBoard();
         return "게시글 삭제에 성공했습니다.";
     }
@@ -133,20 +134,25 @@ public class BoardService {
     @Transactional
     public String modifyPost(Long boardIdx, BoardModifyRequest request) throws BaseException {
         Board board = boardRepository.findById(boardIdx)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(POST_NOT_FOUND));
+        if (!checkUser(board.getUser().getIdx())) { throw new BaseException(DONT_HAVE_ACCESS); }
         Cafe cafe = cafeRepository.findById(request.getCafeIdx())
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(CAFE_NOT_FOUND));
         modifyTagList(request.getTagList(), board);
         board.modifyPost(cafe, request.getBoardTitle(), request.getBoardContent());
 
         return "게시글 수정에 성공했습니다.";
     }
 
+    private boolean checkUser(Long writer) throws BaseException {
+        return writer.equals(authService.getUser().getIdx());
+    }
+
     private void modifyTagList(List<Long> tagList, Board board) throws BaseException {
         List<BoardTag> existingTags = boardTagRepository.findTagIdxListByBoardIdx(board.getIdx());
         for (Long tagIdx : tagList) {
             Tag tag = tagRepository.findById(tagIdx)
-                    .orElseThrow(() -> new BaseException(BaseResponseStatus.TAG_NOT_FOUND));
+                    .orElseThrow(() -> new BaseException(TAG_NOT_FOUND));
             if (!containsTag(existingTags, tagIdx)) {
                 boardTagRepository.save(new BoardTag(board, tag));
             }
@@ -166,9 +172,9 @@ public class BoardService {
     }
 
     @Transactional
-    public String likePost(Long boardIdx, Long userIdx) throws BaseException {
-        Board board = boardRepository.findById(boardIdx).orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
-        User user = userRepository.findById(userIdx).orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
+    public String likePost(Long boardIdx) throws BaseException {
+        Board board = boardRepository.findById(boardIdx).orElseThrow(() -> new BaseException(POST_NOT_FOUND));
+        User user = authService.getUser();
         LikeBoard likeBoard = LikeBoard.builder()
                 .board(board)
                 .user(user)
@@ -178,7 +184,8 @@ public class BoardService {
     }
 
     @Transactional
-    public String likePostCancel(Long boardIdx, Long userIdx) throws BaseException {
+    public String likePostCancel(Long boardIdx) throws BaseException {
+        Long userIdx = authService.getUser().getIdx();
         LikeBoard likeBoard = likeBoardRepository.findByBoardIdxAndUserIdx(boardIdx, userIdx);
         likeBoardRepository.delete(likeBoard);
         return "좋아요 취소";

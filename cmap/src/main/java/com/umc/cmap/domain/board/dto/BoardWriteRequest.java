@@ -10,7 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardWriteRequest {
-    private Long userIdx;
     private Long cafeIdx;
     private String boardTitle;
     private String boardContent;

@@ -36,6 +36,7 @@ public enum BaseResponseStatus {
     POST_NOT_FOUND(false, 3201, "게시글을 찾을 수 없습니다."),
     POST_DELETED(false, 3202, "삭제된 게시글입니다."),
     TAG_NOT_FOUND(false, 3203, "태그를 찾을 수 없습니다."),
+    DONT_HAVE_ACCESS(false, 3204, "접근 권한이 없습니다."),
 
 
     /**
