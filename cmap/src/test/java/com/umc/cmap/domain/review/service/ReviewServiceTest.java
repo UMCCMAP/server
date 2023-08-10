@@ -1,5 +1,6 @@
 package com.umc.cmap.domain.review.service;
 
+import com.umc.cmap.config.BaseException;
 import com.umc.cmap.domain.board.entity.Role;
 import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.repository.CafeRepository;
@@ -13,6 +14,7 @@ import com.umc.cmap.domain.user.entity.Profile;
 import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.repository.ProfileRepository;
 import com.umc.cmap.domain.user.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -79,11 +81,11 @@ class ReviewServiceTest {
                 .review(review)
                 .build();
         reviewImageRepository.save(image1);
+
         ReviewImage image2 = ReviewImage.builder()
                 .imageUrl("review-image-url2.com")
                 .review(review)
                 .build();
-
         reviewImageRepository.save(image2);
 
         Pageable pageable = PageRequest.of(0, 5);
@@ -97,7 +99,15 @@ class ReviewServiceTest {
     }
 
     @Test
-    void 리뷰_저장() {
+    void 리뷰_저장() throws BaseException {
+        User user = User.builder()
+                .name("name1")
+                .email("email1")
+                .password("password1")
+                .nickname("nickname1")
+                .role(Role.USER)
+                .build();
+        userRepository.save(user);
         Cafe cafe = Cafe.builder()
                 .name("cafe-name")
                 .info("cafe-information")
@@ -152,5 +162,4 @@ class ReviewServiceTest {
         //then
         assertThat(result).isEqualTo(1L);
     }
-
 }
