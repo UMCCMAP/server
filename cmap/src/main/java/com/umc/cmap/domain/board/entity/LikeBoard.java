@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class LikeBoard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "like_board_idx")
     private Long idx;
 
     @ManyToOne
