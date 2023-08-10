@@ -1,8 +1,6 @@
 package com.umc.cmap.domain.review.dto;
 
-import com.umc.cmap.domain.review.entity.ReviewImage;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 

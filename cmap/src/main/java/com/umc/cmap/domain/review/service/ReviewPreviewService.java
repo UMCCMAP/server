@@ -2,6 +2,7 @@ package com.umc.cmap.domain.review.service;
 
 import com.umc.cmap.domain.review.dto.ReviewPreviewResponse;
 import com.umc.cmap.domain.review.entity.Review;
+import com.umc.cmap.domain.review.entity.ReviewImage;
 import com.umc.cmap.domain.review.repository.ReviewImageRepository;
 import com.umc.cmap.domain.review.repository.ReviewRepository;
 import lombok.AccessLevel;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -43,6 +45,11 @@ public class ReviewPreviewService {
     }
 
     private String getOneImageUrl(Long reviewIdx) {
-        return imageRepository.findByReviewIdx(reviewIdx).getImageUrl();
+        Optional<ReviewImage> image = imageRepository.findFirstByReviewIdx(reviewIdx);
+        String imageUrl = "";
+        if (image.isPresent()) {
+            imageUrl = image.get().getImageUrl();
+        }
+        return imageUrl;
     }
 }

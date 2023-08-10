@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReviewImageRepository extends JpaRepository<ReviewImage, Long> {
@@ -12,5 +13,5 @@ public interface ReviewImageRepository extends JpaRepository<ReviewImage, Long> 
 
     Long countByReviewIdx(Long reviewIdx);
 
-    ReviewImage findByReviewIdx(Long reviewIdx);
+    Optional<ReviewImage> findFirstByReviewIdx(Long reviewIdx);
 }
