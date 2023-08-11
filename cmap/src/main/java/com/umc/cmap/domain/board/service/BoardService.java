@@ -144,6 +144,7 @@ public class BoardService {
         Cafe cafe = cafeRepository.findById(request.getCafeIdx())
                 .orElseThrow(() -> new BaseException(CAFE_NOT_FOUND));
         modifyTagList(request.getTagList(), board);
+        modifyImgList(request.getImgList(), board);
         board.modifyPost(cafe, request.getBoardTitle(), request.getBoardContent());
 
         return "게시글 수정에 성공했습니다.";
@@ -151,6 +152,27 @@ public class BoardService {
 
     private boolean checkUser(Long writer) throws BaseException {
         return writer.equals(authService.getUser().getIdx());
+    }
+
+    private void modifyImgList(List<String> imgList, Board board) throws BaseException {
+        List<BoardImage> existingImgs = boardImageRepository.findBoardImageListByBoardIdx(board.getIdx());
+        for (String imgUrl : imgList) {
+            if (!containsImg(existingImgs, imgUrl)) {
+                boardImageRepository.save(new BoardImage(imgUrl, board));
+            }
+        }
+        for (BoardImage existingImg : existingImgs) {
+            if(!imgList.contains(existingImg.getImageUrl())) {
+                boardImageRepository.delete(existingImg);
+            }
+        }
+    }
+
+    private boolean containsImg(List<BoardImage> boardImages, String imgUrl) {
+        for (BoardImage img : boardImages) {
+            if (img.getImageUrl().equals(imgUrl)) { return true; }
+        }
+        return false;
     }
 
     private void modifyTagList(List<Long> tagList, Board board) throws BaseException {
