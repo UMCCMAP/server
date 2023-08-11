@@ -1,12 +1,10 @@
 package com.umc.cmap.domain.board.service;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
 import com.umc.cmap.config.BaseException;
 import com.umc.cmap.domain.board.dto.*;
 import com.umc.cmap.domain.board.entity.*;
-import com.umc.cmap.domain.board.repository.BoardRepository;
-import com.umc.cmap.domain.board.repository.BoardTagRepository;
-import com.umc.cmap.domain.board.repository.LikeBoardRepository;
-import com.umc.cmap.domain.board.repository.TagRepository;
+import com.umc.cmap.domain.board.repository.*;
 import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.repository.CafeRepository;
 import com.umc.cmap.domain.user.entity.User;
@@ -32,6 +30,7 @@ public class BoardService {
     private final CafeRepository cafeRepository;
     private final LikeBoardRepository likeBoardRepository;
     private final AuthService authService;
+    private final BoardImageRepository boardImageRepository;
 
 
     public BoardListResponse getBoardList(Pageable pageable) throws BaseException {
@@ -100,6 +99,7 @@ public class BoardService {
 
         Board savedBoard = boardRepository.save(board);
         postBoardTagList(request.getTagList(), savedBoard);
+        postBoardImgList(request.getImgList(), savedBoard);
 
         return savedBoard.getIdx();
     }
@@ -110,6 +110,12 @@ public class BoardService {
                     .orElseThrow(() -> new BaseException(TAG_NOT_FOUND));
 
             boardTagRepository.save(new BoardTag(board, tag));
+        }
+    }
+
+    private void postBoardImgList(List<String> imgList, Board board) throws BaseException {
+        for (String img : imgList) {
+            boardImageRepository.save(new BoardImage(img, board));
         }
     }
 
