@@ -14,5 +14,5 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Board> findByIdxInAndRemovedAtIsNull(List<Long> boardIdx, Pageable pageable);
     Page<Board> findByBoardTitleContainingOrBoardContentContainingAndRemovedAtIsNull(String boardTitle, String boardContent, Pageable pageable);
     Long countByUserIdxAndRemovedAtIsNull(Long userIdx);
-    Optional<Board> findAllByUserIdxAndRemovedAtIsNull(Long userIdx);
+    List<Board> findAllByUserIdxAndRemovedAtIsNull(Long userIdx);
 }
