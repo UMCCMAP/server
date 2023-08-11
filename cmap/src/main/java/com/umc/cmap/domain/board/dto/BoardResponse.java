@@ -20,9 +20,16 @@ public class BoardResponse {
 
     public BoardResponse(Long idx, String boardTitle, String boardContent, HashMap<Long, List<HashMap<Long, String>>> tagList, LocalDateTime createdAt) {
         this.idx = idx;
-        this.boardTitle = boardTitle;
-        this.boardContent = boardContent;
+        this.boardTitle = generatePreview(boardTitle, 10);
+        this.boardContent = generatePreview(boardContent, 20);
         this.tagList = tagList;
         this.createdAt = createdAt;
+    }
+
+    private String generatePreview(String text, int maxLength) {
+        if (text.length() > maxLength) {
+            return text.substring(0, maxLength - 4) + " ...";
+        }
+        return text;
     }
 }
