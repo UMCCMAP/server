@@ -24,9 +24,10 @@ public class BoardPostViewResponse {
     private HashMap<Long, List<HashMap<Long, String>>> tagList;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private boolean like;
     private boolean canModifyPost;
 
-    public BoardPostViewResponse(Board board, String profileImg, HashMap<Long, List<HashMap<Long, String>>> tagList, boolean canModifyPost) {
+    public BoardPostViewResponse(Board board, String profileImg, HashMap<Long, List<HashMap<Long, String>>> tagList, boolean like, boolean canModifyPost) {
         this.idx = board.getIdx();
         this.cafeName = board.getCafe().getName();
         this.nickName = board.getUser().getNickname();
@@ -36,6 +37,7 @@ public class BoardPostViewResponse {
         this.tagList = tagList;
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
+        this.like = like;
         this.canModifyPost = canModifyPost;
     }
 }
