@@ -28,7 +28,7 @@ public class BoardResponse {
 
     private String generatePreview(String text, int maxLength) {
         if (text.length() > maxLength) {
-            return text.substring(0, maxLength - 4) + " ...";
+            return text.substring(0, maxLength - 3) + " ..";
         }
         return text;
     }
