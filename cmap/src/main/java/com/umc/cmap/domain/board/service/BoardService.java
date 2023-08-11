@@ -1,6 +1,5 @@
 package com.umc.cmap.domain.board.service;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
 import com.umc.cmap.config.BaseException;
 import com.umc.cmap.domain.board.dto.*;
 import com.umc.cmap.domain.board.entity.*;
