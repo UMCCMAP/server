@@ -1,11 +1,9 @@
 package com.umc.cmap.domain.review.service;
 
-import com.umc.cmap.config.BaseException;
 import com.umc.cmap.domain.board.entity.Role;
 import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.repository.CafeRepository;
-import com.umc.cmap.domain.review.dto.ReviewRequest;
-import com.umc.cmap.domain.review.dto.ReviewResponse;
+import com.umc.cmap.domain.review.dto.ReviewPreviewResponse;
 import com.umc.cmap.domain.review.entity.Review;
 import com.umc.cmap.domain.review.entity.ReviewImage;
 import com.umc.cmap.domain.review.repository.ReviewImageRepository;
@@ -14,7 +12,6 @@ import com.umc.cmap.domain.user.entity.Profile;
 import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.repository.ProfileRepository;
 import com.umc.cmap.domain.user.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,30 +19,23 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-class ReviewServiceTest {
-
-    @Autowired
-    private ReviewService service;
-    @Autowired
-    private ReviewRepository reviewRepository;
-    @Autowired
-    private ReviewImageRepository reviewImageRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private ProfileRepository profileRepository;
-    @Autowired
-    private CafeRepository cafeRepository;
+class ReviewPreviewServiceTest {
+    @Autowired private ReviewPreviewService previewService;
+    @Autowired private ReviewRepository reviewRepository;
+    @Autowired private ReviewImageRepository reviewImageRepository;
+    @Autowired private UserRepository userRepository;
+    @Autowired private ProfileRepository profileRepository;
+    @Autowired private CafeRepository cafeRepository;
 
     @Test
-    void 모든_리뷰_찾기() {
+    void 카페별_리뷰_미리보기() {
         //given
         User user = User.builder()
                 .name("name1")
@@ -68,71 +58,37 @@ class ReviewServiceTest {
                 .build();
         cafeRepository.save(cafe);
 
-        Review review = Review.builder()
+        Review review1 = Review.builder()
                 .user(user)
                 .cafe(cafe)
                 .content("comment-content")
                 .score(4.5)
                 .build();
-        reviewRepository.save(review);
+        reviewRepository.save(review1);
 
         ReviewImage image1 = ReviewImage.builder()
                 .imageUrl("review-image-url1.com")
-                .review(review)
+                .review(review1)
                 .build();
         reviewImageRepository.save(image1);
 
         ReviewImage image2 = ReviewImage.builder()
                 .imageUrl("review-image-url2.com")
-                .review(review)
+                .review(review1)
                 .build();
         reviewImageRepository.save(image2);
 
         Pageable pageable = PageRequest.of(0, 5);
 
         //when
-        List<ReviewResponse> result = service.getAll(user.getIdx(), pageable);
+        List<ReviewPreviewResponse> result = previewService.get(cafe.getIdx(), pageable);
 
         //then
-        assertThat(result.get(0).getImageUrls()).contains(image1.getImageUrl(), image2.getImageUrl());
-
+        assertThat(result.get(0).getImageCnt().longValue()).isEqualTo(2L);
     }
 
     @Test
-    void 리뷰_저장() throws BaseException {
-        User user = User.builder()
-                .name("name1")
-                .email("email1")
-                .password("password1")
-                .nickname("nickname1")
-                .role(Role.USER)
-                .build();
-        userRepository.save(user);
-        Cafe cafe = Cafe.builder()
-                .name("cafe-name")
-                .info("cafe-information")
-                .build();
-        cafeRepository.save(cafe);
-        String content = "this is content";
-        List<String> imageUrls = new ArrayList<>();
-        imageUrls.add("https://image-url/1");
-        Double score = 4.5;
-
-        ReviewRequest request = ReviewRequest.builder()
-                .score(score)
-                .content(content)
-                .imageUrls(imageUrls)
-                .build();
-
-        service.save(cafe.getIdx(), request);
-
-        List<Review> reviews = reviewRepository.findAll();
-        assertThat(reviews.stream().anyMatch(r -> r.getContent().equals(content))).isTrue();
-    }
-
-
-    @Test
-    void 사용자별_리뷰_수() {
+    void 카페별_이미지_없는_리뷰_미리보기() {
         //given
         User user = User.builder()
                 .name("name1")
@@ -143,23 +99,33 @@ class ReviewServiceTest {
                 .build();
         userRepository.save(user);
 
+        Profile profile = Profile.builder()
+                .userImg("https://user-profile.com")
+                .user(user)
+                .build();
+        profileRepository.save(profile);
+
         Cafe cafe = Cafe.builder()
                 .name("cafe-name")
                 .info("cafe-information")
                 .build();
         cafeRepository.save(cafe);
 
-        Review review = Review.builder()
+        Review review1 = Review.builder()
                 .user(user)
                 .cafe(cafe)
-                .content("review-content")
+                .content("comment-content")
+                .score(4.5)
                 .build();
-        reviewRepository.save(review);
+        reviewRepository.save(review1);
+
+        Pageable pageable = PageRequest.of(0, 5);
 
         //when
-        Long result = service.getUserReviewsCnt(user.getIdx());
+        List<ReviewPreviewResponse> result = previewService.get(cafe.getIdx(), pageable);
 
         //then
-        assertThat(result).isEqualTo(1L);
+        assertThat(result.get(0).getImageCnt().longValue()).isZero();
     }
+
 }

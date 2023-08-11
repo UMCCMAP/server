@@ -47,7 +47,7 @@ public class ReviewService {
         return mapper.toResponse(review, imageService.getAll(id), getWriter(review.getUser()));
     }
 
-    private ReviewWriterResponse getWriter(User user) {
+    public ReviewWriterResponse getWriter(User user) {
         return ReviewWriterResponse.builder()
                 .userIdx(user.getIdx())
                 .userNickname(user.getNickname())

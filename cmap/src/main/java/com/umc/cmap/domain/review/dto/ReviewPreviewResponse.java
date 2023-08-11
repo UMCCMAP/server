@@ -1,19 +1,18 @@
 package com.umc.cmap.domain.review.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
-@Setter
+@Builder
 @AllArgsConstructor
-public class ReviewResponse {
+public class ReviewPreviewResponse {
     private ReviewWriterResponse userInfo;
     private String content;
-    private Double score;
-    private List<String> imageUrls;
+    private String imageUrl;
+    private Long imageCnt;
     private LocalDateTime createdAt;
 }
