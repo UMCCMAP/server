@@ -15,6 +15,7 @@ public class BoardImage {
     @Column(name = "board_image_idx")
     private Long idx;
 
+    @Column(name = "image_url")
     private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)

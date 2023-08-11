@@ -37,7 +37,8 @@ public class BoardService {
         List<BoardResponse> boardResponses = new ArrayList<>();
         for (Board board : boardPage) {
             HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(board.getIdx());
-            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, board.getCreatedAt());
+            List<String> imgList = getImageUrlForMain(board.getIdx());
+            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, imgList, board.getCreatedAt());
             boardResponses.add(boardResponse);
         }
         List<TagDto> tagNames = tagRepository.findAllTags();
@@ -51,7 +52,8 @@ public class BoardService {
         List<BoardResponse> boardResponses = new ArrayList<>();
         for (Board board : boardPage) {
             HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(board.getIdx());
-            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, board.getCreatedAt());
+            List<String> imgList = getImageUrlForMain(board.getIdx());
+            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, imgList, board.getCreatedAt());
             boardResponses.add(boardResponse);
         }
         return new BoardListResponse(new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements()), tagNames);
@@ -81,6 +83,22 @@ public class BoardService {
         result.put(boardIdx, tagsList);
         return result;
     }
+
+    private List<String> getImageUrlForMain(Long boardIdx) {
+        List<BoardImage> images = boardImageRepository.findBoardImageListByBoardIdx(boardIdx);
+        int maxImageCount = 3;
+        if (images.size() > maxImageCount) {
+            return images.stream()
+                    .sorted(Comparator.comparing(BoardImage::getIdx))
+                    .limit(maxImageCount)
+                    .map(BoardImage::getImageUrl)
+                    .collect(Collectors.toList());
+        }
+        return images.stream()
+                .map(BoardImage::getImageUrl)
+                .collect(Collectors.toList());
+    }
+
 
     @Transactional
     public Long writeBoard(BoardWriteRequest request) throws BaseException {
@@ -224,7 +242,8 @@ public class BoardService {
         List<BoardResponse> boardResponses = new ArrayList<>();
         for (Board board : boardPage) {
             HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(board.getIdx());
-            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, board.getCreatedAt());
+            List<String> imgList = getImageUrlForMain(board.getIdx());
+            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, imgList, board.getCreatedAt());
             boardResponses.add(boardResponse);
         }
         return new BoardListResponse(new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements()), tagNames);
