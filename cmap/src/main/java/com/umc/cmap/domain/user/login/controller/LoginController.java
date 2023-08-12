@@ -16,9 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
@@ -54,20 +52,22 @@ public class LoginController {
     }
 
     @PostMapping("/users/nickname")
-    public String nickname(@NotNull @RequestParam("nickname") String nickname, RedirectAttributes redirectAttributes) throws BaseException {
+    public String nickname(@NotNull @RequestParam("nickname") String nickname, HttpServletRequest request, RedirectAttributes redirectAttributes) throws BaseException {
         if (nickname.trim().isEmpty()) {
             // 닉네임이 비어있는 경우
             redirectAttributes.addFlashAttribute("errorMessage", "닉네임을 입력해주세요.");
             return "redirect:/users/nickname";
         }
         else if(userRepository.findByNickname(nickname).isPresent()){
-            //중복 처리
-            redirectAttributes.addFlashAttribute("errorMessage", "이미 사용 중인 닉네임입니다.");
-            return "redirect:/users/nickname";
+            if(userRepository.findByNickname(nickname).get().getNickname().toLowerCase().equals(nickname.toLowerCase())){
+                //중복 처리
+                redirectAttributes.addFlashAttribute("errorMessage", "이미 사용 중인 닉네임입니다.");
+                return "redirect:/users/nickname";
+            }
         }
 
 
-        User user = authService.getUser();
+        User user = authService.getUser(request);
         userService.setNickname(user.getEmail(), nickname);
 
         //프로필 생성
@@ -77,7 +77,7 @@ public class LoginController {
     }
 
 
-    @GetMapping("/")
+    //@GetMapping("/")
     public String logout(HttpServletRequest request){
         HttpSession session = request.getSession(false);
 

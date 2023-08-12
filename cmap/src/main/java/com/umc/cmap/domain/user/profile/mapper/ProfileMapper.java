@@ -11,5 +11,5 @@ import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ProfileMapper {
-    ProfileResponse toResponse(Profile profile, String userNickname, List<MatesInfoMapping> matesInfoList);
+    ProfileResponse toResponse(Profile profile, String userNickname, Long reviewNo, Long boardNo, List<MatesInfoMapping> matesInfoList);
 }

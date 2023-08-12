@@ -10,6 +10,7 @@ import com.umc.cmap.domain.user.profile.dto.ProfileRequest;
 import com.umc.cmap.domain.user.profile.dto.ProfileResponse;
 import com.umc.cmap.domain.user.profile.service.ProfileService;
 import com.umc.cmap.domain.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -32,16 +33,18 @@ public class ProfileController {
     }
 
     @PatchMapping("/users/profile/{userNickname}")
-    public String editProfile(@PathVariable String userNickname, @RequestBody ProfileRequest profileRequest) throws BaseException {
-        User user = authService.getUser();
+    public String editProfile(@PathVariable String userNickname, HttpServletRequest request, @RequestBody ProfileRequest profileRequest) throws BaseException {
+        User user = authService.getUser(request);
         if(user.getNickname().equals(userNickname)){
             if (profileRequest.getUserNickname().trim().isEmpty()) {
                 // 닉네임이 비어있는 경우
                 return "닉네임을 입력해주세요.";
             }
             else if(userRepository.findByNickname(profileRequest.getUserNickname()).isPresent()){
-                //중복 처리
-                return "이미 사용 중인 닉네임입니다.";
+                if(userRepository.findByNickname(profileRequest.getUserNickname()).get().getNickname().toLowerCase().equals(profileRequest.getUserNickname().toLowerCase())){
+                    //중복 처리
+                    return "이미 사용 중인 닉네임입니다.";
+                }
             }
 
             ProfileResponse profileResponse = profileService.update(userNickname, profileRequest);
