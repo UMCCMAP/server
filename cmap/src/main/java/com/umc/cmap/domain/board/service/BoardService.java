@@ -122,9 +122,10 @@ public class BoardService {
         if(board.isDeleted()) { throw new BaseException(POST_DELETED); }
         boolean canModifyPost = checkUser(board.getUser().getIdx());
         String profileImg = getProfileImg();
-        boolean like = likeBoardRepository.existsByBoardIdxAndUserIdx(board.getIdx(), authService.getUser().getIdx());
-        HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(board.getIdx());
-        return new BoardPostViewResponse(board, profileImg, tagList, like, canModifyPost);
+        boolean like = likeBoardRepository.existsByBoardIdxAndUserIdx(boardIdx, authService.getUser().getIdx());
+        Long cntLike = likeBoardRepository.countByBoardIdx(boardIdx);
+        HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(boardIdx);
+        return new BoardPostViewResponse(board, profileImg, cntLike, tagList, like, canModifyPost);
     }
 
     private String getProfileImg() throws BaseException {

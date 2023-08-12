@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface LikeBoardRepository extends JpaRepository<LikeBoard, Long> {
     @Query("SELECT likeBoard FROM LikeBoard likeBoard WHERE likeBoard.board.idx = :boardIdx AND likeBoard.user.idx = :userIdx")
     LikeBoard findByBoardIdxAndUserIdx(@Param("boardIdx") Long boardIdx, @Param("userIdx") Long userIdx);
-
     boolean existsByBoardIdxAndUserIdx(Long boardIdx, Long User);
+    Long countByBoardIdx(Long boardIdx);
 }
