@@ -11,7 +11,6 @@ import com.umc.cmap.domain.user.repository.UserRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +23,6 @@ public class   AuthService {
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
     private final TokenService tokenService;
-    private final HttpSession httpSession;
 
 
     public User getUser(ServletRequest request) throws BaseException {
