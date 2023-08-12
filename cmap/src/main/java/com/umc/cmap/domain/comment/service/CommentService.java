@@ -35,8 +35,11 @@ public class CommentService {
     AuthService authService;
 
     public List<CommentResponse> getAll(Long boardIdx, Pageable pageable) {
-        List<CommentResponse> comments = commentRepository.findAllByBoardIdx(boardIdx, pageable).stream().filter(c -> c.getRemovedAt() == null)
-                .map(c -> mapper.toResponse(c, c.getUser())).toList();
+        List<CommentResponse> comments = commentRepository.findAllByBoardIdx(boardIdx, pageable)
+                .stream()
+                .filter(c -> c.getRemovedAt() == null)
+                .map(c -> mapper.toResponse(c, c.getUser()))
+                .toList();
         comments.forEach(c -> c.setUserImg(getWriterProfileImg(c.getUserIdx())));
         return comments;
     }
