@@ -5,6 +5,7 @@ import com.umc.cmap.domain.board.entity.Role;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Getter
@@ -43,12 +44,12 @@ public class OAuthAttributes {
                 .build();
     }
 
+    public Map<String, Object> convertToMap(){
+        Map<String, Object> map = new HashMap<>();
+        map.put("name",name);
+        map.put("email",email);
+        map.put("role",Role.USER);
 
-    public User toEntity(){
-        return User.builder()
-                .name(name)
-                .email(email)
-                .role(Role.USER)
-                .build();
+        return map;
     }
 }

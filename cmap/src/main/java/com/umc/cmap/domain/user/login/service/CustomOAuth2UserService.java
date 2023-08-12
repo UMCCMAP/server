@@ -21,40 +21,28 @@ import java.util.Optional;
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User>{
 
     private final UserRepository userRepository;
-    private final HttpSession httpSession;
 
-    public CustomOAuth2UserService(UserRepository userRepository, HttpSession httpSession){
+    public CustomOAuth2UserService(UserRepository userRepository){
         this.userRepository=userRepository;
-        this.httpSession=httpSession;
     }
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException{
-        OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
-        OAuth2User oAuth2User = delegate.loadUser(userRequest);
+        OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
+        OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         String usernameAttributeName = userRequest.getClientRegistration().getProviderDetails(). getUserInfoEndpoint().getUserNameAttributeName();
 
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, usernameAttributeName, oAuth2User.getAttributes());
 
-        User user = saveOrUpdate(attributes);
-        httpSession.setAttribute("loginUser", new SessionUser(user.getName(), user.getEmail()));
+        var memberAttribute = attributes.convertToMap();
 
         return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority((user.getRole().getKey()))),
-                attributes.getAttributes(),
-                attributes.getNameAttributeKey()
-        );
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
+                memberAttribute, "email");
     }
 
-    private User saveOrUpdate(OAuthAttributes attributes){
-        User user = userRepository.findByEmail((attributes.getEmail()))
-                .map(entity -> entity.update(attributes.getName()))
-                .orElse(attributes.toEntity());
-
-        return userRepository.save(user);
-    }
 
     public void setNickname(String email, String nickname){
         Optional<User> optionalUser = userRepository.findByEmail(email);
