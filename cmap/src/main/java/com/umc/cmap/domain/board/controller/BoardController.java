@@ -21,7 +21,7 @@ public class BoardController {
 
 
     @GetMapping
-    public BaseResponse<BoardListResponse> getBoard(@PageableDefault(size = 4, sort = "idx", direction = DESC) Pageable pageable,
+    public BaseResponse<BoardListResponse> getBoard(@PageableDefault(size = 5, sort = "idx", direction = DESC) Pageable pageable,
                                                     @RequestParam(required = false) List<Long> tagIdx) throws BaseException {
         if (tagIdx != null && !tagIdx.isEmpty()) {
             return new BaseResponse<>(boardService.getBoardListWithTags(pageable, tagIdx));
@@ -60,7 +60,7 @@ public class BoardController {
     }
 
     @GetMapping("/search")
-    public BaseResponse<BoardListResponse> getBoardBySearch(@PageableDefault(size = 4, sort = "idx", direction = DESC) Pageable pageable,
+    public BaseResponse<BoardListResponse> getBoardBySearch(@PageableDefault(size = 5, sort = "idx", direction = DESC) Pageable pageable,
                                                             @RequestParam String keyword) throws BaseException {
         return new BaseResponse<>(boardService.getBoardBySearch(pageable, keyword));
     }

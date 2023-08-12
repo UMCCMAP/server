@@ -14,4 +14,5 @@ public class BoardWriteRequest {
     private String boardTitle;
     private String boardContent;
     private List<Long> tagList;
+    private List<String> imgList;
 }
