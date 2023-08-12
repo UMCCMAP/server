@@ -10,7 +10,7 @@ import com.umc.cmap.domain.comment.entity.Comment;
 import com.umc.cmap.domain.comment.mapper.CommentMapper;
 import com.umc.cmap.domain.comment.repository.CommentRepository;
 import com.umc.cmap.domain.user.entity.Profile;
-import com.umc.cmap.domain.user.entity.User;
+
 import com.umc.cmap.domain.user.login.service.AuthService;
 import com.umc.cmap.domain.user.repository.ProfileRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -49,11 +49,7 @@ public class CommentService {
     @Transactional
     public void save(Long boardIdx, CommentRequest param) throws BaseException {
         param.setBoard(boardRepository.findById(boardIdx).orElseThrow(EntityNotFoundException::new));
-        commentRepository.save(mapper.toEntity(param, getLoginUser()));
-    }
-
-    private User getLoginUser() throws BaseException {
-        return authService.getUser();
+        commentRepository.save(mapper.toEntity(param, authService.getUser()));
     }
 
     @Transactional
