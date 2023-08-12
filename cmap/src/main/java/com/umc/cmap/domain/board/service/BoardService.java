@@ -9,8 +9,10 @@ import com.umc.cmap.domain.board.repository.LikeBoardRepository;
 import com.umc.cmap.domain.board.repository.TagRepository;
 import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.repository.CafeRepository;
+import com.umc.cmap.domain.user.entity.Profile;
 import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.login.service.AuthService;
+import com.umc.cmap.domain.user.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,7 @@ public class BoardService {
     private final TagRepository tagRepository;
     private final CafeRepository cafeRepository;
     private final LikeBoardRepository likeBoardRepository;
+    private final ProfileRepository profileRepository;
     private final AuthService authService;
 
 
@@ -116,10 +119,18 @@ public class BoardService {
     public BoardPostViewResponse getPostView(Long boardIdx) throws BaseException {
         Board board = boardRepository.findById(boardIdx)
                 .orElseThrow(() -> new BaseException(POST_NOT_FOUND));
-        boolean canModifyPost = checkUser(board.getUser().getIdx());
         if(board.isDeleted()) { throw new BaseException(POST_DELETED); }
-        HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(board.getIdx());
-        return new BoardPostViewResponse(board, tagList, canModifyPost);
+        boolean canModifyPost = checkUser(board.getUser().getIdx());
+        String profileImg = getProfileImg();
+        boolean like = likeBoardRepository.existsByBoardIdxAndUserIdx(boardIdx, authService.getUser().getIdx());
+        Long cntLike = likeBoardRepository.countByBoardIdx(boardIdx);
+        HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(boardIdx);
+        return new BoardPostViewResponse(board, profileImg, cntLike, tagList, like, canModifyPost);
+    }
+
+    private String getProfileImg() throws BaseException {
+        Optional<Profile> profile = profileRepository.findByUserIdx(authService.getUser().getIdx());
+        return profile.get().getUserImg();
     }
 
     @Transactional
