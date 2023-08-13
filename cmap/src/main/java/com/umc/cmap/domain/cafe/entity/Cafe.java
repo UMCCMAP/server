@@ -6,6 +6,9 @@ import com.umc.cmap.domain.theme.entity.CafeTheme;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Getter
@@ -23,7 +26,14 @@ public class Cafe extends BaseTimeEntity {
     @Column(name="cafe_name")
     private String name;
 
-    private String location;
+    //private String location;
+
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "district")
+    private String district;
+
 
     @Column(name="cafe_info")
     private String info;
@@ -36,32 +46,34 @@ public class Cafe extends BaseTimeEntity {
     private Boolean wantToVisit ;
 
     @JsonManagedReference
-    @OneToOne(mappedBy = "cafe",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private CafeTheme cafeTheme;
+    @OneToMany(mappedBy = "cafe", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<CafeTheme> cafeThemes = new ArrayList<>();
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "theme_id")
     private CafeTheme theme;
 
     public String getThemeName() {
-        return this.cafeTheme != null && this.cafeTheme.getTheme() != null ? this.cafeTheme.getTheme().getName() : null;
+        return this.cafeThemes != null && !this.cafeThemes.isEmpty() && this.cafeThemes.get(0).getTheme() != null
+                ? this.cafeThemes.get(0).getTheme().getName() : null;
     }
 
     @Builder
-    public Cafe(Long idx, String name, String location,
-                String info,CafeTheme cafeTheme,Boolean visited,Boolean wantToVisit) {
+    public Cafe(Long idx, String name, String city, String district, String info,
+                CafeTheme cafeTheme, Boolean visited, Boolean wantToVisit) {
         this.idx = idx;
         this.name = name;
-        this.location = location;
+        this.city = city;
+        this.district = district;
         this.info = info;
-        this.cafeTheme=cafeTheme;
-
         this.visited = visited != null ? visited : false;
         this.wantToVisit = wantToVisit != null ? wantToVisit : false;
     }
-    public CafeTheme getCafeTheme() { return this.cafeTheme; }
 
+    public List<CafeTheme> getCafeThemes() {
+        return cafeThemes;
+    }
     public Boolean getVisited() {return this.visited;}
 
 }

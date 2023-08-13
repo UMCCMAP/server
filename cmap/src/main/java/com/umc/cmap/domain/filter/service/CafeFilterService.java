@@ -28,7 +28,8 @@ public class CafeFilterService {
         return CafeFilterDto.builder()
                 .idx(randomCafeFilter.getIdx())
                 .name(randomCafeFilter.getCafe().getName())
-                .theme(randomCafeFilter.getCafe().getCafeTheme().getTheme().getName())
+                .theme(randomCafeFilter.getCafe().getCafeThemes().isEmpty() ? null
+                        : randomCafeFilter.getCafe().getCafeThemes().get(0).getTheme().getName())
                 .cafeIdx(randomCafeFilter.getCafe().getIdx())
                 .build();
     }
