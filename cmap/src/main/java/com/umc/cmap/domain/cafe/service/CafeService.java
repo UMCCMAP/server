@@ -40,7 +40,8 @@ public class CafeService {
         Cafe updatedCafe = Cafe.builder()
                 .idx(existingCafe.getIdx())
                 .name(existingCafe.getName())
-                .location(existingCafe.getLocation())
+                .city(existingCafe.getCity())
+                .district(existingCafe.getDistrict())
                 .info(existingCafe.getInfo())
                 .visited(visited)
                 .wantToVisit(wantToVisit)
@@ -53,6 +54,7 @@ public class CafeService {
         Cafe cafe = getCafeById(idx);
         cafeRepository.delete(cafe);
     }
+
 
     public List<Cafe> getVisitedCafes() throws BaseException {
         List<Cafe> visitedCafes = cafeRepository.findByVisited(true);
@@ -71,7 +73,7 @@ public class CafeService {
     }
 
     public List<Cafe> getCafesByTheme(String themeName) throws BaseException {
-        List<Cafe> cafesWithTheme = cafeRepository.findByCafeTheme_Theme_Name(themeName);
+        List<Cafe> cafesWithTheme = cafeRepository.findByCafeThemes_Theme_Name(themeName);
 
         if (cafesWithTheme.isEmpty()) {
             throw new BaseException(BaseResponseStatus.THEME_CAFES_NOT_FOUND);
@@ -79,4 +81,21 @@ public class CafeService {
 
         return cafesWithTheme;
     }
+
+    public List<Cafe> getCafesByThemes(List<String> themeNames) {
+        return cafeRepository.findByCafeThemes_Theme_NameIn(themeNames);
+    }
+
+    public List<Cafe> getCafesByCityAndDistrict(String city, String district) {
+        return cafeRepository.findByCityAndDistrict(city, district);
+    }
+
+    public List<Cafe> getCafesByName(String cafeName) {
+        return cafeRepository.findByNameContaining(cafeName);
+    }
+
+
+
+
+
 }

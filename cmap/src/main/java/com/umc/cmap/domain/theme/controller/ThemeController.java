@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -20,12 +21,18 @@ public class ThemeController {
     private final ThemeService themeService;
 
 
+
     @PostMapping
-    public ResponseEntity<Theme> createTheme(@RequestBody CafeThemeRequest request) {
-        String themeName = request.getThemeName();
-        Theme createdTheme = themeService.createTheme(themeName);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdTheme);
+    public ResponseEntity<List<Theme>> createThemes(@RequestBody List<CafeThemeRequest> requests) {
+        List<Theme> createdThemes = new ArrayList<>();
+        for (CafeThemeRequest request : requests) {
+            String themeName = request.getThemeName();
+            Theme createdTheme = themeService.createTheme(themeName);
+            createdThemes.add(createdTheme);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdThemes);
     }
+
 
     @GetMapping //테마이름전체찾기
     public ResponseEntity<List<Theme>> getAllThemes() {
