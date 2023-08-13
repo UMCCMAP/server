@@ -58,10 +58,4 @@ public class ProfileController {
         User user = authService.getUser(request);
         return reviewService.getAllUserReviews(user.getIdx(), @PageableDefault(sort = "createdAt", direction = DESC) Pageable pageable);
     }*/
-
-    @GetMapping("/users/profile/{userNickname}/board")
-    public List<Board> userBoard(HttpServletRequest request) throws BaseException{
-        User user = authService.getUser(request);
-        return boardRepository.findAllByUserIdxAndRemovedAtIsNull(user.getIdx());
-    }
 }
