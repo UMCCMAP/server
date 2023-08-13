@@ -28,7 +28,23 @@ public class CafeService {
     }
 
     public Cafe createCafe(Cafe cafe) {
-        return cafeRepository.save(cafe);
+        Boolean visited = cafe.getVisited() != null ? cafe.getVisited() : false;
+        Boolean wantToVisit = cafe.getWantToVisit() != null ? cafe.getWantToVisit() : false;
+
+        if (visited) {
+            wantToVisit = false;
+        }
+
+        Cafe newCafe = Cafe.builder()
+                .name(cafe.getName())
+                .city(cafe.getCity())
+                .district(cafe.getDistrict())
+                .info(cafe.getInfo())
+                .visited(visited)
+                .wantToVisit(wantToVisit)
+                .build();
+
+        return cafeRepository.save(newCafe);
     }
 
     public Cafe updateCafe(Long idx, Cafe cafe) throws BaseException {
@@ -36,6 +52,10 @@ public class CafeService {
 
         Boolean visited = cafe.getVisited() == null ? existingCafe.getVisited() : cafe.getVisited();
         Boolean wantToVisit = cafe.getWantToVisit() == null ? existingCafe.getWantToVisit() : cafe.getWantToVisit();
+
+        if (visited) {
+            wantToVisit = false;
+        }
 
         Cafe updatedCafe = Cafe.builder()
                 .idx(existingCafe.getIdx())
@@ -49,6 +69,7 @@ public class CafeService {
 
         return cafeRepository.save(updatedCafe);
     }
+
 
     public void deleteCafe(Long idx) throws BaseException {
         Cafe cafe = getCafeById(idx);
