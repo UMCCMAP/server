@@ -18,7 +18,9 @@ public class Review extends BaseTimeEntity {
     @Column(name = "review_idx")
     private Long idx;
 
-    String content;
+    private String title;
+    private String keyword;
+    private String content;
 
     private Double score;
     private Boolean isDeleted;
@@ -32,17 +34,21 @@ public class Review extends BaseTimeEntity {
     private Cafe cafe;
 
     @Builder
-    public Review(User user, Cafe cafe, String content, Double score) {
+    public Review(User user, Cafe cafe, String content, String title, String keyword, Double score) {
         this.user = user;
         this.cafe = cafe;
         this.content = content;
+        this.title = title;
+        this.keyword = keyword;
         this.score = score;
         this.isDeleted = false;
     }
 
-    public void update(String content, Double score){
-        this.content = content;
-        this.score = score;
+    public void update(ReviewRequest dto) {
+        this.content = dto.getContent();
+        this.title = dto.getTitle();
+        this.keyword = dto.getKeyword();
+        this.score = dto.getScore();
     }
 
     public void delete() {
