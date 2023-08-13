@@ -21,7 +21,7 @@ public class TokenService {
 
     public Token generateToken(String uid, String role){
         Long tokenPeriod = 1000L * 60L * 60L * 365L;
-        Long refreshPeriod = 1000L * 60L * 60L * 24L * 30L * 3L;
+        Long refreshPeriod = 1000L * 60L * 60L * 365L * 2L;
 
         Claims claims = Jwts.claims().setSubject(uid);
         claims.put("role", role);
@@ -58,7 +58,7 @@ public class TokenService {
         }
     }
 
-    public String getUid(String token){
+    public String getUserEmail(String token){
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 }
