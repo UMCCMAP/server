@@ -6,14 +6,15 @@ import com.umc.cmap.domain.theme.entity.CafeTheme;
 import jakarta.persistence.*;
 import lombok.*;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
 
 @Entity
 @Getter
+
 @Table(name = "cafe")
-//@RequiredArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Cafe extends BaseTimeEntity {
 
@@ -26,24 +27,19 @@ public class Cafe extends BaseTimeEntity {
     @Column(name="cafe_name")
     private String name;
 
-    //private String location;
-
     @Column(name = "city")
     private String city;
 
     @Column(name = "district")
     private String district;
 
+    @Lob
+    @Column(name = "cafe_image", columnDefinition = "BLOB")
+    private byte[] image;
 
     @Column(name="cafe_info")
     private String info;
 
-    //true: 방문 , flase: 미방문
-    @Column(name = "visited")
-    private Boolean visited ;
-
-    @Column(name = "want_to_visit")
-    private Boolean wantToVisit ;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "cafe", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -54,6 +50,10 @@ public class Cafe extends BaseTimeEntity {
     @JoinColumn(name = "theme_id")
     private CafeTheme theme;
 
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "location_idx")
+    private Location location;
+
     public String getThemeName() {
         return this.cafeThemes != null && !this.cafeThemes.isEmpty() && this.cafeThemes.get(0).getTheme() != null
                 ? this.cafeThemes.get(0).getTheme().getName() : null;
@@ -61,19 +61,27 @@ public class Cafe extends BaseTimeEntity {
 
     @Builder
     public Cafe(Long idx, String name, String city, String district, String info,
-                CafeTheme cafeTheme, Boolean visited, Boolean wantToVisit) {
+                CafeTheme cafeTheme,byte[] image,Location location) {
         this.idx = idx;
         this.name = name;
         this.city = city;
         this.district = district;
         this.info = info;
-        this.visited = visited != null ? visited : false;
-        this.wantToVisit = wantToVisit != null ? wantToVisit : false;
+        this.image=image;
+        this.location = location;
     }
 
     public List<CafeTheme> getCafeThemes() {
         return cafeThemes;
     }
-    public Boolean getVisited() {return this.visited;}
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
 
 }

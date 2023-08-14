@@ -3,16 +3,22 @@ package com.umc.cmap.domain.cafe.controller;
 import com.umc.cmap.config.BaseException;
 import com.umc.cmap.config.BaseResponse;
 import com.umc.cmap.config.BaseResponseStatus;
+import com.umc.cmap.domain.cafe.controller.request.CafeRequest;
 import com.umc.cmap.domain.cafe.controller.response.CafeResponse;
 import com.umc.cmap.domain.cafe.entity.Cafe;
+import com.umc.cmap.domain.cafe.entity.Location;
 import com.umc.cmap.domain.cafe.service.CafeService;
+import com.umc.cmap.domain.cafe.service.LocationService;
 import com.umc.cmap.domain.filter.service.CafeFilterService;
 import com.umc.cmap.domain.theme.repository.ThemeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +33,7 @@ public class CafeController {
     private final CafeService cafeService;
     private final CafeFilterService cafeFilterService;
     private final ThemeRepository themeRepository;
-
+    private final LocationService locationService;
 
     @GetMapping
     public List<Cafe> getAllCafes() {
@@ -50,18 +56,18 @@ public class CafeController {
     }
 
 
-
     @PostMapping
-    public ResponseEntity<Cafe> createCafe(@RequestBody Cafe cafe) {
-        Cafe createdCafe = cafeService.createCafe(cafe);
+    public ResponseEntity<Cafe> createCafe(@RequestBody CafeRequest cafeRequest) throws BaseException {
+        Cafe createdCafe = cafeService.createCafe(cafeRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCafe);
     }
 
     @PutMapping("/{idx}")
-    public ResponseEntity<Cafe> updateCafe(@PathVariable Long idx, @RequestBody Cafe cafe) throws BaseException {
-        Cafe updatedCafe = cafeService.updateCafe(idx, cafe);
+    public ResponseEntity<Cafe> updateCafe(@PathVariable Long idx, @RequestBody CafeRequest updatedCafeRequest) throws BaseException {
+        Cafe updatedCafe = cafeService.updateCafe(idx, updatedCafeRequest);
         return ResponseEntity.ok(updatedCafe);
     }
+
 
     @DeleteMapping("/{idx}")
     public ResponseEntity<Void> deleteCafe(@PathVariable Long idx) throws BaseException {
@@ -69,21 +75,10 @@ public class CafeController {
         return ResponseEntity.noContent().build();
     }
 
-
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<BaseResponse<BaseResponseStatus>> handleBaseException(BaseException ex) {
         BaseResponse<BaseResponseStatus> response = new BaseResponse<>(ex.getStatus());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    @GetMapping("/visited")
-    public List<Cafe> getVisitedCafes() throws BaseException {
-        return cafeService.getVisitedCafes();
-    }
-
-    @GetMapping("/wantToVisit")
-    public List<Cafe> getWantToVisitCafes() throws BaseException {
-        return cafeService.getWantToVisitCafes();
     }
 
     @GetMapping("/filter")
@@ -123,5 +118,17 @@ public class CafeController {
         return ResponseEntity.ok(Collections.singletonList(randomCafeResponse));
     }
 
+    @GetMapping("/{idx}/image")
+    public ResponseEntity<byte[]> getCafeImage(@PathVariable Long idx) throws BaseException {
+        byte[] imageBytes = cafeService.getCafeImage(idx);
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageBytes);
+    }
+
+    @PostMapping("/{idx}/image")
+    public ResponseEntity<String> uploadCafeImage(@PathVariable Long idx, @RequestParam("imageFile") MultipartFile imageFile) throws BaseException {
+        cafeService.uploadCafeImage(idx, imageFile);
+        return ResponseEntity.ok("성공적으로 이미지 업로드");
+    }
 
 }
+

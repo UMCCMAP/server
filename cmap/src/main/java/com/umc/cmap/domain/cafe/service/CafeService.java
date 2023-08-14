@@ -3,13 +3,20 @@ package com.umc.cmap.domain.cafe.service;
 import com.umc.cmap.config.BaseException;
 import com.umc.cmap.config.BaseResponse;
 import com.umc.cmap.config.BaseResponseStatus;
+import com.umc.cmap.domain.cafe.controller.request.CafeRequest;
 import com.umc.cmap.domain.cafe.entity.Cafe;
+import com.umc.cmap.domain.cafe.entity.Location;
 import com.umc.cmap.domain.cafe.repository.CafeRepository;
+import com.umc.cmap.domain.cafe.repository.LocationRepository;
 import com.umc.cmap.domain.theme.repository.ThemeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +24,7 @@ public class CafeService {
 
     private final CafeRepository cafeRepository;
     private final ThemeRepository themeRepository;
+    private final LocationRepository locationRepository;
 
     public Cafe getCafeById(Long idx) throws BaseException {
         return cafeRepository.findById(idx)
@@ -27,70 +35,46 @@ public class CafeService {
         return cafeRepository.findAll();
     }
 
-    public Cafe createCafe(Cafe cafe) {
-        Boolean visited = cafe.getVisited() != null ? cafe.getVisited() : false;
-        Boolean wantToVisit = cafe.getWantToVisit() != null ? cafe.getWantToVisit() : false;
-
-        if (visited) {
-            wantToVisit = false;
+    @Transactional
+    public Cafe createCafe(CafeRequest cafeRequest) throws BaseException {
+        if (cafeRequest.getLocationIdx() == null) {
+            throw new BaseException(BaseResponseStatus.LOCATION_NOT_INPUT);
         }
 
-        Cafe newCafe = Cafe.builder()
-                .name(cafe.getName())
-                .city(cafe.getCity())
-                .district(cafe.getDistrict())
-                .info(cafe.getInfo())
-                .visited(visited)
-                .wantToVisit(wantToVisit)
+        Location location = locationRepository.findById(cafeRequest.getLocationIdx())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.LOCATION_NOT_FOUND));
+
+        Cafe cafe = Cafe.builder()
+                .name(cafeRequest.getName())
+                .city(cafeRequest.getCity())
+                .district(cafeRequest.getDistrict())
+                .info(cafeRequest.getInfo())
+                .location(location)
                 .build();
 
-        return cafeRepository.save(newCafe);
+        return cafeRepository.save(cafe);
     }
 
-    public Cafe updateCafe(Long idx, Cafe cafe) throws BaseException {
+    @Transactional
+    public Cafe updateCafe(Long idx, CafeRequest updatedCafeRequest) throws BaseException {
         Cafe existingCafe = getCafeById(idx);
 
-        Boolean visited = cafe.getVisited() == null ? existingCafe.getVisited() : cafe.getVisited();
-        Boolean wantToVisit = cafe.getWantToVisit() == null ? existingCafe.getWantToVisit() : cafe.getWantToVisit();
-
-        if (visited) {
-            wantToVisit = false;
-        }
-
-        Cafe updatedCafe = Cafe.builder()
+        existingCafe = Cafe.builder()
                 .idx(existingCafe.getIdx())
-                .name(existingCafe.getName())
-                .city(existingCafe.getCity())
-                .district(existingCafe.getDistrict())
-                .info(existingCafe.getInfo())
-                .visited(visited)
-                .wantToVisit(wantToVisit)
+                .name(updatedCafeRequest.getName())
+                .city(updatedCafeRequest.getCity())
+                .district(updatedCafeRequest.getDistrict())
+                .info(updatedCafeRequest.getInfo())
+                .location(existingCafe.getLocation())
                 .build();
 
-        return cafeRepository.save(updatedCafe);
+        return cafeRepository.save(existingCafe);
     }
 
 
     public void deleteCafe(Long idx) throws BaseException {
         Cafe cafe = getCafeById(idx);
         cafeRepository.delete(cafe);
-    }
-
-
-    public List<Cafe> getVisitedCafes() throws BaseException {
-        List<Cafe> visitedCafes = cafeRepository.findByVisited(true);
-        if (visitedCafes.isEmpty()) {
-            throw new BaseException(BaseResponseStatus.VISITED_CAFES_NOT_FOUND);
-        }
-        return visitedCafes;
-    }
-
-    public List<Cafe> getWantToVisitCafes() throws BaseException {
-        List<Cafe> wantToVisitCafes = cafeRepository.findByWantToVisit(true);
-        if (wantToVisitCafes.isEmpty()) {
-            throw new BaseException(BaseResponseStatus.WANT_TO_VISIT_CAFES_NOT_FOUND);
-        }
-        return wantToVisitCafes;
     }
 
     public List<Cafe> getCafesByTheme(String themeName) throws BaseException {
@@ -116,7 +100,29 @@ public class CafeService {
     }
 
 
+    public void uploadCafeImage(Long idx, MultipartFile imageFile) throws BaseException {
+        Cafe cafe = getCafeById(idx);
 
+        if (imageFile != null) {
+            try {
+                byte[] imageData = imageFile.getBytes();
+                cafe.setImage(imageData);
+                cafeRepository.save(cafe);
+            } catch (IOException e) {
+                throw new BaseException(BaseResponseStatus.CAFE_IMAGE_NOT_UPLOADED2);
+            }
+        } else {
+            throw new BaseException(BaseResponseStatus.CAFE_IMAGE_NOT_UPLOADED);
+        }
+    }
 
+    public byte[] getCafeImage(Long idx) throws BaseException {
+        Cafe cafe = getCafeById(idx);
+        byte[] image = cafe.getImage();
+        if (image == null) {
+            throw new BaseException(BaseResponseStatus.CAFE_IMAGE_NOT_FOUND);
+        }
+        return image;
+    }
 
 }
