@@ -14,6 +14,7 @@ import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.login.service.AuthService;
 import com.umc.cmap.domain.user.repository.ProfileRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.umc.cmap.config.BaseResponseStatus.DONT_HAVE_ACCESS;
 
 @Service
 @Transactional(readOnly = true)
@@ -70,9 +73,9 @@ public class ReviewService {
     }
 
     @Transactional
-    public void save(Long cafeIdx, ReviewRequest param) throws BaseException {
+    public void save(Long cafeIdx, ReviewRequest param, HttpServletRequest request) throws BaseException {
         param.setCafe(getCafeEntity(cafeIdx));
-        Review review = reviewRepository.save(mapper.toEntity(param, authService.getUser()));
+        Review review = reviewRepository.save(mapper.toEntity(param, authService.getUser(request)));
         imageService.saveAll(param.getImageUrls(), review);
     }
 
@@ -81,10 +84,18 @@ public class ReviewService {
     }
 
     @Transactional
-    public void update(Long reviewIdx, ReviewRequest param) {
+    public void update(Long reviewIdx, ReviewRequest param, HttpServletRequest request) throws BaseException {
         Review review = reviewRepository.findById(reviewIdx).orElseThrow(EntityNotFoundException::new);
+        if (!isValidRequest(review.getUser(), request)) {
+            throw new BaseException(DONT_HAVE_ACCESS);
+        }
+
         review.update(param);
         updateReviewImages(param.getImageUrls(), review);
+    }
+
+    private boolean isValidRequest(User writer, HttpServletRequest request) throws BaseException {
+        return writer.equals(authService.getUser(request));
     }
 
     private void updateReviewImages(List<String> urls, Review review) {
