@@ -11,14 +11,6 @@ import lombok.NoArgsConstructor;
 @Generated
 @Getter
 @Entity
-@Table(
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "mates",
-                        columnNames = {"from_idx", "to_idx"}
-                )
-        }
-)
 public class Mates extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

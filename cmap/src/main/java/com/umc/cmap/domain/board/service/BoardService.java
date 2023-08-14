@@ -259,4 +259,17 @@ public class BoardService {
         }
         return new BoardListResponse(new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements()), tagNames);
     }
+
+    public Page<BoardResponse> getMyBoardList(Pageable pageable) throws BaseException {
+        User user = authService.getUser();
+        Page<Board> boardPage = boardRepository.findByUserAndRemovedAtIsNull(user, pageable);
+        List<BoardResponse> boardResponses = new ArrayList<>();
+        for (Board board : boardPage) {
+            List<HashMap<Long, String>> tagList = getTagsForBoard(board.getIdx());
+            List<String> imgList = getImageUrlForMain(board.getIdx());
+            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, imgList, board.getCreatedAt());
+            boardResponses.add(boardResponse);
+        }
+        return new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements());
+    }
 }

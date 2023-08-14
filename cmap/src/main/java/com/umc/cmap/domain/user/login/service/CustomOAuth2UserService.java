@@ -3,8 +3,6 @@ package com.umc.cmap.domain.user.login.service;
 import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.login.dto.OAuthAttributes;
 import com.umc.cmap.domain.user.repository.UserRepository;
-import com.umc.cmap.domain.user.login.dto.SessionUser;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -21,39 +19,33 @@ import java.util.Optional;
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User>{
 
     private final UserRepository userRepository;
-    private final HttpSession httpSession;
 
-    public CustomOAuth2UserService(UserRepository userRepository, HttpSession httpSession){
+    public CustomOAuth2UserService(UserRepository userRepository){
         this.userRepository=userRepository;
-        this.httpSession=httpSession;
     }
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException{
-        OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
-        OAuth2User oAuth2User = delegate.loadUser(userRequest);
+        OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
+        OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         String usernameAttributeName = userRequest.getClientRegistration().getProviderDetails(). getUserInfoEndpoint().getUserNameAttributeName();
 
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, usernameAttributeName, oAuth2User.getAttributes());
-
         User user = saveOrUpdate(attributes);
-        httpSession.setAttribute("loginUser", new SessionUser(user.getName(), user.getEmail()));
+        userRepository.findByIdx(user.getIdx())
+                .orElse(userRepository.save(user));
 
         return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority((user.getRole().getKey()))),
-                attributes.getAttributes(),
-                attributes.getNameAttributeKey()
-        );
+                Collections.singleton(new SimpleGrantedAuthority(user.getRole().getKey())),
+                attributes.getAttributes(), attributes.getNameAttributeKey());
     }
 
     private User saveOrUpdate(OAuthAttributes attributes){
-        User user = userRepository.findByEmail((attributes.getEmail()))
-                .map(entity -> entity.update(attributes.getName()))
+        return userRepository.findByEmail(attributes.getEmail())
+                .map(existingUser -> existingUser.update(existingUser.getName()))
                 .orElse(attributes.toEntity());
-
-        return userRepository.save(user);
     }
 
     public void setNickname(String email, String nickname){
