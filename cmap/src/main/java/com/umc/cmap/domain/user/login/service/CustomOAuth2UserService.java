@@ -3,8 +3,6 @@ package com.umc.cmap.domain.user.login.service;
 import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.login.dto.OAuthAttributes;
 import com.umc.cmap.domain.user.repository.UserRepository;
-import com.umc.cmap.domain.user.login.dto.SessionUser;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -35,14 +33,20 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String usernameAttributeName = userRequest.getClientRegistration().getProviderDetails(). getUserInfoEndpoint().getUserNameAttributeName();
 
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, usernameAttributeName, oAuth2User.getAttributes());
-
-        var memberAttribute = attributes.convertToMap();
+        User user = saveOrUpdate(attributes);
+        userRepository.findByIdx(user.getIdx())
+                .orElse(userRepository.save(user));
 
         return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
-                memberAttribute, "email");
+                Collections.singleton(new SimpleGrantedAuthority(user.getRole().getKey())),
+                attributes.getAttributes(), attributes.getNameAttributeKey());
     }
 
+    private User saveOrUpdate(OAuthAttributes attributes){
+        return userRepository.findByEmail(attributes.getEmail())
+                .map(existingUser -> existingUser.update(existingUser.getName()))
+                .orElse(attributes.toEntity());
+    }
 
     public void setNickname(String email, String nickname){
         Optional<User> optionalUser = userRepository.findByEmail(email);

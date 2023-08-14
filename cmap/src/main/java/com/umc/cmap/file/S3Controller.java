@@ -2,7 +2,6 @@ package com.umc.cmap.file;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,7 +14,6 @@ import java.util.List;
 public class S3Controller {
 
     private final AwsS3Service awsS3Service;
-
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/file")

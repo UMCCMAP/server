@@ -15,11 +15,11 @@ public class BoardResponse {
     private Long idx;
     private String boardTitle;
     private String boardContent;
-    private HashMap<Long, List<HashMap<Long, String>>> tagList;
+    private List<HashMap<Long, String>> tagList;
     private List<String> imgList;
     private LocalDateTime createdAt;
 
-    public BoardResponse(Long idx, String boardTitle, String boardContent, HashMap<Long, List<HashMap<Long, String>>> tagList, List<String> imgList, LocalDateTime createdAt) {
+    public BoardResponse(Long idx, String boardTitle, String boardContent, List<HashMap<Long, String>> tagList, List<String> imgList, LocalDateTime createdAt) {
         this.idx = idx;
         this.boardTitle = generatePreview(boardTitle, 10);
         this.boardContent = generatePreview(boardContent, 20);

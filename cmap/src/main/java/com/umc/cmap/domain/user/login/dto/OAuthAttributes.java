@@ -44,6 +44,14 @@ public class OAuthAttributes {
                 .build();
     }
 
+    public User toEntity(){
+        return User.builder()
+                .email(email)
+                .name(name)
+                .role(Role.USER)
+                .build();
+    }
+
     public Map<String, Object> convertToMap(){
         Map<String, Object> map = new HashMap<>();
         map.put("name",name);
