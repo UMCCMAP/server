@@ -14,5 +14,11 @@ public class ExceptionControllerAdvice {
     protected ErrorResponse entityNotFound(EntityNotFoundException e) {
         return new ErrorResponse(e);
     }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(UnAuthorizedException.class)
+    protected ErrorResponse unAuthorized(UnAuthorizedException e) {
+        return new ErrorResponse(e);
+    }
     
 }
