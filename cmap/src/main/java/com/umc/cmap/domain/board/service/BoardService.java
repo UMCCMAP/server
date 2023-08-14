@@ -39,7 +39,7 @@ public class BoardService {
         Page<Board> boardPage = boardRepository.findAllByRemovedAtIsNull(pageable);
         List<BoardResponse> boardResponses = new ArrayList<>();
         for (Board board : boardPage) {
-            HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(board.getIdx());
+            List<HashMap<Long, String>> tagList = getTagsForBoard(board.getIdx());
             List<String> imgList = getImageUrlForMain(board.getIdx());
             BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, imgList, board.getCreatedAt());
             boardResponses.add(boardResponse);
@@ -54,7 +54,7 @@ public class BoardService {
         List<TagDto> tagNames = tagRepository.findAllTags();
         List<BoardResponse> boardResponses = new ArrayList<>();
         for (Board board : boardPage) {
-            HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(board.getIdx());
+            List<HashMap<Long, String>> tagList = getTagsForBoard(board.getIdx());
             List<String> imgList = getImageUrlForMain(board.getIdx());
             BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, imgList, board.getCreatedAt());
             boardResponses.add(boardResponse);
@@ -72,9 +72,9 @@ public class BoardService {
         return result;
     }
 
-    private HashMap<Long, List<HashMap<Long, String>>> getTagsForBoard(Long boardIdx) throws BaseException {
+    private List<HashMap<Long, String>> getTagsForBoard(Long boardIdx) throws BaseException {
         List<BoardTag> boardTags = boardTagRepository.findTagIdxListByBoardIdx(boardIdx);
-        List<HashMap<Long, String>> tagsList = boardTags.stream()
+        return boardTags.stream()
                 .map(boardTag -> {
                     Tag tag = boardTag.getTag();
                     HashMap<Long, String> tagMap = new HashMap<>();
@@ -82,9 +82,6 @@ public class BoardService {
                     return tagMap;
                 })
                 .collect(Collectors.toList());
-        HashMap<Long, List<HashMap<Long, String>>> result = new HashMap<>();
-        result.put(boardIdx, tagsList);
-        return result;
     }
 
     private List<String> getImageUrlForMain(Long boardIdx) {
@@ -147,7 +144,7 @@ public class BoardService {
         String profileImg = getProfileImg();
         boolean like = likeBoardRepository.existsByBoardIdxAndUserIdx(boardIdx, authService.getUser().getIdx());
         Long cntLike = likeBoardRepository.countByBoardIdx(boardIdx);
-        HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(boardIdx);
+        List<HashMap<Long, String>> tagList = getTagsForBoard(boardIdx);
         return new BoardPostViewResponse(board, profileImg, cntLike, tagList, like, canModifyPost);
     }
 
@@ -252,11 +249,24 @@ public class BoardService {
         List<TagDto> tagNames = tagRepository.findAllTags();
         List<BoardResponse> boardResponses = new ArrayList<>();
         for (Board board : boardPage) {
-            HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(board.getIdx());
+            List<HashMap<Long, String>> tagList = getTagsForBoard(board.getIdx());
             List<String> imgList = getImageUrlForMain(board.getIdx());
             BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, imgList, board.getCreatedAt());
             boardResponses.add(boardResponse);
         }
         return new BoardListResponse(new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements()), tagNames);
+    }
+
+    public Page<BoardResponse> getMyBoardList(Pageable pageable) throws BaseException {
+        User user = authService.getUser();
+        Page<Board> boardPage = boardRepository.findByUserAndRemovedAtIsNull(user, pageable);
+        List<BoardResponse> boardResponses = new ArrayList<>();
+        for (Board board : boardPage) {
+            List<HashMap<Long, String>> tagList = getTagsForBoard(board.getIdx());
+            List<String> imgList = getImageUrlForMain(board.getIdx());
+            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, imgList, board.getCreatedAt());
+            boardResponses.add(boardResponse);
+        }
+        return new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements());
     }
 }

@@ -5,6 +5,7 @@ import com.umc.cmap.config.BaseResponse;
 import com.umc.cmap.domain.board.dto.*;
 import com.umc.cmap.domain.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -63,6 +64,11 @@ public class BoardController {
     public BaseResponse<BoardListResponse> getBoardBySearch(@PageableDefault(size = 5, sort = "idx", direction = DESC) Pageable pageable,
                                                             @RequestParam String keyword) throws BaseException {
         return new BaseResponse<>(boardService.getBoardBySearch(pageable, keyword));
+    }
+
+    @GetMapping("/my-posts")
+    public BaseResponse<Page<BoardResponse>> getMyBoardList(@PageableDefault(size = 5, sort = "idx", direction = DESC) Pageable pageable) throws BaseException {
+        return new BaseResponse<>(boardService.getMyBoardList(pageable));
     }
 
 }
