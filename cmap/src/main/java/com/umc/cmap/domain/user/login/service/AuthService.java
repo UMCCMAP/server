@@ -8,7 +8,6 @@ import com.umc.cmap.domain.user.login.dto.SessionUser;
 import com.umc.cmap.domain.user.login.token.TokenService;
 import com.umc.cmap.domain.user.repository.ProfileRepository;
 import com.umc.cmap.domain.user.repository.UserRepository;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,7 @@ public class   AuthService {
 
     public User getUser(ServletRequest request) throws BaseException {
         String token = ((HttpServletRequest)request).getHeader("Authorization");
-        return userRepository.findByEmail(tokenService.getUid(token))
+        return userRepository.findByEmail(tokenService.getUserEmail(token))
                     .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
     }
 
