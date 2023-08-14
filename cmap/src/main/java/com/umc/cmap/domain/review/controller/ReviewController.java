@@ -6,6 +6,7 @@ import com.umc.cmap.domain.review.dto.ReviewRequest;
 import com.umc.cmap.domain.review.dto.ReviewResponse;
 import com.umc.cmap.domain.review.service.ReviewPreviewService;
 import com.umc.cmap.domain.review.service.ReviewService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -47,14 +48,14 @@ public class ReviewController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{cafeIdx}/review")
-    public void create(@PathVariable Long cafeIdx, @RequestBody @Valid final ReviewRequest dto) throws BaseException {
-        reviewService.save(cafeIdx, dto);
+    public void create(@PathVariable Long cafeIdx, @RequestBody @Valid final ReviewRequest dto, HttpServletRequest request) throws BaseException {
+        reviewService.save(cafeIdx, dto, request);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/cafe-reviews/{reviewIdx}")
-    public void update(@PathVariable Long reviewIdx, @RequestBody @Valid final ReviewRequest dto) {
-        reviewService.update(reviewIdx, dto);
+    public void update(@PathVariable Long reviewIdx, @RequestBody @Valid final ReviewRequest dto, HttpServletRequest request) {
+        reviewService.update(reviewIdx, dto, request);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
