@@ -1,6 +1,7 @@
 package com.umc.cmap.domain.cmap.entity;
 
 import com.umc.cmap.config.BaseTimeEntity;
+import com.umc.cmap.domain.board.entity.Role;
 import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -26,10 +27,12 @@ public class Cmap extends BaseTimeEntity {
     @JoinColumn(name="cafe_idx")
     private Cafe cafe;
 
-    private boolean type;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Type type;
 
     @Builder
-    public Cmap(User user, Cafe cafe, boolean type) {
+    public Cmap(User user, Cafe cafe, Type type) {
         this.user = user;
         this.cafe = cafe;
         this.type = type;
