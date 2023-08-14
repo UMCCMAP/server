@@ -10,4 +10,8 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findAllByBoardIdx(Long boardIdx, Pageable pageable);
+
+    Long countByUserIdx(Long userIdx);
+
+    List<Comment> findAllByUserIdx(Long userIdx, Pageable pageable);
 }

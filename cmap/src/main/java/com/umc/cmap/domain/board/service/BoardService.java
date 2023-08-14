@@ -6,6 +6,7 @@ import com.umc.cmap.domain.board.entity.*;
 import com.umc.cmap.domain.board.repository.*;
 import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.repository.CafeRepository;
+import com.umc.cmap.domain.comment.repository.CommentRepository;
 import com.umc.cmap.domain.user.entity.Profile;
 import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.login.service.AuthService;
@@ -33,6 +34,7 @@ public class BoardService {
     private final ProfileRepository profileRepository;
     private final AuthService authService;
     private final BoardImageRepository boardImageRepository;
+    private final CommentRepository commentRepository;
 
 
     public BoardListResponse getBoardList(Pageable pageable) throws BaseException {
@@ -144,8 +146,9 @@ public class BoardService {
         String profileImg = getProfileImg();
         boolean like = likeBoardRepository.existsByBoardIdxAndUserIdx(boardIdx, authService.getUser().getIdx());
         Long cntLike = likeBoardRepository.countByBoardIdx(boardIdx);
+        Long cntComment = commentRepository.countByUserIdx(board.getUser().getIdx());
         List<HashMap<Long, String>> tagList = getTagsForBoard(boardIdx);
-        return new BoardPostViewResponse(board, profileImg, cntLike, tagList, like, canModifyPost);
+        return new BoardPostViewResponse(board, profileImg, cntLike, cntComment, tagList, like, canModifyPost);
     }
 
     private String getProfileImg() throws BaseException {
