@@ -35,7 +35,7 @@ public class Cafe extends BaseTimeEntity {
 
     @Lob
     @Column(name = "cafe_image", columnDefinition = "BLOB")
-    private byte[] image;
+    private String image;
 
     @Column(name="cafe_info")
     private String info;
@@ -61,7 +61,7 @@ public class Cafe extends BaseTimeEntity {
 
     @Builder
     public Cafe(Long idx, String name, String city, String district, String info,
-                CafeTheme cafeTheme,byte[] image,Location location) {
+                CafeTheme cafeTheme,String image,Location location) {
         this.idx = idx;
         this.name = name;
         this.city = city;
@@ -75,11 +75,11 @@ public class Cafe extends BaseTimeEntity {
         return cafeThemes;
     }
 
-    public byte[] getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(String image) {
         this.image = image;
     }
 

@@ -119,8 +119,8 @@ public class CafeController {
     }
 
     @GetMapping("/{idx}/image")
-    public ResponseEntity<byte[]> getCafeImage(@PathVariable Long idx) throws BaseException {
-        byte[] imageBytes = cafeService.getCafeImage(idx);
+    public ResponseEntity<String> getCafeImage(@PathVariable Long idx) throws BaseException {
+        String imageBytes = cafeService.getCafeImage(idx);
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageBytes);
     }
 

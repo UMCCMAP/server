@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,6 +51,7 @@ public class CafeService {
                 .district(cafeRequest.getDistrict())
                 .info(cafeRequest.getInfo())
                 .location(location)
+                .image(cafeRequest.getImage())
                 .build();
 
         return cafeRepository.save(cafe);
@@ -66,6 +68,7 @@ public class CafeService {
                 .district(updatedCafeRequest.getDistrict())
                 .info(updatedCafeRequest.getInfo())
                 .location(existingCafe.getLocation())
+                .image(updatedCafeRequest.getImage())
                 .build();
 
         return cafeRepository.save(existingCafe);
@@ -105,7 +108,8 @@ public class CafeService {
 
         if (imageFile != null) {
             try {
-                byte[] imageData = imageFile.getBytes();
+                //String imageData = imageFile.getBytes();
+                String imageData = Base64.getEncoder().encodeToString(imageFile.getBytes());
                 cafe.setImage(imageData);
                 cafeRepository.save(cafe);
             } catch (IOException e) {
@@ -116,9 +120,9 @@ public class CafeService {
         }
     }
 
-    public byte[] getCafeImage(Long idx) throws BaseException {
+    public String getCafeImage(Long idx) throws BaseException {
         Cafe cafe = getCafeById(idx);
-        byte[] image = cafe.getImage();
+        String image = cafe.getImage();
         if (image == null) {
             throw new BaseException(BaseResponseStatus.CAFE_IMAGE_NOT_FOUND);
         }
