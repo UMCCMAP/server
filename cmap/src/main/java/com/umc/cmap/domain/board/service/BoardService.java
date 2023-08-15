@@ -10,6 +10,7 @@ import com.umc.cmap.domain.user.entity.Profile;
 import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.login.service.AuthService;
 import com.umc.cmap.domain.user.repository.ProfileRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.transaction.annotation.Transactional;
@@ -101,8 +102,8 @@ public class BoardService {
 
 
     @Transactional
-    public Long writeBoard(BoardWriteRequest request) throws BaseException {
-        User user = authService.getUser();
+    public Long writeBoard(BoardWriteRequest request, HttpServletRequest token) throws BaseException {
+        User user = authService.getUser(token);
         Cafe cafe = cafeRepository.findById(request.getCafeIdx())
                 .orElseThrow(() -> new BaseException(CAFE_NOT_FOUND));
 
@@ -136,37 +137,37 @@ public class BoardService {
         }
     }
 
-    public BoardPostViewResponse getPostView(Long boardIdx) throws BaseException {
+    public BoardPostViewResponse getPostView(Long boardIdx, HttpServletRequest token) throws BaseException {
         Board board = boardRepository.findById(boardIdx)
                 .orElseThrow(() -> new BaseException(POST_NOT_FOUND));
         if(board.isDeleted()) { throw new BaseException(POST_DELETED); }
-        boolean canModifyPost = checkUser(board.getUser().getIdx());
-        String profileImg = getProfileImg();
-        boolean like = likeBoardRepository.existsByBoardIdxAndUserIdx(boardIdx, authService.getUser().getIdx());
+        boolean canModifyPost = checkUser(board.getUser().getIdx(),token);
+        String profileImg = getProfileImg(token);
+        boolean like = likeBoardRepository.existsByBoardIdxAndUserIdx(boardIdx, authService.getUser(token).getIdx());
         Long cntLike = likeBoardRepository.countByBoardIdx(boardIdx);
         List<HashMap<Long, String>> tagList = getTagsForBoard(boardIdx);
         return new BoardPostViewResponse(board, profileImg, cntLike, tagList, like, canModifyPost);
     }
 
-    private String getProfileImg() throws BaseException {
-        Optional<Profile> profile = profileRepository.findByUserIdx(authService.getUser().getIdx());
+    private String getProfileImg(HttpServletRequest token) throws BaseException {
+        Optional<Profile> profile = profileRepository.findByUserIdx(authService.getUser(token).getIdx());
         return profile.get().getUserImg();
     }
 
     @Transactional
-    public String deletePost(Long boardIdx) throws BaseException {
+    public String deletePost(Long boardIdx, HttpServletRequest token) throws BaseException {
         Board board = boardRepository.findById(boardIdx)
                 .orElseThrow(() -> new BaseException(POST_NOT_FOUND));
-        if (!checkUser(board.getUser().getIdx())) { throw new BaseException(DONT_HAVE_ACCESS); }
+        if (!checkUser(board.getUser().getIdx(), token)) { throw new BaseException(DONT_HAVE_ACCESS); }
         board.removeBoard();
         return "게시글 삭제에 성공했습니다.";
     }
 
     @Transactional
-    public String modifyPost(Long boardIdx, BoardModifyRequest request) throws BaseException {
+    public String modifyPost(Long boardIdx, BoardModifyRequest request, HttpServletRequest token) throws BaseException {
         Board board = boardRepository.findById(boardIdx)
                 .orElseThrow(() -> new BaseException(POST_NOT_FOUND));
-        if (!checkUser(board.getUser().getIdx())) { throw new BaseException(DONT_HAVE_ACCESS); }
+        if (!checkUser(board.getUser().getIdx(),token)) { throw new BaseException(DONT_HAVE_ACCESS); }
         Cafe cafe = cafeRepository.findById(request.getCafeIdx())
                 .orElseThrow(() -> new BaseException(CAFE_NOT_FOUND));
         modifyTagList(request.getTagList(), board);
@@ -176,8 +177,8 @@ public class BoardService {
         return "게시글 수정에 성공했습니다.";
     }
 
-    private boolean checkUser(Long writer) throws BaseException {
-        return writer.equals(authService.getUser().getIdx());
+    private boolean checkUser(Long writer, HttpServletRequest token) throws BaseException {
+        return writer.equals(authService.getUser(token).getIdx());
     }
 
     private void modifyImgList(List<String> imgList, Board board) throws BaseException {
@@ -225,9 +226,9 @@ public class BoardService {
     }
 
     @Transactional
-    public String likePost(Long boardIdx) throws BaseException {
+    public String likePost(Long boardIdx, HttpServletRequest token) throws BaseException {
         Board board = boardRepository.findById(boardIdx).orElseThrow(() -> new BaseException(POST_NOT_FOUND));
-        User user = authService.getUser();
+        User user = authService.getUser(token);
         LikeBoard likeBoard = LikeBoard.builder()
                 .board(board)
                 .user(user)
@@ -237,8 +238,8 @@ public class BoardService {
     }
 
     @Transactional
-    public String likePostCancel(Long boardIdx) throws BaseException {
-        Long userIdx = authService.getUser().getIdx();
+    public String likePostCancel(Long boardIdx, HttpServletRequest token) throws BaseException {
+        Long userIdx = authService.getUser(token).getIdx();
         LikeBoard likeBoard = likeBoardRepository.findByBoardIdxAndUserIdx(boardIdx, userIdx);
         likeBoardRepository.delete(likeBoard);
         return "좋아요 취소";
@@ -257,8 +258,8 @@ public class BoardService {
         return new BoardListResponse(new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements()), tagNames);
     }
 
-    public Page<BoardResponse> getMyBoardList(Pageable pageable) throws BaseException {
-        User user = authService.getUser();
+    public Page<BoardResponse> getMyBoardList(Pageable pageable, HttpServletRequest token) throws BaseException {
+        User user = authService.getUser(token);
         Page<Board> boardPage = boardRepository.findByUserAndRemovedAtIsNull(user, pageable);
         List<BoardResponse> boardResponses = new ArrayList<>();
         for (Board board : boardPage) {
