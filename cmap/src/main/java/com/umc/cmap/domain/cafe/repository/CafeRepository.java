@@ -24,6 +24,7 @@ public interface CafeRepository extends JpaRepository<Cafe, Long> {
     List<Cafe> findByCityAndDistrict(String city, String district);
 
     List<Cafe> findByNameContaining(String cafeName);
+    Cafe findByName(String cafeName);
 
 }
 
