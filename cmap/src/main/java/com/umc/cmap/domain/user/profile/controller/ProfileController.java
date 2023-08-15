@@ -1,8 +1,7 @@
 package com.umc.cmap.domain.user.profile.controller;
 
 import com.umc.cmap.config.BaseException;
-import com.umc.cmap.domain.board.entity.Board;
-import com.umc.cmap.domain.board.repository.BoardRepository;
+import com.umc.cmap.domain.review.dto.ReviewResponse;
 import com.umc.cmap.domain.review.service.ReviewService;
 import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.login.service.AuthService;
@@ -12,9 +11,13 @@ import com.umc.cmap.domain.user.profile.service.ProfileService;
 import com.umc.cmap.domain.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 
 @RestController
@@ -24,7 +27,6 @@ public class ProfileController {
     private final ProfileService profileService;
     private final AuthService authService;
     private final ReviewService reviewService;
-    private final BoardRepository boardRepository;
 
     @GetMapping("/users/profile/{userNickname}")
     public ProfileResponse profile(@PathVariable String userNickname) throws BaseException{
@@ -53,15 +55,9 @@ public class ProfileController {
         return "redirect:/users/profile/" + userNickname;
     }
 
-    /*@GetMapping("/users/profile/{userNickname}/reviews")
-    public List<ReviewResponse> userReview(HttpServletRequest request) throws BaseException{
+    @GetMapping("/users/profile/{userNickname}/reviews")
+    public List<ReviewResponse> userReview(HttpServletRequest request, @PageableDefault(sort = "createdAt", direction = DESC) Pageable pageable) throws BaseException{
         User user = authService.getUser(request);
-        return reviewService.getAllUserReviews(user.getIdx(), @PageableDefault(sort = "createdAt", direction = DESC) Pageable pageable);
-    }*/
-
-    @GetMapping("/users/profile/{userNickname}/board")
-    public List<Board> userBoard(HttpServletRequest request) throws BaseException{
-        User user = authService.getUser(request);
-        return boardRepository.findAllByUserIdxAndRemovedAtIsNull(user.getIdx());
+        return reviewService.getAllUserReviews(user.getIdx(), pageable);
     }
 }
