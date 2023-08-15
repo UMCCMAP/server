@@ -3,7 +3,7 @@ package com.umc.cmap.domain.user.profile.service;
 import com.umc.cmap.config.BaseException;
 import com.umc.cmap.config.BaseResponseStatus;
 import com.umc.cmap.domain.board.repository.BoardRepository;
-import com.umc.cmap.domain.review.repository.ReviewRepository;
+import com.umc.cmap.domain.review.service.ReviewService;
 import com.umc.cmap.domain.user.entity.Mates;
 import com.umc.cmap.domain.user.entity.Profile;
 import com.umc.cmap.domain.user.entity.User;
@@ -29,7 +29,7 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
     private final MatesRepository matesRepository;
     private final ProfileMapper profileMapper;
-    private final ReviewRepository reviewRepository;
+    private final ReviewService reviewService;
     private final BoardRepository boardRepository;
 
     public ProfileResponse getOne(String userNickname) throws BaseException{
@@ -48,7 +48,7 @@ public class ProfileService {
             }
         }
 
-        Long reviewNo = reviewRepository.countByUserIdx(user.getIdx());
+        Long reviewNo = reviewService.getUserReviewsCnt(user.getIdx());
         Long boardNo = boardRepository.countByUserIdxAndRemovedAtIsNull(user.getIdx());
 
         return profileMapper.toResponse(profile, profile.getUser().getNickname(), reviewNo, boardNo, matesInfoList);
@@ -76,7 +76,7 @@ public class ProfileService {
             }
         }
 
-        Long reviewNo = reviewRepository.countByUserIdx(user.getIdx());
+        Long reviewNo = reviewService.getUserReviewsCnt(user.getIdx());
         Long boardNo = boardRepository.countByUserIdxAndRemovedAtIsNull(user.getIdx());
 
         return profileMapper.toResponse(profile, profile.getUser().getNickname(), reviewNo, boardNo, matesInfoList);
