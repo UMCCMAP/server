@@ -13,7 +13,7 @@ import java.util.List;
 public class ReviewResponse {
     private ReviewWriterResponse userInfo;
     private String content;
-    private Double score;
+    private Integer score;
     private String title;
     private String keyword;
     private List<String> imageUrls;

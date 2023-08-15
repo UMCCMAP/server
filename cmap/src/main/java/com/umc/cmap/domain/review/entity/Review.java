@@ -22,7 +22,7 @@ public class Review extends BaseTimeEntity {
     private String keyword;
     private String content;
 
-    private Double score;
+    private Integer score;
     private Boolean isDeleted;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,7 +34,7 @@ public class Review extends BaseTimeEntity {
     private Cafe cafe;
 
     @Builder
-    public Review(User user, Cafe cafe, String content, String title, String keyword, Double score) {
+    public Review(User user, Cafe cafe, String content, String title, String keyword, Integer score) {
         this.user = user;
         this.cafe = cafe;
         this.content = content;

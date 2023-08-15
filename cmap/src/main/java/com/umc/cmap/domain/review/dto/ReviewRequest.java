@@ -4,6 +4,7 @@ import com.umc.cmap.domain.cafe.entity.Cafe;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.validator.constraints.URL;
 
 import java.util.List;
 
@@ -13,10 +14,10 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class ReviewRequest {
-    private Double score;
+    private Integer score;
     private String title;
     @Size(max = 20)private String keyword;
     @NotNull private String content;
-    private List<String> imageUrls;
+    @URL private List<String> imageUrls;
     private Cafe cafe;
 }
