@@ -40,6 +40,7 @@ public class BoardService {
     private final UserRepository userRepository;
 
 
+
     public BoardListResponse getBoardList(Pageable pageable) throws BaseException {
         Page<Board> boardPage = boardRepository.findAllByRemovedAtIsNull(pageable);
         Long cntBoard = boardRepository.countByRemovedAtIsNull();
