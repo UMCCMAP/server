@@ -39,31 +39,11 @@ public class CafeService {
     }
 
     @Transactional
-    public Cafe createCafe(CafeRequest cafeRequest) throws BaseException {
-        if (cafeRequest.getLocationIdx() == null) {
-            throw new BaseException(BaseResponseStatus.LOCATION_NOT_INPUT);
-        }
-
-        Location location = locationRepository.findById(cafeRequest.getLocationIdx())
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.LOCATION_NOT_FOUND));
-
-        Cafe cafe = Cafe.builder()
-                .name(cafeRequest.getName())
-                .city(cafeRequest.getCity())
-                .district(cafeRequest.getDistrict())
-                .info(cafeRequest.getInfo())
-                .location(location)
-                .build();
-
-        return cafeRepository.save(cafe);
-    }
-
-    @Transactional
     public Cafe updateCafe(Long idx, CafeRequest updatedCafeRequest) throws BaseException {
         Cafe existingCafe = getCafeById(idx);
         LocalDateTime createdAt = existingCafe.getCreatedAt();
 
-        existingCafe = Cafe.builder()
+
                 .idx(existingCafe.getIdx())
                 .name(updatedCafeRequest.getName())
                 .city(updatedCafeRequest.getCity())
