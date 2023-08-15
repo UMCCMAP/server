@@ -104,8 +104,12 @@ public class ReviewService {
     }
 
     @Transactional
-    public void delete(Long param) {
-        reviewRepository.findById(param).orElseThrow(EntityNotFoundException::new).delete();
+    public void delete(Long param, HttpServletRequest request) throws BaseException {
+        Review review = reviewRepository.findById(param).orElseThrow(EntityNotFoundException::new);
+        if (!isValidRequest(review.getUser(), request)) {
+            throw new BaseException(DONT_HAVE_ACCESS);
+        }
+        review.delete();
     }
 
 }

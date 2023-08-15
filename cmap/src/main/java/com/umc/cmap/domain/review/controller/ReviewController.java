@@ -54,13 +54,13 @@ public class ReviewController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/cafe-reviews/{reviewIdx}")
-    public void update(@PathVariable Long reviewIdx, @RequestBody @Valid final ReviewRequest dto, HttpServletRequest request) {
+    public void update(@PathVariable Long reviewIdx, @RequestBody @Valid final ReviewRequest dto, HttpServletRequest request) throws BaseException {
         reviewService.update(reviewIdx, dto, request);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/cafe-reviews/{reviewIdx}")
-    public void delete(@PathVariable Long reviewIdx) {
-        reviewService.delete(reviewIdx);
+    public void delete(@PathVariable Long reviewIdx,HttpServletRequest request) throws BaseException{
+        reviewService.delete(reviewIdx, request);
     }
 }
