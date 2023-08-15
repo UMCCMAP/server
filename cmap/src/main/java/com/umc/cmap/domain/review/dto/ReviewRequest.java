@@ -18,6 +18,6 @@ public class ReviewRequest {
     private String title;
     @Size(max = 20)private String keyword;
     @NotNull private String content;
-    @URL private List<String> imageUrls;
+    private List<String> imageUrls;
     private Cafe cafe;
 }
