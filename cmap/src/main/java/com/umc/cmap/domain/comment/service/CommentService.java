@@ -10,6 +10,7 @@ import com.umc.cmap.domain.comment.entity.Comment;
 import com.umc.cmap.domain.comment.mapper.CommentMapper;
 import com.umc.cmap.domain.comment.repository.CommentRepository;
 import com.umc.cmap.domain.user.entity.Profile;
+
 import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.login.service.AuthService;
 import com.umc.cmap.domain.user.repository.ProfileRepository;
@@ -37,6 +38,17 @@ public class CommentService {
     public List<CommentResponse> getAll(Long boardIdx, Pageable pageable) {
         List<CommentResponse> comments = commentRepository.findAllByBoardIdx(boardIdx, pageable).stream().filter(c -> c.getRemovedAt() == null)
                 .map(c -> mapper.toResponse(c, c.getUser())).toList();
+        return setCommentUserImg(comments);
+    }
+
+    public List<CommentResponse> getAllByUser(Long userIdx, Pageable pageable) throws BaseException {
+        User login = authService.getUser();
+        List<CommentResponse> comments = commentRepository.findAllByUserIdx(login.getIdx(), pageable)
+                .stream().map(c -> mapper.toResponse(c, login)).toList();
+        return setCommentUserImg(comments);
+    }
+
+    private List<CommentResponse> setCommentUserImg(List<CommentResponse> comments) {
         comments.forEach(c -> c.setUserImg(getWriterProfileImg(c.getUserIdx())));
         return comments;
     }
