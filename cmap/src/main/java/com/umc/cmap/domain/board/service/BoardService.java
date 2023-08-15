@@ -40,6 +40,8 @@ public class BoardService {
 
     public BoardListResponse getBoardList(Pageable pageable) throws BaseException {
         Page<Board> boardPage = boardRepository.findAllByRemovedAtIsNull(pageable);
+        Long cntBoard = boardRepository.countByRemovedAtIsNull();
+        Long cntPage = (long) Math.ceil(cntBoard.doubleValue() / 5);
         List<BoardResponse> boardResponses = new ArrayList<>();
         for (Board board : boardPage) {
             List<HashMap<Long, String>> tagList = getTagsForBoard(board.getIdx());
@@ -48,12 +50,14 @@ public class BoardService {
             boardResponses.add(boardResponse);
         }
         List<TagDto> tagNames = tagRepository.findAllTags();
-        return new BoardListResponse(new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements()), tagNames);
+        return new BoardListResponse(new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements()), cntBoard, cntPage, tagNames);
     }
 
     public BoardListResponse getBoardListWithTags(Pageable pageable, List<Long> tagIdx) throws BaseException {
         List<Long> boardIdxInBoardTag = findBoardIdxByAllTags(tagIdx);
         Page<Board> boardPage = boardRepository.findByIdxInAndRemovedAtIsNull(boardIdxInBoardTag, pageable);
+        Long cntBoard = boardRepository.countByIdxInAndRemovedAtIsNull(boardIdxInBoardTag);
+        Long cntPage = (long) Math.ceil(cntBoard.doubleValue() / 5);
         List<TagDto> tagNames = tagRepository.findAllTags();
         List<BoardResponse> boardResponses = new ArrayList<>();
         for (Board board : boardPage) {
@@ -62,7 +66,7 @@ public class BoardService {
             BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, imgList, board.getCreatedAt());
             boardResponses.add(boardResponse);
         }
-        return new BoardListResponse(new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements()), tagNames);
+        return new BoardListResponse(new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements()),cntBoard, cntPage, tagNames);
     }
 
     private List<Long> findBoardIdxByAllTags(List<Long> tagIdxList) {
