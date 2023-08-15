@@ -5,6 +5,7 @@ import com.umc.cmap.config.BaseResponse;
 import com.umc.cmap.config.BaseResponseStatus;
 import com.umc.cmap.domain.theme.controller.request.CafeThemeRequest;
 import com.umc.cmap.domain.theme.entity.CafeTheme;
+import com.umc.cmap.domain.theme.entity.Theme;
 import com.umc.cmap.domain.theme.service.CafeThemeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,9 +29,6 @@ public class CafeThemeController {
     @GetMapping("/{cafeThemeId}")
     public ResponseEntity<CafeTheme> getCafeThemeById(@PathVariable Long cafeThemeId) throws BaseException {
         CafeTheme cafeTheme = cafeThemeService.getCafeThemeById(cafeThemeId);
-        if (cafeTheme == null) {
-            throw new BaseException(BaseResponseStatus.CAFE_THEME_NOT_FOUND);
-        }
         return ResponseEntity.ok(cafeTheme);
     }
 
@@ -49,15 +47,21 @@ public class CafeThemeController {
 
 
     @PutMapping("/{cafeThemeId}")
-    public ResponseEntity<CafeTheme> updateCafeTheme(@PathVariable Long cafeThemeId, @RequestBody CafeTheme cafeTheme) throws BaseException {
-        CafeTheme updatedCafeTheme = cafeThemeService.updateCafeTheme(cafeThemeId, cafeTheme);
+    public ResponseEntity<CafeTheme> updateCafeTheme(@PathVariable Long cafeThemeId, @RequestBody CafeThemeRequest cafeThemeRequest) throws BaseException {
+        CafeTheme updatedCafeTheme = cafeThemeService.updateCafeTheme(cafeThemeId, cafeThemeRequest);
         return ResponseEntity.ok(updatedCafeTheme);
     }
 
-
-    @DeleteMapping("/{cafeThemeId}")
+    @DeleteMapping("/theme/{cafeThemeId}")
     public ResponseEntity<Void> deleteCafeTheme(@PathVariable Long cafeThemeId) throws BaseException {
         cafeThemeService.deleteCafeTheme(cafeThemeId);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @DeleteMapping("/{cafeId}")
+    public ResponseEntity<Void> deleteCafeThemes(@PathVariable Long cafeId) throws BaseException {
+        cafeThemeService.deleteCafeThemes(cafeId);
         return ResponseEntity.noContent().build();
     }
 

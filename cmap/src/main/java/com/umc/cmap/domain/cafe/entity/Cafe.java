@@ -1,5 +1,6 @@
 package com.umc.cmap.domain.cafe.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.umc.cmap.config.BaseTimeEntity;
 import com.umc.cmap.domain.theme.entity.CafeTheme;
@@ -7,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +55,11 @@ public class Cafe extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "location_idx")
     private Location location;
+
+    @JsonIgnore
+    public LocalDateTime getCreatedAt() {
+        return super.getCreatedAt();
+    }
 
     public String getThemeName() {
         return this.cafeThemes != null && !this.cafeThemes.isEmpty() && this.cafeThemes.get(0).getTheme() != null

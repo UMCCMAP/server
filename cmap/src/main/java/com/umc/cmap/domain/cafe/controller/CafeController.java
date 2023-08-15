@@ -9,6 +9,7 @@ import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.entity.Location;
 import com.umc.cmap.domain.cafe.service.CafeService;
 import com.umc.cmap.domain.cafe.service.LocationService;
+import com.umc.cmap.domain.filter.entity.CafeFilter;
 import com.umc.cmap.domain.filter.service.CafeFilterService;
 import com.umc.cmap.domain.theme.repository.ThemeRepository;
 import lombok.RequiredArgsConstructor;
@@ -75,6 +76,7 @@ public class CafeController {
         return ResponseEntity.noContent().build();
     }
 
+
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<BaseResponse<BaseResponseStatus>> handleBaseException(BaseException ex) {
         BaseResponse<BaseResponseStatus> response = new BaseResponse<>(ex.getStatus());
@@ -82,41 +84,20 @@ public class CafeController {
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<CafeResponse>> getCafesByFilter(
+    public ResponseEntity<CafeResponse> getCafesByFilter(
             @RequestParam(name = "city", required = false) String city,
             @RequestParam(name = "district", required = false) String district,
             @RequestParam(name = "theme", required = false) List<String> themeNames) throws BaseException {
 
-        List<CafeResponse> cafeResponses = new ArrayList<>();
+        List<CafeResponse> cafeResponses = cafeFilterService.getRandomCafeByTheme(city, district, themeNames);
 
-        if ((city != null && district != null) && (themeNames == null || themeNames.isEmpty())) {
-            List<Cafe> cafes = cafeService.getCafesByCityAndDistrict(city, district);
-            cafeResponses = cafes.stream()
-                    .map(CafeResponse::new)
-                    .collect(Collectors.toList());
-        } else if (themeNames != null && !themeNames.isEmpty() && (city == null || district == null)) {
-            List<Cafe> cafesWithThemes = cafeService.getCafesByThemes(themeNames);
-
-            for (Cafe cafe : cafesWithThemes) {
-                List<String> cafeThemeNames = cafe.getCafeThemes().stream()
-                        .map(cafeTheme -> cafeTheme.getTheme().getName()) // Get the theme name from CafeTheme
-                        .collect(Collectors.toList());
-
-                if (cafeThemeNames.containsAll(themeNames)) {
-                    cafeResponses.add(new CafeResponse(cafe));
-                }
-            }
-        }
-
-        if (cafeResponses.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
 
         int randomIndex = new Random().nextInt(cafeResponses.size());
         CafeResponse randomCafeResponse = cafeResponses.get(randomIndex);
 
-        return ResponseEntity.ok(Collections.singletonList(randomCafeResponse));
+        return ResponseEntity.ok(randomCafeResponse);
     }
+
 
     @GetMapping("/{idx}/image")
     public ResponseEntity<String> getCafeImage(@PathVariable Long idx) throws BaseException {
@@ -124,11 +105,20 @@ public class CafeController {
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageBytes);
     }
 
+
     @PostMapping("/{idx}/image")
     public ResponseEntity<String> uploadCafeImage(@PathVariable Long idx, @RequestParam("imageFile") MultipartFile imageFile) throws BaseException {
         cafeService.uploadCafeImage(idx, imageFile);
         return ResponseEntity.ok("성공적으로 이미지 업로드");
     }
 
-}
 
+    @GetMapping("/themeAll")
+    public ResponseEntity<List<CafeResponse>> getCafesByTheme(
+            @RequestParam(name = "themeName") String themeName) throws BaseException {
+        List<CafeResponse> cafeResponses = cafeFilterService.getCafesByTheme(themeName);
+        return ResponseEntity.ok(cafeResponses);
+    }
+
+
+}

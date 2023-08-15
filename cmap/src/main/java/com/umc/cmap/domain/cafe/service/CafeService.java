@@ -15,9 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -51,7 +53,6 @@ public class CafeService {
                 .district(cafeRequest.getDistrict())
                 .info(cafeRequest.getInfo())
                 .location(location)
-                .image(cafeRequest.getImage())
                 .build();
 
         return cafeRepository.save(cafe);
@@ -60,6 +61,7 @@ public class CafeService {
     @Transactional
     public Cafe updateCafe(Long idx, CafeRequest updatedCafeRequest) throws BaseException {
         Cafe existingCafe = getCafeById(idx);
+        LocalDateTime createdAt = existingCafe.getCreatedAt();
 
         existingCafe = Cafe.builder()
                 .idx(existingCafe.getIdx())
@@ -68,7 +70,6 @@ public class CafeService {
                 .district(updatedCafeRequest.getDistrict())
                 .info(updatedCafeRequest.getInfo())
                 .location(existingCafe.getLocation())
-                .image(updatedCafeRequest.getImage())
                 .build();
 
         return cafeRepository.save(existingCafe);
@@ -102,13 +103,11 @@ public class CafeService {
         return cafeRepository.findByNameContaining(cafeName);
     }
 
-
     public void uploadCafeImage(Long idx, MultipartFile imageFile) throws BaseException {
         Cafe cafe = getCafeById(idx);
 
         if (imageFile != null) {
             try {
-                //String imageData = imageFile.getBytes();
                 String imageData = Base64.getEncoder().encodeToString(imageFile.getBytes());
                 cafe.setImage(imageData);
                 cafeRepository.save(cafe);
@@ -127,6 +126,24 @@ public class CafeService {
             throw new BaseException(BaseResponseStatus.CAFE_IMAGE_NOT_FOUND);
         }
         return image;
+    }
+
+    public List<Cafe> getCafesByCityAndDistrictAndThemes(String city, String district, List<String> themeNames) {
+        List<Cafe> cafes = cafeRepository.findCafesByCityAndDistrict(city, district);
+
+        // Filter cafes by themes
+        List<Cafe> cafesWithThemes = new ArrayList<>();
+        for (Cafe cafe : cafes) {
+            List<String> cafeThemeNames = cafe.getCafeThemes().stream()
+                    .map(cafeTheme -> cafeTheme.getTheme().getName())
+                    .collect(Collectors.toList());
+
+            if (cafeThemeNames.containsAll(themeNames)) {
+                cafesWithThemes.add(cafe);
+            }
+        }
+
+        return cafesWithThemes;
     }
 
 }
