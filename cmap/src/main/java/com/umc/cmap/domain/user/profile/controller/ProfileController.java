@@ -55,6 +55,7 @@ public class ProfileController {
         return "redirect:/users/profile/" + userNickname;
     }
 
+  
     @GetMapping("/users/profile/{userNickname}/reviews")
     public List<ReviewResponse> userReview(HttpServletRequest request, @PageableDefault(sort = "createdAt", direction = DESC) Pageable pageable) throws BaseException{
         User user = authService.getUser(request);

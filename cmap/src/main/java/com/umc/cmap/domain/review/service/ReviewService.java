@@ -47,7 +47,7 @@ public class ReviewService {
         return mapper.toResponse(review, imageService.getAll(id), getWriter(review.getUser()));
     }
 
-    private ReviewWriterResponse getWriter(User user) {
+    public ReviewWriterResponse getWriter(User user) {
         return ReviewWriterResponse.builder()
                 .userIdx(user.getIdx())
                 .userNickname(user.getNickname())
@@ -83,7 +83,7 @@ public class ReviewService {
     @Transactional
     public void update(Long reviewIdx, ReviewRequest param) {
         Review review = reviewRepository.findById(reviewIdx).orElseThrow(EntityNotFoundException::new);
-        review.update(param.getContent(), param.getScore());
+        review.update(param);
         updateReviewImages(param.getImageUrls(), review);
     }
 
@@ -95,7 +95,6 @@ public class ReviewService {
     @Transactional
     public void delete(Long param) {
         reviewRepository.findById(param).orElseThrow(EntityNotFoundException::new).delete();
-
     }
 
 }

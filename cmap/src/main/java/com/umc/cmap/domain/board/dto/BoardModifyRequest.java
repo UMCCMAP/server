@@ -12,9 +12,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardModifyRequest {
-    private Long userIdx;
     private Long cafeIdx;
     private String boardTitle;
     private String boardContent;
     private List<Long> tagList;
+    private List<String> imgList;
 }

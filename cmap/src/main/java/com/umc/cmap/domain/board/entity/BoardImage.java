@@ -1,6 +1,5 @@
 package com.umc.cmap.domain.board.entity;
 
-import com.umc.cmap.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -10,23 +9,22 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class LikeBoard {
+public class BoardImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "like_board_idx")
+    @Column(name = "board_image_idx")
     private Long idx;
 
-    @ManyToOne
-    @JoinColumn(name = "board_idx")
+    @Column(name = "image_url")
+    private String imageUrl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="board_idx")
     private Board board;
 
-    @ManyToOne
-    @JoinColumn(name = "user_idx")
-    private User user;
-
     @Builder
-    public LikeBoard(Board board, User user) {
+    public BoardImage (String imageUrl, Board board) {
+        this.imageUrl = imageUrl;
         this.board = board;
-        this.user = user;
     }
 }

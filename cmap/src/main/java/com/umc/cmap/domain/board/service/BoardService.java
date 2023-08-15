@@ -1,17 +1,16 @@
 package com.umc.cmap.domain.board.service;
 
 import com.umc.cmap.config.BaseException;
-import com.umc.cmap.config.BaseResponseStatus;
 import com.umc.cmap.domain.board.dto.*;
 import com.umc.cmap.domain.board.entity.*;
-import com.umc.cmap.domain.board.repository.BoardRepository;
-import com.umc.cmap.domain.board.repository.BoardTagRepository;
-import com.umc.cmap.domain.board.repository.LikeBoardRepository;
-import com.umc.cmap.domain.board.repository.TagRepository;
+import com.umc.cmap.domain.board.repository.*;
 import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.repository.CafeRepository;
+import com.umc.cmap.domain.comment.repository.CommentRepository;
+import com.umc.cmap.domain.user.entity.Profile;
 import com.umc.cmap.domain.user.entity.User;
-import com.umc.cmap.domain.user.repository.UserRepository;
+import com.umc.cmap.domain.user.login.service.AuthService;
+import com.umc.cmap.domain.user.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import static com.umc.cmap.config.BaseResponseStatus.*;
 
 @RequiredArgsConstructor
 @Service
@@ -29,17 +29,21 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardTagRepository boardTagRepository;
     private final TagRepository tagRepository;
-    private final UserRepository userRepository;
     private final CafeRepository cafeRepository;
     private final LikeBoardRepository likeBoardRepository;
+    private final ProfileRepository profileRepository;
+    private final AuthService authService;
+    private final BoardImageRepository boardImageRepository;
+    private final CommentRepository commentRepository;
 
 
     public BoardListResponse getBoardList(Pageable pageable) throws BaseException {
         Page<Board> boardPage = boardRepository.findAllByRemovedAtIsNull(pageable);
         List<BoardResponse> boardResponses = new ArrayList<>();
         for (Board board : boardPage) {
-            HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(board.getIdx());
-            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, board.getCreatedAt());
+            List<HashMap<Long, String>> tagList = getTagsForBoard(board.getIdx());
+            List<String> imgList = getImageUrlForMain(board.getIdx());
+            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, imgList, board.getCreatedAt());
             boardResponses.add(boardResponse);
         }
         List<TagDto> tagNames = tagRepository.findAllTags();
@@ -52,8 +56,9 @@ public class BoardService {
         List<TagDto> tagNames = tagRepository.findAllTags();
         List<BoardResponse> boardResponses = new ArrayList<>();
         for (Board board : boardPage) {
-            HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(board.getIdx());
-            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, board.getCreatedAt());
+            List<HashMap<Long, String>> tagList = getTagsForBoard(board.getIdx());
+            List<String> imgList = getImageUrlForMain(board.getIdx());
+            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, imgList, board.getCreatedAt());
             boardResponses.add(boardResponse);
         }
         return new BoardListResponse(new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements()), tagNames);
@@ -69,9 +74,9 @@ public class BoardService {
         return result;
     }
 
-    private HashMap<Long, List<HashMap<Long, String>>> getTagsForBoard(Long boardIdx) throws BaseException {
+    private List<HashMap<Long, String>> getTagsForBoard(Long boardIdx) throws BaseException {
         List<BoardTag> boardTags = boardTagRepository.findTagIdxListByBoardIdx(boardIdx);
-        List<HashMap<Long, String>> tagsList = boardTags.stream()
+        return boardTags.stream()
                 .map(boardTag -> {
                     Tag tag = boardTag.getTag();
                     HashMap<Long, String> tagMap = new HashMap<>();
@@ -79,17 +84,29 @@ public class BoardService {
                     return tagMap;
                 })
                 .collect(Collectors.toList());
-        HashMap<Long, List<HashMap<Long, String>>> result = new HashMap<>();
-        result.put(boardIdx, tagsList);
-        return result;
     }
+
+    private List<String> getImageUrlForMain(Long boardIdx) {
+        List<BoardImage> images = boardImageRepository.findBoardImageListByBoardIdx(boardIdx);
+        int maxImageCount = 3;
+        if (images.size() > maxImageCount) {
+            return images.stream()
+                    .sorted(Comparator.comparing(BoardImage::getIdx))
+                    .limit(maxImageCount)
+                    .map(BoardImage::getImageUrl)
+                    .collect(Collectors.toList());
+        }
+        return images.stream()
+                .map(BoardImage::getImageUrl)
+                .collect(Collectors.toList());
+    }
+
 
     @Transactional
     public Long writeBoard(BoardWriteRequest request) throws BaseException {
-        User user = userRepository.findById(request.getUserIdx())
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
+        User user = authService.getUser();
         Cafe cafe = cafeRepository.findById(request.getCafeIdx())
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(CAFE_NOT_FOUND));
 
         Board board = Board.builder()
                 .user(user)
@@ -101,6 +118,7 @@ public class BoardService {
 
         Board savedBoard = boardRepository.save(board);
         postBoardTagList(request.getTagList(), savedBoard);
+        postBoardImgList(request.getImgList(), savedBoard);
 
         return savedBoard.getIdx();
     }
@@ -108,24 +126,41 @@ public class BoardService {
     private void postBoardTagList(List<Long> tagList, Board board) throws BaseException {
         for (Long tagIdx : tagList) {
             Tag tag = tagRepository.findById(tagIdx)
-                    .orElseThrow(() -> new BaseException(BaseResponseStatus.TAG_NOT_FOUND));
+                    .orElseThrow(() -> new BaseException(TAG_NOT_FOUND));
 
             boardTagRepository.save(new BoardTag(board, tag));
         }
     }
 
-    public BoardMyPostResponse getMyPost(Long boardIdx) throws BaseException {
+    private void postBoardImgList(List<String> imgList, Board board) throws BaseException {
+        for (String img : imgList) {
+            boardImageRepository.save(new BoardImage(img, board));
+        }
+    }
+
+    public BoardPostViewResponse getPostView(Long boardIdx) throws BaseException {
         Board board = boardRepository.findById(boardIdx)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
-        if(board.isDeleted()) { throw new BaseException(BaseResponseStatus.POST_DELETED); }
-        HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(board.getIdx());
-        return new BoardMyPostResponse(board, tagList);
+                .orElseThrow(() -> new BaseException(POST_NOT_FOUND));
+        if(board.isDeleted()) { throw new BaseException(POST_DELETED); }
+        boolean canModifyPost = checkUser(board.getUser().getIdx());
+        String profileImg = getProfileImg();
+        boolean like = likeBoardRepository.existsByBoardIdxAndUserIdx(boardIdx, authService.getUser().getIdx());
+        Long cntLike = likeBoardRepository.countByBoardIdx(boardIdx);
+        Long cntComment = commentRepository.countByUserIdx(board.getUser().getIdx());
+        List<HashMap<Long, String>> tagList = getTagsForBoard(boardIdx);
+        return new BoardPostViewResponse(board, profileImg, cntLike, cntComment, tagList, like, canModifyPost);
+    }
+
+    private String getProfileImg() throws BaseException {
+        Optional<Profile> profile = profileRepository.findByUserIdx(authService.getUser().getIdx());
+        return profile.get().getUserImg();
     }
 
     @Transactional
     public String deletePost(Long boardIdx) throws BaseException {
         Board board = boardRepository.findById(boardIdx)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(POST_NOT_FOUND));
+        if (!checkUser(board.getUser().getIdx())) { throw new BaseException(DONT_HAVE_ACCESS); }
         board.removeBoard();
         return "게시글 삭제에 성공했습니다.";
     }
@@ -133,20 +168,47 @@ public class BoardService {
     @Transactional
     public String modifyPost(Long boardIdx, BoardModifyRequest request) throws BaseException {
         Board board = boardRepository.findById(boardIdx)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(POST_NOT_FOUND));
+        if (!checkUser(board.getUser().getIdx())) { throw new BaseException(DONT_HAVE_ACCESS); }
         Cafe cafe = cafeRepository.findById(request.getCafeIdx())
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(CAFE_NOT_FOUND));
         modifyTagList(request.getTagList(), board);
+        modifyImgList(request.getImgList(), board);
         board.modifyPost(cafe, request.getBoardTitle(), request.getBoardContent());
 
         return "게시글 수정에 성공했습니다.";
+    }
+
+    private boolean checkUser(Long writer) throws BaseException {
+        return writer.equals(authService.getUser().getIdx());
+    }
+
+    private void modifyImgList(List<String> imgList, Board board) throws BaseException {
+        List<BoardImage> existingImgs = boardImageRepository.findBoardImageListByBoardIdx(board.getIdx());
+        for (String imgUrl : imgList) {
+            if (!containsImg(existingImgs, imgUrl)) {
+                boardImageRepository.save(new BoardImage(imgUrl, board));
+            }
+        }
+        for (BoardImage existingImg : existingImgs) {
+            if(!imgList.contains(existingImg.getImageUrl())) {
+                boardImageRepository.delete(existingImg);
+            }
+        }
+    }
+
+    private boolean containsImg(List<BoardImage> boardImages, String imgUrl) {
+        for (BoardImage img : boardImages) {
+            if (img.getImageUrl().equals(imgUrl)) { return true; }
+        }
+        return false;
     }
 
     private void modifyTagList(List<Long> tagList, Board board) throws BaseException {
         List<BoardTag> existingTags = boardTagRepository.findTagIdxListByBoardIdx(board.getIdx());
         for (Long tagIdx : tagList) {
             Tag tag = tagRepository.findById(tagIdx)
-                    .orElseThrow(() -> new BaseException(BaseResponseStatus.TAG_NOT_FOUND));
+                    .orElseThrow(() -> new BaseException(TAG_NOT_FOUND));
             if (!containsTag(existingTags, tagIdx)) {
                 boardTagRepository.save(new BoardTag(board, tag));
             }
@@ -166,9 +228,9 @@ public class BoardService {
     }
 
     @Transactional
-    public String likePost(Long boardIdx, Long userIdx) throws BaseException {
-        Board board = boardRepository.findById(boardIdx).orElseThrow(() -> new BaseException(BaseResponseStatus.POST_NOT_FOUND));
-        User user = userRepository.findById(userIdx).orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
+    public String likePost(Long boardIdx) throws BaseException {
+        Board board = boardRepository.findById(boardIdx).orElseThrow(() -> new BaseException(POST_NOT_FOUND));
+        User user = authService.getUser();
         LikeBoard likeBoard = LikeBoard.builder()
                 .board(board)
                 .user(user)
@@ -178,7 +240,8 @@ public class BoardService {
     }
 
     @Transactional
-    public String likePostCancel(Long boardIdx, Long userIdx) throws BaseException {
+    public String likePostCancel(Long boardIdx) throws BaseException {
+        Long userIdx = authService.getUser().getIdx();
         LikeBoard likeBoard = likeBoardRepository.findByBoardIdxAndUserIdx(boardIdx, userIdx);
         likeBoardRepository.delete(likeBoard);
         return "좋아요 취소";
@@ -189,10 +252,24 @@ public class BoardService {
         List<TagDto> tagNames = tagRepository.findAllTags();
         List<BoardResponse> boardResponses = new ArrayList<>();
         for (Board board : boardPage) {
-            HashMap<Long, List<HashMap<Long, String>>> tagList = getTagsForBoard(board.getIdx());
-            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, board.getCreatedAt());
+            List<HashMap<Long, String>> tagList = getTagsForBoard(board.getIdx());
+            List<String> imgList = getImageUrlForMain(board.getIdx());
+            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, imgList, board.getCreatedAt());
             boardResponses.add(boardResponse);
         }
         return new BoardListResponse(new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements()), tagNames);
+    }
+
+    public Page<BoardResponse> getMyBoardList(Pageable pageable) throws BaseException {
+        User user = authService.getUser();
+        Page<Board> boardPage = boardRepository.findByUserAndRemovedAtIsNull(user, pageable);
+        List<BoardResponse> boardResponses = new ArrayList<>();
+        for (Board board : boardPage) {
+            List<HashMap<Long, String>> tagList = getTagsForBoard(board.getIdx());
+            List<String> imgList = getImageUrlForMain(board.getIdx());
+            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, imgList, board.getCreatedAt());
+            boardResponses.add(boardResponse);
+        }
+        return new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements());
     }
 }

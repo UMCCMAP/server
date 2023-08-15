@@ -22,7 +22,7 @@ public class BoardController {
 
 
     @GetMapping
-    public BaseResponse<BoardListResponse> getBoard(@PageableDefault(size = 4, sort = "idx", direction = DESC) Pageable pageable,
+    public BaseResponse<BoardListResponse> getBoard(@PageableDefault(size = 5, sort = "idx", direction = DESC) Pageable pageable,
                                                     @RequestParam(required = false) List<Long> tagIdx) throws BaseException {
         if (tagIdx != null && !tagIdx.isEmpty()) {
             return new BaseResponse<>(boardService.getBoardListWithTags(pageable, tagIdx));
@@ -37,8 +37,8 @@ public class BoardController {
     }
 
     @GetMapping("/{boardIdx}")
-    public BaseResponse<BoardMyPostResponse> getMyPost(@PathVariable Long boardIdx) throws BaseException {
-        return new BaseResponse<>(boardService.getMyPost(boardIdx));
+    public BaseResponse<BoardPostViewResponse> getMyPost(@PathVariable Long boardIdx) throws BaseException {
+        return new BaseResponse<>(boardService.getPostView(boardIdx));
     }
 
     @DeleteMapping("/{boardIdx}")
@@ -52,18 +52,23 @@ public class BoardController {
     }
 
     @PostMapping("/{boardIdx}/like")
-    public BaseResponse<String> likePost(@PathVariable Long boardIdx, @RequestBody LikeBoardRequest request) throws BaseException {
-        if (!request.isType()) {
-            return new BaseResponse<>(boardService.likePostCancel(boardIdx, request.getUserIdx()));
+    public BaseResponse<String> likePost(@PathVariable Long boardIdx, @RequestParam boolean type) throws BaseException {
+        if (!type) {
+            return new BaseResponse<>(boardService.likePostCancel(boardIdx));
         } else {
-            return new BaseResponse<>(boardService.likePost(boardIdx, request.getUserIdx()));
+            return new BaseResponse<>(boardService.likePost(boardIdx));
         }
     }
 
     @GetMapping("/search")
-    public BaseResponse<BoardListResponse> getBoardBySearch(@PageableDefault(size = 4, sort = "idx", direction = DESC) Pageable pageable,
+    public BaseResponse<BoardListResponse> getBoardBySearch(@PageableDefault(size = 5, sort = "idx", direction = DESC) Pageable pageable,
                                                             @RequestParam String keyword) throws BaseException {
         return new BaseResponse<>(boardService.getBoardBySearch(pageable, keyword));
+    }
+
+    @GetMapping("/my-posts")
+    public BaseResponse<Page<BoardResponse>> getMyBoardList(@PageableDefault(size = 5, sort = "idx", direction = DESC) Pageable pageable) throws BaseException {
+        return new BaseResponse<>(boardService.getMyBoardList(pageable));
     }
 
 }

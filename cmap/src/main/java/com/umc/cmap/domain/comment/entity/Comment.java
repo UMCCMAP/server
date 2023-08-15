@@ -17,6 +17,7 @@ import java.sql.Timestamp;
 public class Comment extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="comment_idx")
     private Long idx;
 
     @ManyToOne(fetch = FetchType.LAZY)

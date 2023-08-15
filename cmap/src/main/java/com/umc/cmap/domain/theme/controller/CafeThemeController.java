@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 @RestController
 @RequiredArgsConstructor
@@ -33,15 +34,19 @@ public class CafeThemeController {
         return ResponseEntity.ok(cafeTheme);
     }
 
-
     @PostMapping
-    public ResponseEntity<CafeTheme> createCafeTheme(@RequestBody CafeThemeRequest request) throws BaseException {
-        String themeName = request.getThemeName();
-        Long cafeIdx = request.getCafeIdx();
-
-        CafeTheme createdCafeTheme = cafeThemeService.createCafeTheme(themeName, cafeIdx);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdCafeTheme);
+    public ResponseEntity<List<CafeTheme>> createCafeThemes(@RequestBody List<CafeThemeRequest> requests) throws BaseException {
+        List<CafeTheme> createdCafeThemes = new ArrayList<>();
+        for (CafeThemeRequest request : requests) {
+            String themeName = request.getThemeName();
+            Long cafeIdx = request.getCafeIdx();
+            CafeTheme createdCafeTheme = cafeThemeService.createCafeTheme(themeName, cafeIdx);
+            createdCafeThemes.add(createdCafeTheme);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdCafeThemes);
     }
+
+
 
     @PutMapping("/{cafeThemeId}")
     public ResponseEntity<CafeTheme> updateCafeTheme(@PathVariable Long cafeThemeId, @RequestBody CafeTheme cafeTheme) throws BaseException {

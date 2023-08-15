@@ -10,7 +10,6 @@ import com.umc.cmap.domain.user.repository.ProfileRepository;
 import com.umc.cmap.domain.user.repository.UserRepository;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
