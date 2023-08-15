@@ -35,7 +35,6 @@ public class Cafe extends BaseTimeEntity {
     @Column(name = "district")
     private String district;
 
-    @Lob
     @Column(name = "cafe_image", columnDefinition = "BLOB")
     private String image;
 
