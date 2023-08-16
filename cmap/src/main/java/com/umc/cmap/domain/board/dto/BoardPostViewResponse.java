@@ -1,5 +1,6 @@
 package com.umc.cmap.domain.board.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.umc.cmap.domain.board.entity.Board;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,7 +25,9 @@ public class BoardPostViewResponse {
     private Long cntLike;
     private Long cntComment;
     private List<HashMap<Long, String>> tagList;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime updatedAt;
     private boolean like;
     private boolean canModifyPost;
