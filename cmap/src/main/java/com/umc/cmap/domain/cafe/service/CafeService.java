@@ -31,7 +31,7 @@ public class CafeService {
 
     public Cafe getCafeById(Long idx) throws BaseException {
         return cafeRepository.findById(idx)
-                .orElseThrow(() -> new BaseException(new BaseResponse<>(BaseResponseStatus.CAFE_NOT_FOUND)));
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_NOT_FOUND));
     }
 
     public List<Cafe> getAllCafes() {
@@ -41,11 +41,11 @@ public class CafeService {
     @Transactional
     public Cafe createCafe(CafeRequest cafeRequest) throws BaseException {
         if (cafeRequest.getLocationIdx() == null) {
-            throw new BaseException(new BaseResponse<>(BaseResponseStatus.LOCATION_NOT_INPUT));
+            throw new BaseException(BaseResponseStatus.LOCATION_NOT_INPUT);
         }
 
         Location location = locationRepository.findById(cafeRequest.getLocationIdx())
-                .orElseThrow(() -> new BaseException(new BaseResponse<>(BaseResponseStatus.LOCATION_NOT_FOUND)));
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.LOCATION_NOT_FOUND));
 
         Cafe cafe = Cafe.builder()
                 .name(cafeRequest.getName())
@@ -85,7 +85,7 @@ public class CafeService {
         List<Cafe> cafesWithTheme = cafeRepository.findByCafeThemes_Theme_Name(themeName);
 
         if (cafesWithTheme.isEmpty()) {
-            throw new BaseException(new BaseResponse<>(BaseResponseStatus.THEME_CAFES_NOT_FOUND));
+            throw new BaseException(BaseResponseStatus.THEME_CAFES_NOT_FOUND);
         }
 
         return cafesWithTheme;
@@ -112,10 +112,10 @@ public class CafeService {
                 cafe.setImage(imageData);
                 cafeRepository.save(cafe);
             } catch (IOException e) {
-                throw new BaseException(new BaseResponse<>(BaseResponseStatus.CAFE_IMAGE_NOT_UPLOADED2));
+                throw new BaseException((BaseResponseStatus.CAFE_IMAGE_NOT_UPLOADED2);
             }
         } else {
-            throw new BaseException(new BaseResponse<>(BaseResponseStatus.CAFE_IMAGE_NOT_UPLOADED));
+            throw new BaseException(BaseResponseStatus.CAFE_IMAGE_NOT_UPLOADED);
         }
     }
 
@@ -123,7 +123,7 @@ public class CafeService {
         Cafe cafe = getCafeById(idx);
         String image = cafe.getImage();
         if (image == null) {
-            throw new BaseException(new BaseResponse<>(BaseResponseStatus.CAFE_IMAGE_NOT_FOUND));
+            throw new BaseException(BaseResponseStatus.CAFE_IMAGE_NOT_FOUND);
         }
         return image;
     }
