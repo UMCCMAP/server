@@ -37,7 +37,10 @@ public class ProfileService {
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
 
         Profile profile = profileRepository.findByUserIdx(user.getIdx())
-                .orElseGet(() -> profileRepository.save(Profile.builder().user(user).build()));
+                .orElseGet(() -> profileRepository.save(Profile.builder().user(user)
+                        .userImg("https://cmap-bucket.s3.ap-northeast-2.amazonaws.com/d3522cb0-a73e-4e24-b918-69aa14665a7f.png")
+                        .cafeImg("https://cmap-bucket.s3.ap-northeast-2.amazonaws.com/f25830b3-5a90-4715-ade4-8651a08c4e77.png")
+                        .build()));
 
         List<Mates> matesList = matesRepository.findAllByFromIdx(user.getIdx());
         List<MatesInfoMapping> matesInfoList = new ArrayList<>();
@@ -61,7 +64,10 @@ public class ProfileService {
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
 
         Profile profile = profileRepository.findByUserIdx(user.getIdx())
-                .orElseGet(() -> profileRepository.save(Profile.builder().user(user).build()));
+                .orElseGet(() -> profileRepository.save(Profile.builder().user(user)
+                        .userImg("https://cmap-bucket.s3.ap-northeast-2.amazonaws.com/d3522cb0-a73e-4e24-b918-69aa14665a7f.png")
+                        .cafeImg("https://cmap-bucket.s3.ap-northeast-2.amazonaws.com/f25830b3-5a90-4715-ade4-8651a08c4e77.png")
+                        .build()));
 
 
         profile.update(request.getUserNickname(), request.getUserImg(), request.getUserInfo(), request.getCafeImg(), request.getCafeInfo());
