@@ -13,7 +13,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Board> findAllByRemovedAtIsNull(Pageable pageable);
     Page<Board> findByUserAndRemovedAtIsNull(User user, Pageable pageable);
     Page<Board> findByIdxInAndRemovedAtIsNull(List<Long> boardIdx, Pageable pageable);
-    Page<Board> findByCafeIdxAndRemovedAtIsNull(Long cafeIdx);
+    Page<Board> findByCafeIdxAndRemovedAtIsNull(Long cafeIdx, Pageable pageable);
     Page<Board> findByBoardTitleContainingOrBoardContentContainingAndRemovedAtIsNull(String boardTitle, String boardContent, Pageable pageable);
     Long countByUserIdxAndRemovedAtIsNull(Long userIdx);
     Long countByRemovedAtIsNull();
