@@ -1,6 +1,7 @@
 package com.umc.cmap.domain.board.repository;
 
 import com.umc.cmap.domain.board.entity.Board;
+import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +13,13 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Board> findAllByRemovedAtIsNull(Pageable pageable);
     Page<Board> findByUserAndRemovedAtIsNull(User user, Pageable pageable);
     Page<Board> findByIdxInAndRemovedAtIsNull(List<Long> boardIdx, Pageable pageable);
+    Page<Board> findByCafeIdxAndRemovedAtIsNull(Long cafeIdx, Pageable pageable);
     Page<Board> findByBoardTitleContainingOrBoardContentContainingAndRemovedAtIsNull(String boardTitle, String boardContent, Pageable pageable);
     Long countByUserIdxAndRemovedAtIsNull(Long userIdx);
-    List<Board> findAllByUserIdxAndRemovedAtIsNull(Long userIdx);
+    Long countByRemovedAtIsNull();
+    Long countByIdxInAndRemovedAtIsNull(List<Long> boardIdx);
+    Long countByUserAndRemovedAtIsNull(User user);
+
+    Long countByCafe(Cafe cafe);
+    Long countByBoardTitleContainingOrBoardContentContainingAndRemovedAtIsNull(String boardTitle, String boardContent);
 }

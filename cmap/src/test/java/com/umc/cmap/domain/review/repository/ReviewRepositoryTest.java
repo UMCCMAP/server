@@ -50,7 +50,7 @@ class ReviewRepositoryTest {
                 .user(user)
                 .cafe(cafe)
                 .content("comment-content")
-                .score(4.5)
+                .score(4)
                 .build();
 
         Pageable pageable = PageRequest.of(0, 5);

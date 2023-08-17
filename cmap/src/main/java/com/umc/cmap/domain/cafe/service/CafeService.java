@@ -112,7 +112,7 @@ public class CafeService {
                 cafe.setImage(imageData);
                 cafeRepository.save(cafe);
             } catch (IOException e) {
-                throw new BaseException(BaseResponseStatus.CAFE_IMAGE_NOT_UPLOADED2);
+                throw new BaseException((BaseResponseStatus.CAFE_IMAGE_NOT_UPLOADED2));
             }
         } else {
             throw new BaseException(BaseResponseStatus.CAFE_IMAGE_NOT_UPLOADED);

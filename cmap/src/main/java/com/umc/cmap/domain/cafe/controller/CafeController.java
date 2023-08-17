@@ -113,7 +113,7 @@ public class CafeController {
     }
 
 
-    @GetMapping("/themeAll")
+    @GetMapping("/theme-all")
     public ResponseEntity<List<CafeResponse>> getCafesByTheme(
             @RequestParam(name = "themeName") String themeName) throws BaseException {
         List<CafeResponse> cafeResponses = cafeFilterService.getCafesByTheme(themeName);
