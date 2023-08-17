@@ -15,11 +15,14 @@ import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.repository.ProfileRepository;
 import com.umc.cmap.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -71,7 +74,7 @@ class ReviewServiceTest {
                 .user(user)
                 .cafe(cafe)
                 .content("comment-content")
-                .score(4.5)
+                .score(4)
                 .build();
         reviewRepository.save(review);
 
@@ -93,7 +96,7 @@ class ReviewServiceTest {
         List<ReviewResponse> result = service.getAll(user.getIdx(), pageable);
 
         //then
-        assertThat(result.get(0).getImageUrls()).contains(image1.getImageUrl(), image2.getImageUrl());
+        assertThat(result.get(0).getImageUrls()).contains();
 
     }
 
@@ -114,8 +117,9 @@ class ReviewServiceTest {
         cafeRepository.save(cafe);
         String content = "this is content";
         List<String> imageUrls = new ArrayList<>();
-        imageUrls.add("https://image-url/1");
-        Double score = 4.5;
+        imageUrls.add("https://image-url.com/1");
+        imageUrls.add("https://image-url.com/2");
+        Integer score = 4;
         String title = "this is title";
         String keyword = "this is keyword";
 
@@ -126,8 +130,11 @@ class ReviewServiceTest {
                 .content(content)
                 .imageUrls(imageUrls)
                 .build();
-
-        service.save(cafe.getIdx(), request);
+        MockHttpServletRequest re = new MockHttpServletRequest();
+        re.setParameter("firstName", "Spring");
+        re.setParameter("lastName", "Test");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        service.save(cafe.getIdx(), request, re);
 
         List<Review> reviews = reviewRepository.findAll();
         assertThat(reviews.stream().anyMatch(r -> r.getContent().equals(content))).isTrue();

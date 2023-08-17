@@ -12,13 +12,22 @@ import com.umc.cmap.domain.user.entity.Profile;
 import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.repository.ProfileRepository;
 import com.umc.cmap.domain.user.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithSecurityContext;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,9 +43,26 @@ class ReviewPreviewServiceTest {
     @Autowired private ProfileRepository profileRepository;
     @Autowired private CafeRepository cafeRepository;
 
+//    @Retention(RetentionPolicy.RUNTIME)
+//    @WithSecurityContext(factory = WithMockCustomUserSecurityContextFactory.class)
+//    public @interface WithMockCustomUser {
+//
+//        String username() default "foo";
+//
+//        String grade() default "ADMIN";
+//
+//    }
+
+//    @WithMockUser
     @Test
     void 카페별_리뷰_미리보기() {
         //given
+//        MockHttpServletRequest request = new MockHttpServletRequest();
+//        request.setParameter("firstName", "Spring");
+//        request.setParameter("lastName", "Test");
+//        MockHttpServletResponse response = new MockHttpServletResponse();
+
+
         User user = User.builder()
                 .name("name1")
                 .email("email1")
@@ -45,6 +71,7 @@ class ReviewPreviewServiceTest {
                 .role(Role.USER)
                 .build();
         userRepository.save(user);
+//        User user = userRepository.findById(1L).orElseThrow(EntityNotFoundException::new);
 
         Profile profile = Profile.builder()
                 .userImg("https://user-profile.com")
@@ -62,7 +89,7 @@ class ReviewPreviewServiceTest {
                 .user(user)
                 .cafe(cafe)
                 .content("comment-content")
-                .score(4.5)
+                .score(4)
                 .build();
         reviewRepository.save(review1);
 
@@ -115,7 +142,7 @@ class ReviewPreviewServiceTest {
                 .user(user)
                 .cafe(cafe)
                 .content("comment-content")
-                .score(4.5)
+                .score(4)
                 .build();
         reviewRepository.save(review1);
 
