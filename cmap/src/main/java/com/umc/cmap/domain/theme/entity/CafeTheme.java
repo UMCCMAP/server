@@ -26,8 +26,6 @@ public class CafeTheme {
     @JoinColumn(name = "theme_idx")
     private Theme theme;
 
-
-
     @Builder
     public CafeTheme(Long idx, Theme theme, Cafe cafe) {
         this.idx = idx;
