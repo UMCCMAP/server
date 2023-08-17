@@ -38,6 +38,8 @@ public enum BaseResponseStatus {
     LOCATION_NOT_FOUND(false,3111,"존재하지 않는 위치좌표"),
     LOCATION_NOT_INPUT(false,3112,"위치좌표를 입력하세요"),
     THEME_NOT_INPUT(false,3113,"검색 할 테마를 입력하세요"),
+    CAFE_NOT_FOUND_FOR_USER(false,3114,"저장된 카페가 없습니다."),
+
 
 
     USER_NOT_FOUND(false, 3200, "유저를 찾을 수 없습니다."),
