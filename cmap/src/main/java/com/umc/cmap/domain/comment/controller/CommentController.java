@@ -5,6 +5,7 @@ import com.umc.cmap.domain.comment.dto.CommentRequest;
 import com.umc.cmap.domain.comment.dto.CommentResponse;
 import com.umc.cmap.domain.comment.dto.UpdateCommentRequest;
 import com.umc.cmap.domain.comment.service.CommentService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -30,8 +31,8 @@ public class CommentController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{postIdx}/comments")
-    public void create(@PathVariable Long postIdx, @RequestBody @Valid final CommentRequest dto) throws BaseException {
-        service.save(postIdx, dto);
+    public void create(@PathVariable Long postIdx, @RequestBody @Valid final CommentRequest dto, HttpServletRequest request) throws BaseException {
+        service.save(postIdx, dto, request);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface ThemeRepository extends JpaRepository<Theme, Long> {
     Optional<Theme> findByName(String name);
+    boolean existsByName(String name);
 }

@@ -10,10 +10,12 @@ import com.umc.cmap.domain.comment.entity.Comment;
 import com.umc.cmap.domain.comment.mapper.CommentMapper;
 import com.umc.cmap.domain.comment.repository.CommentRepository;
 import com.umc.cmap.domain.user.entity.Profile;
+
 import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.login.service.AuthService;
 import com.umc.cmap.domain.user.repository.ProfileRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -37,6 +39,16 @@ public class CommentService {
     public List<CommentResponse> getAll(Long boardIdx, Pageable pageable) {
         List<CommentResponse> comments = commentRepository.findAllByBoardIdx(boardIdx, pageable).stream().filter(c -> c.getRemovedAt() == null)
                 .map(c -> mapper.toResponse(c, c.getUser())).toList();
+        return setCommentUserImg(comments);
+    }
+
+    public List<CommentResponse> getAllByUser(User user, Pageable pageable) throws BaseException {
+        List<CommentResponse> comments = commentRepository.findAllByUserIdx(user.getIdx(), pageable)
+                .stream().map(c -> mapper.toResponse(c, user)).toList();
+        return setCommentUserImg(comments);
+    }
+
+    private List<CommentResponse> setCommentUserImg(List<CommentResponse> comments) {
         comments.forEach(c -> c.setUserImg(getWriterProfileImg(c.getUserIdx())));
         return comments;
     }
@@ -47,13 +59,13 @@ public class CommentService {
     }
 
     @Transactional
-    public void save(Long boardIdx, CommentRequest param) throws BaseException {
+    public void save(Long boardIdx, CommentRequest param, HttpServletRequest request) throws BaseException {
         param.setBoard(boardRepository.findById(boardIdx).orElseThrow(EntityNotFoundException::new));
-        commentRepository.save(mapper.toEntity(param, getLoginUser()));
+        commentRepository.save(mapper.toEntity(param, getLoginUser(request)));
     }
 
-    private User getLoginUser() throws BaseException {
-        return authService.getUser();
+    private User getLoginUser(HttpServletRequest request) throws BaseException {
+        return authService.getUser(request);
     }
 
     @Transactional

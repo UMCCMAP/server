@@ -1,5 +1,6 @@
 package com.umc.cmap.domain.board.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.umc.cmap.domain.board.entity.Board;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,13 +23,16 @@ public class BoardPostViewResponse {
     private String boardTitle;
     private String boardContent;
     private Long cntLike;
+    private Long cntComment;
     private List<HashMap<Long, String>> tagList;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime updatedAt;
     private boolean like;
     private boolean canModifyPost;
 
-    public BoardPostViewResponse(Board board, String profileImg, Long cntLike, List<HashMap<Long, String>> tagList, boolean like, boolean canModifyPost) {
+    public BoardPostViewResponse(Board board, String profileImg, Long cntLike, Long cntComment, List<HashMap<Long, String>> tagList, boolean like, boolean canModifyPost) {
         this.idx = board.getIdx();
         this.cafeName = board.getCafe().getName();
         this.nickName = board.getUser().getNickname();
@@ -36,6 +40,7 @@ public class BoardPostViewResponse {
         this.boardTitle = board.getBoardTitle();
         this.boardContent = board.getBoardContent();
         this.cntLike = cntLike;
+        this.cntComment = cntComment;
         this.tagList = tagList;
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
