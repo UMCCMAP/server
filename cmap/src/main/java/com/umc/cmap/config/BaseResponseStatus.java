@@ -31,12 +31,26 @@ public enum BaseResponseStatus {
     VISITED_CAFES_NOT_FOUND(false,3104,"방문한 카페가 없습니다"),
     WANT_TO_VISIT_CAFES_NOT_FOUND(false,3105,"원하는 카페가 없습니다."),
     THEME_CAFES_NOT_FOUND(false,3106,"조건에 맞는 카페가 없습니다"),
+    CAFE_THEME_ALREADY_EXISTS(false,3107,"중복되는 테마이름"),
+    CAFE_IMAGE_NOT_FOUND(false,3108,"카페이미지가 없음"),
+    CAFE_IMAGE_NOT_UPLOADED(false,3109,"이미지를 업로드하세요"),
+    CAFE_IMAGE_NOT_UPLOADED2(false,3110,"올바르지 않은 파일값"),
+    LOCATION_NOT_FOUND(false,3111,"존재하지 않는 위치좌표"),
+    LOCATION_NOT_INPUT(false,3112,"위치좌표를 입력하세요"),
+    THEME_NOT_INPUT(false,3113,"검색 할 테마를 입력하세요"),
+
 
     USER_NOT_FOUND(false, 3200, "유저를 찾을 수 없습니다."),
     POST_NOT_FOUND(false, 3201, "게시글을 찾을 수 없습니다."),
     POST_DELETED(false, 3202, "삭제된 게시글입니다."),
     TAG_NOT_FOUND(false, 3203, "태그를 찾을 수 없습니다."),
     DONT_HAVE_ACCESS(false, 3204, "접근 권한이 없습니다."),
+
+    /**
+     * 3500 : Cmap 오류
+     */
+    CMAP_WANT_NOT_FOUND(false, 3500, "Cmap - WANT 를 찾을 수 없습니다."),
+    CMAP_WENT_NOT_FOUND(false, 3501, "Cmap - WENT 를 찾을 수 없습니다."),
 
 
     /**

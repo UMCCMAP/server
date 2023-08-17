@@ -4,6 +4,7 @@ import com.umc.cmap.config.BaseException;
 import com.umc.cmap.config.BaseResponse;
 import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.repository.CafeRepository;
+import com.umc.cmap.domain.theme.controller.request.CafeThemeRequest;
 import com.umc.cmap.domain.theme.entity.CafeTheme;
 import com.umc.cmap.domain.theme.entity.Theme;
 import com.umc.cmap.domain.theme.repository.CafeThemeRepository;
@@ -13,10 +14,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.umc.cmap.config.BaseResponseStatus;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional(readOnly = false)
 public class CafeThemeService {
     private final CafeThemeRepository cafeThemeRepository;
     private final ThemeRepository themeRepository;
@@ -32,19 +35,18 @@ public class CafeThemeService {
         return cafeThemeRepository.findAll();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = false)
     public CafeTheme getCafeThemeById(Long cafeThemeId) throws BaseException {
 
         CafeTheme cafeTheme = cafeThemeRepository.findById(cafeThemeId).orElse(null);
         if (cafeTheme == null) {
-            return null;
+            throw new BaseException(BaseResponseStatus.CAFE_THEME_NOT_FOUND);
         }
         Hibernate.initialize(cafeTheme.getTheme());
         return cafeTheme;
 
     }
 
-    @Transactional
     public CafeTheme createCafeTheme(String themeName, Long cafeIdx) throws BaseException {
         Theme theme = themeRepository.findByName(themeName)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.THEME_NOT_FOUND));
@@ -52,23 +54,38 @@ public class CafeThemeService {
         Cafe cafe = cafeRepository.findById(cafeIdx)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_NOT_FOUND));
 
+        if (cafe.getCafeThemes().stream().anyMatch(ct -> ct.getTheme().equals(theme))) {
+            throw new BaseException(BaseResponseStatus.CAFE_THEME_ALREADY_EXISTS);
+        }
+
         CafeTheme cafeTheme = new CafeTheme();
         cafeTheme.setTheme(theme);
         cafeTheme.setCafe(cafe);
+
+        cafe.getCafeThemes().add(cafeTheme);
 
         return cafeThemeRepository.save(cafeTheme);
     }
 
     @Transactional
-    public CafeTheme updateCafeTheme(Long cafeThemeId, CafeTheme cafeTheme) throws BaseException {
-        CafeTheme existingCafeTheme = getCafeThemeById(cafeThemeId);
+    public CafeTheme updateCafeTheme(Long cafeThemeId, CafeThemeRequest cafeThemeRequest) throws BaseException {
 
-        CafeTheme updatedCafeTheme = CafeTheme.builder()
-                .idx(existingCafeTheme.getIdx())
-                .theme(existingCafeTheme.getTheme())
-                .build();
+        CafeTheme existingCafeTheme = cafeThemeRepository.findById(cafeThemeId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_THEME_NOT_FOUND));
 
-        return cafeThemeRepository.save(updatedCafeTheme);
+        Theme newTheme = themeRepository.findByName(cafeThemeRequest.getThemeName())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.THEME_NOT_FOUND));
+
+        Cafe cafe = existingCafeTheme.getCafe();
+
+        CafeTheme cafeThemeToReplace = cafe.getCafeThemes().stream()
+                .filter(ct -> ct.getIdx().equals(cafeThemeId))
+                .findFirst()
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_THEME_NOT_FOUND));
+
+        cafeThemeToReplace.setTheme(newTheme);
+
+        return cafeThemeRepository.save(cafeThemeToReplace);
     }
 
     @Transactional
@@ -76,4 +93,18 @@ public class CafeThemeService {
         CafeTheme existingCafeTheme = getCafeThemeById(cafeThemeId);
         cafeThemeRepository.delete(existingCafeTheme);
     }
+
+    @Transactional
+    public void deleteCafeThemes(Long cafeId) throws BaseException {
+        Cafe cafe = cafeRepository.findById(cafeId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_NOT_FOUND));
+
+        List<CafeTheme> cafeThemesToDelete = new ArrayList<>(cafe.getCafeThemes());
+
+        cafe.getCafeThemes().clear();
+        cafeRepository.save(cafe);
+
+        cafeThemeRepository.deleteAll(cafeThemesToDelete);
+    }
+
 }

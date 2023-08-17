@@ -1,5 +1,6 @@
 package com.umc.cmap.domain.board.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,6 +18,7 @@ public class BoardResponse {
     private String boardContent;
     private List<HashMap<Long, String>> tagList;
     private List<String> imgList;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
     public BoardResponse(Long idx, String boardTitle, String boardContent, List<HashMap<Long, String>> tagList, List<String> imgList, LocalDateTime createdAt) {

@@ -20,10 +20,8 @@ import java.util.List;
 public class ThemeController {
     private final ThemeService themeService;
 
-
-
     @PostMapping
-    public ResponseEntity<List<Theme>> createThemes(@RequestBody List<CafeThemeRequest> requests) {
+    public ResponseEntity<List<Theme>> createThemes(@RequestBody List<CafeThemeRequest> requests) throws BaseException {
         List<Theme> createdThemes = new ArrayList<>();
         for (CafeThemeRequest request : requests) {
             String themeName = request.getThemeName();

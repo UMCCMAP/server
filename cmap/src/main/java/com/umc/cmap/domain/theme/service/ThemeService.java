@@ -1,6 +1,7 @@
 package com.umc.cmap.domain.theme.service;
 
 import com.umc.cmap.config.BaseException;
+import com.umc.cmap.config.BaseResponse;
 import com.umc.cmap.config.BaseResponseStatus;
 import com.umc.cmap.domain.theme.entity.Theme;
 import com.umc.cmap.domain.theme.repository.ThemeRepository;
@@ -18,7 +19,11 @@ public class ThemeService {
         this.themeRepository = themeRepository;
     }
 
-    public Theme createTheme(String themeName) {
+    public Theme createTheme(String themeName) throws BaseException {
+        if (themeRepository.existsByName(themeName)) {
+            throw new BaseException(BaseResponseStatus.CAFE_THEME_ALREADY_EXISTS);
+        }
+
         Theme theme = new Theme();
         theme.setName(themeName);
 
