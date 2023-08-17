@@ -11,6 +11,7 @@ import com.umc.cmap.domain.user.entity.Profile;
 import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.login.service.AuthService;
 import com.umc.cmap.domain.user.repository.ProfileRepository;
+import com.umc.cmap.domain.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
@@ -36,10 +37,14 @@ public class BoardService {
     private final AuthService authService;
     private final BoardImageRepository boardImageRepository;
     private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
+
 
 
     public BoardListResponse getBoardList(Pageable pageable) throws BaseException {
         Page<Board> boardPage = boardRepository.findAllByRemovedAtIsNull(pageable);
+        Long cntBoard = boardRepository.countByRemovedAtIsNull();
+        Long cntPage = (long) Math.ceil(cntBoard.doubleValue() / 5);
         List<BoardResponse> boardResponses = new ArrayList<>();
         for (Board board : boardPage) {
             List<HashMap<Long, String>> tagList = getTagsForBoard(board.getIdx());
@@ -48,12 +53,14 @@ public class BoardService {
             boardResponses.add(boardResponse);
         }
         List<TagDto> tagNames = tagRepository.findAllTags();
-        return new BoardListResponse(new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements()), tagNames);
+        return new BoardListResponse(new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements()), cntBoard, cntPage, tagNames);
     }
 
     public BoardListResponse getBoardListWithTags(Pageable pageable, List<Long> tagIdx) throws BaseException {
         List<Long> boardIdxInBoardTag = findBoardIdxByAllTags(tagIdx);
         Page<Board> boardPage = boardRepository.findByIdxInAndRemovedAtIsNull(boardIdxInBoardTag, pageable);
+        Long cntBoard = boardRepository.countByIdxInAndRemovedAtIsNull(boardIdxInBoardTag);
+        Long cntPage = (long) Math.ceil(cntBoard.doubleValue() / 5);
         List<TagDto> tagNames = tagRepository.findAllTags();
         List<BoardResponse> boardResponses = new ArrayList<>();
         for (Board board : boardPage) {
@@ -62,7 +69,7 @@ public class BoardService {
             BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, imgList, board.getCreatedAt());
             boardResponses.add(boardResponse);
         }
-        return new BoardListResponse(new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements()), tagNames);
+        return new BoardListResponse(new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements()),cntBoard, cntPage, tagNames);
     }
 
     private List<Long> findBoardIdxByAllTags(List<Long> tagIdxList) {
@@ -248,8 +255,10 @@ public class BoardService {
         return "좋아요 취소";
     }
 
-    public BoardListResponse getBoardBySearch(Pageable pageable, String keyword) throws BaseException {
+    public BoardListResponse getBoardBySearchOfTitle(Pageable pageable, String keyword) throws BaseException {
         Page<Board> boardPage = boardRepository.findByBoardTitleContainingOrBoardContentContainingAndRemovedAtIsNull(keyword, keyword, pageable);
+        Long cntBoard = boardRepository.countByBoardTitleContainingOrBoardContentContainingAndRemovedAtIsNull(keyword, keyword);
+        Long cntPage = (long) Math.ceil(cntBoard.doubleValue() / 5);
         List<TagDto> tagNames = tagRepository.findAllTags();
         List<BoardResponse> boardResponses = new ArrayList<>();
         for (Board board : boardPage) {
@@ -258,7 +267,40 @@ public class BoardService {
             BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, imgList, board.getCreatedAt());
             boardResponses.add(boardResponse);
         }
-        return new BoardListResponse(new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements()), tagNames);
+        return new BoardListResponse(new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements()), cntBoard, cntPage, tagNames);
+    }
+
+    public BoardListResponse getBoardByWriter(Pageable pageable, String nickName) throws BaseException {
+        User user = userRepository.findByNickname(nickName)
+                .orElseThrow(() -> new BaseException(USER_NOT_FOUND));
+        Page<Board> boardPage = boardRepository.findByUserAndRemovedAtIsNull(user, pageable);
+        Long cntBoard = boardRepository.countByUserAndRemovedAtIsNull(user);
+        Long cntPage = (long) Math.ceil(cntBoard.doubleValue() / 5);
+        List<TagDto> tagNames = tagRepository.findAllTags();
+        List<BoardResponse> boardResponses = new ArrayList<>();
+        for (Board board : boardPage) {
+            List<HashMap<Long, String>> tagList = getTagsForBoard(board.getIdx());
+            List<String> imgList = getImageUrlForMain(board.getIdx());
+            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, imgList, board.getCreatedAt());
+            boardResponses.add(boardResponse);
+        }
+        return new BoardListResponse(new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements()), cntBoard, cntPage, tagNames);
+    }
+
+    public BoardListResponse getBoardByCafe(Pageable pageable, String cafeName) throws BaseException {
+        Cafe cafe = cafeRepository.findByName(cafeName);
+        Page<Board> boardPage = boardRepository.findByCafeIdxAndRemovedAtIsNull(cafe.getIdx(), pageable);
+        Long cntBoard = boardRepository.countByCafe(cafe);
+        Long cntPage = (long) Math.ceil(cntBoard.doubleValue() / 5);
+        List<TagDto> tagNames = tagRepository.findAllTags();
+        List<BoardResponse> boardResponses = new ArrayList<>();
+        for (Board board : boardPage) {
+            List<HashMap<Long, String>> tagList = getTagsForBoard(board.getIdx());
+            List<String> imgList = getImageUrlForMain(board.getIdx());
+            BoardResponse boardResponse = new BoardResponse(board.getIdx(), board.getBoardTitle(), board.getBoardContent(), tagList, imgList, board.getCreatedAt());
+            boardResponses.add(boardResponse);
+        }
+        return new BoardListResponse(new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements()), cntBoard, cntPage, tagNames);
     }
 
     public Page<BoardResponse> getMyBoardList(Pageable pageable, HttpServletRequest token) throws BaseException {

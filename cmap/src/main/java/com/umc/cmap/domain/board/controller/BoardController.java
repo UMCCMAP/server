@@ -65,8 +65,17 @@ public class BoardController {
 
     @GetMapping("/search")
     public BaseResponse<BoardListResponse> getBoardBySearch(@PageableDefault(size = 5, sort = "idx", direction = DESC) Pageable pageable,
-                                                            @RequestParam String keyword) throws BaseException {
-        return new BaseResponse<>(boardService.getBoardBySearch(pageable, keyword));
+                                                            @RequestParam String searchType,
+                                                            String keyword) throws BaseException {
+        if ("title-content".equalsIgnoreCase(searchType)) {
+            return new BaseResponse<>(boardService.getBoardBySearchOfTitle(pageable, keyword));
+        } else if ("writer".equalsIgnoreCase(searchType)) {
+            return new BaseResponse<>(boardService.getBoardByWriter(pageable, keyword));
+        } else if ("cafe".equalsIgnoreCase(searchType)) {
+            return new BaseResponse<>(boardService.getBoardByCafe(pageable, keyword));
+        } else {
+            throw new IllegalArgumentException("Invalid searchType: " + searchType);
+        }
     }
 
     @GetMapping("/my-posts")

@@ -12,10 +12,14 @@ import java.util.List;
 @NoArgsConstructor
 public class BoardListResponse {
     private Page<BoardResponse> boardResponses;
+    private Long cntBoard;
+    private Long cntPage;
     private List<TagDto> tagNames;
 
-    public BoardListResponse(Page<BoardResponse> boardResponses, List<TagDto> tagNames) {
+    public BoardListResponse(Page<BoardResponse> boardResponses, Long cntBoard, Long cntPage, List<TagDto> tagNames) {
         this.boardResponses = boardResponses;
+        this.cntBoard = cntBoard;
+        this.cntPage = cntPage;
         this.tagNames = tagNames;
     }
 }
