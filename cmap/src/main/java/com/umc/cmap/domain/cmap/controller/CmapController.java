@@ -30,29 +30,6 @@ public class CmapController {
      * 노깨 공간
      */
 /*
-    @GetMapping("/user-default")
-    public ResponseEntity<List<CmapCafeDto>> getCafesByUser(@RequestParam Long userId) throws BaseException {
-        List<CmapCafeDto> cmapCafeDtos = cmapService.getCafesByUser(userId);
-        return ResponseEntity.ok(cmapCafeDtos);
-    }
-
-    @PostMapping
-    public ResponseEntity<CmapCafeDto> createOrUpdateCmap(@RequestBody CmapCafeDto cmapRequest) throws BaseException {
-        Cmap createdOrUpdatedCmap = cmapService.createOrUpdateCmap(cmapRequest);
-        CmapCafeDto response = new CmapCafeDto(
-                createdOrUpdatedCmap.getIdx(),
-                createdOrUpdatedCmap.getUser().getIdx(),
-                createdOrUpdatedCmap.getCafe().getIdx(),
-                createdOrUpdatedCmap.getType().toString(),
-                createdOrUpdatedCmap.getCafe().getName(),
-                createdOrUpdatedCmap.getCafe().getCity(),
-                createdOrUpdatedCmap.getCafe().getDistrict(),
-                createdOrUpdatedCmap.getCafe().getLocation().getLatitude(),
-                createdOrUpdatedCmap.getCafe().getLocation().getLongitude()
-
-        );
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }*/
 
     @GetMapping("/user-default")
     public ResponseEntity<CmapListResponse> getCafesByUser(@RequestParam Long userId) throws BaseException {
@@ -74,7 +51,7 @@ public class CmapController {
     }
 
 
-
+*/
 
 
 
