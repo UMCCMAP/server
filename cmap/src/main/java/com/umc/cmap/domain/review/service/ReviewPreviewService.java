@@ -8,6 +8,7 @@ import com.umc.cmap.domain.review.repository.ReviewRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
@@ -26,12 +28,14 @@ public class ReviewPreviewService {
     ReviewImageRepository imageRepository;
 
     public List<ReviewPreviewResponse> get(Long cafeIdx, Pageable pageable) {
-        List<Review> reviews = reviewRepository.findAllByCafeIdx(cafeIdx, pageable);
+        List<Review> reviews = reviewRepository.findAllByCafeIdx(cafeIdx, pageable).stream().filter(r -> !r.getIsDeleted()).toList();
+        log.info("[review] review-preview list of cafe(idx = " + cafeIdx + ") is selected");
         return reviews.stream().map(this::toResponse).toList();
     }
 
     private ReviewPreviewResponse toResponse(final Review review) {
         return ReviewPreviewResponse.builder()
+                .idx(review.getIdx())
                 .userInfo(reviewService.getWriter(review.getUser()))
                 .content(review.getContent())
                 .imageUrl(getOneImageUrl(review.getIdx()))
