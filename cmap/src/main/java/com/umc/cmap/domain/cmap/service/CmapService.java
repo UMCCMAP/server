@@ -1,6 +1,7 @@
 package com.umc.cmap.domain.cmap.service;
 
 import com.umc.cmap.config.BaseException;
+import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cmap.dto.CmapCafeDto;
 import com.umc.cmap.domain.cmap.dto.CmapListResponse;
 import com.umc.cmap.config.BaseResponseStatus;
@@ -8,6 +9,7 @@ import com.umc.cmap.domain.cmap.entity.Cmap;
 import com.umc.cmap.domain.cmap.entity.Type;
 import com.umc.cmap.domain.cmap.repository.CmapRepository;
 import com.umc.cmap.domain.theme.entity.Theme;
+import com.umc.cmap.domain.theme.repository.CafeThemeRepository;
 import com.umc.cmap.domain.theme.repository.ThemeRepository;
 import com.umc.cmap.domain.user.entity.Mates;
 import com.umc.cmap.domain.user.entity.User;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -33,6 +36,7 @@ public class CmapService {
     private final UserRepository userRepository;
     private final ThemeRepository themeRepository;
     private final AuthService authService;
+    private final CafeThemeRepository cafeThemeRepository;
 
     /**
      * 노깨 공간
@@ -61,7 +65,7 @@ public class CmapService {
     /**
      * 데옹 공간
      */
-    public CmapListResponse getCmapWantList(Type type, HttpServletRequest token) throws BaseException {
+    public CmapListResponse getCmapList(Type type, HttpServletRequest token) throws BaseException {
         User user = authService.getUser(token);
         List<Cmap> cmaps = cmapRepository.findByTypeAndUserIdx(type, user.getIdx())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.CMAP_WANT_NOT_FOUND));
@@ -73,35 +77,21 @@ public class CmapService {
         List<HashMap<Long, String>> themeList = getThemeIdxAndName();
         return new CmapListResponse(CmapCafeDtos, themeList);
     }
-/*
-    public CmapListResponse getCmapWantListWithThemeList(String type, List<Long> themeIdx, HttpServletRequest token) throws BaseException {
-        String cafeTitle = "t";
-        Long cafeIdx = 1L;
-
-        List<HashMap<Long,String>> themeList = themeRepository.findIdxAndName();
-        return new CmapListResponse(cafeIdx,cafeTitle,themeList);
-    }*/
-
-    public CmapListResponse getCmapWentList(Type type, HttpServletRequest token) throws BaseException {
+    // 작업 중인 공간
+    public CmapListResponse getCmapListWithThemeList(Type type, List<Long> themes, HttpServletRequest token) throws BaseException {
         User user = authService.getUser(token);
         List<Cmap> cmaps = cmapRepository.findByTypeAndUserIdx(type, user.getIdx())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.CMAP_WANT_NOT_FOUND));
+        List<Cafe> cafes = getCafeContainsThemeList(cmaps, themes);
         List<CmapCafeDto> CmapCafeDtos = new ArrayList<>();
-        for (Cmap cmap : cmaps) {
-            CmapCafeDto cmapCafeDto =  new CmapCafeDto(cmap.getCafe().getIdx(), cmap.getCafe().getName());
+        for (Cafe cafe : cafes) {
+            CmapCafeDto cmapCafeDto =  new CmapCafeDto(cafe.getIdx(), cafe.getName());
             CmapCafeDtos.add(cmapCafeDto);
         }
         List<HashMap<Long, String>> themeList = getThemeIdxAndName();
         return new CmapListResponse(CmapCafeDtos, themeList);
     }
-/*
-    public CmapListResponse getCmapWentListWithThemeList(List<Long> themeIdx) throws BaseException {
-        String cafeTitle = "t";
-        Long cafeIdx = 1L;
 
-        List<HashMap<Long,String>> themeList = themeRepository.findIdxAndName();
-        return new CmapListResponse(cafeIdx,cafeTitle,themeList);
-    }*/
 
     private List<HashMap<Long, String>> getThemeIdxAndName() {
         List<Theme> themes = themeRepository.findAll();
@@ -112,6 +102,16 @@ public class CmapService {
                     return themeMap;
                 })
                 .collect(Collectors.toList());
+    }
+
+    private List<Cafe> getCafeContainsThemeList(List<Cmap> cmaps, List<Long> themes) {
+        List<Cafe> cafeList = cmaps.stream().map(Cmap::getCafe).toList();
+        List<Cafe> result = new ArrayList<>();
+        for (Cafe cafe : cafeList){
+            List<Long> themeIdxList = cafeThemeRepository.findThemeIdxByCafeIdx(cafe.getIdx());
+            if (new HashSet<>(themeIdxList).containsAll(themes)) { result.add(cafe); }
+        }
+        return result;
     }
 
 }
