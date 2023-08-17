@@ -44,6 +44,12 @@ public enum BaseResponseStatus {
     TAG_NOT_FOUND(false, 3203, "태그를 찾을 수 없습니다."),
     DONT_HAVE_ACCESS(false, 3204, "접근 권한이 없습니다."),
 
+    /**
+     * 3500 : Cmap 오류
+     */
+    CMAP_WANT_NOT_FOUND(false, 3500, "Cmap - WANT 를 찾을 수 없습니다."),
+    CMAP_WENT_NOT_FOUND(false, 3501, "Cmap - WENT 를 찾을 수 없습니다."),
+
 
     /**
      * 4000 : Database, Server 오류
