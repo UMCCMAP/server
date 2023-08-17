@@ -2,7 +2,6 @@ package com.umc.cmap.domain.cmap.repository;
 
 import com.umc.cmap.domain.cmap.entity.Cmap;
 import com.umc.cmap.domain.cmap.entity.Type;
-import com.umc.cmap.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
