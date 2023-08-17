@@ -1,6 +1,10 @@
 package com.umc.cmap.domain.cmap.service;
 
 import com.umc.cmap.config.BaseException;
+import com.umc.cmap.config.BaseResponse;
+import com.umc.cmap.domain.cafe.entity.Cafe;
+import com.umc.cmap.domain.cafe.entity.Location;
+import com.umc.cmap.domain.cafe.repository.CafeRepository;
 import com.umc.cmap.domain.cmap.dto.CmapCafeDto;
 import com.umc.cmap.domain.cmap.dto.CmapListResponse;
 import com.umc.cmap.config.BaseResponseStatus;
@@ -33,10 +37,136 @@ public class CmapService {
     private final UserRepository userRepository;
     private final ThemeRepository themeRepository;
     private final AuthService authService;
+    private final CafeRepository cafeRepository;
+
 
     /**
      * 노깨 공간
      */
+    /*
+    public List<CmapCafeDto> getCafesByUser(Long userId) throws BaseException {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
+
+        List<Cmap> cafes = cmapRepository.findByUser(user);
+
+        if (cafes.isEmpty()) {
+            throw new BaseException(BaseResponseStatus.CAFE_NOT_FOUND_FOR_USER);
+        }
+
+        return cafes.stream()
+                .map(cmap -> {
+                    Cafe cafe = cmap.getCafe();
+                    CmapCafeDto cmapCafeDto = new CmapCafeDto(
+                            cmap.getIdx(),
+                            cmap.getUser().getIdx(),
+                            cafe.getIdx(),
+                            cmap.getType().toString(),
+                            cafe.getName(),
+                            cafe.getCity(),
+                            cafe.getDistrict(),
+                            cafe.getLocation().getLatitude(),
+                            cafe.getLocation().getLongitude()
+                    );
+                    return cmapCafeDto;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public Cmap createOrUpdateCmap(CmapCafeDto cmapCafeDto) throws BaseException {
+        User user = userRepository.findById(cmapCafeDto.getUserId())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
+
+        Cafe cafe = cafeRepository.findById(cmapCafeDto.getCafeIdx())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_NOT_FOUND));
+
+        Type newType = Type.valueOf(cmapCafeDto.getType().toUpperCase());
+
+        List<Cmap> existingCmaps = cmapRepository.findByUserAndCafe(user, cafe);
+
+        for (Cmap existingCmap : existingCmaps) {
+            if (existingCmap.getType() != newType) {
+                existingCmap.setType(newType);
+                return cmapRepository.save(existingCmap); // 이미 존재하는 Cmap의 타입 변경 후 저장하여 반환
+            }
+        }
+
+        // 일치하는 Cmap이 없을 경우 새로 생성
+        Cmap cmap = Cmap.builder()
+                .user(user)
+                .cafe(cafe)
+                .type(newType)
+                .build();
+
+        return cmapRepository.save(cmap);
+    }*/
+    public CmapListResponse getCafesByUser(Long userId) throws BaseException {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
+
+        List<Cmap> cafes = cmapRepository.findByUser(user);
+
+        if (cafes.isEmpty()) {
+            throw new BaseException(BaseResponseStatus.CAFE_NOT_FOUND_FOR_USER);
+        }
+
+        List<CmapCafeDto> cmapCafeDtos = new ArrayList<>();
+        for (Cmap cmap : cafes) {
+            Cafe cafe = cmap.getCafe();
+            Location location = cafe.getLocation();
+
+            CmapCafeDto cmapCafeDto = new CmapCafeDto(
+                    cmap.getIdx(),
+                    cmap.getUser().getIdx(),
+                    cafe.getIdx(),
+                    cmap.getType().toString(),
+                    cafe.getName(),
+                    cafe.getCity(),
+                    cafe.getDistrict(),
+                    location.getLatitude(),
+                    location.getLongitude()
+            );
+
+            cmapCafeDtos.add(cmapCafeDto);
+        }
+
+        List<HashMap<Long, String>> themeList = getThemeIdxAndName();
+        return new CmapListResponse(cmapCafeDtos, themeList);
+    }
+
+    @Transactional
+    public CmapListResponse createOrUpdateCmap(CmapCafeDto cmapCafeDto) throws BaseException {
+        User user = userRepository.findById(cmapCafeDto.getUserId())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
+
+        Cafe cafe = cafeRepository.findById(cmapCafeDto.getCafeIdx())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_NOT_FOUND));
+
+        Type newType = Type.valueOf(cmapCafeDto.getType().toUpperCase());
+
+        List<Cmap> existingCmaps = cmapRepository.findByUserAndCafe(user, cafe);
+
+        for (Cmap existingCmap : existingCmaps) {
+            if (existingCmap.getType() != newType) {
+                existingCmap.setType(newType);
+                cmapRepository.save(existingCmap);
+                List<CmapCafeDto> cmapCafeDtos = getCafesByUser(user.getIdx()).getCmapCafeDtos();
+                return new CmapListResponse(cmapCafeDtos, getThemeIdxAndName());
+            }
+        }
+
+        Cmap cmap = Cmap.builder()
+                .user(user)
+                .cafe(cafe)
+                .type(newType)
+                .build();
+
+        cmapRepository.save(cmap);
+        List<CmapCafeDto> cmapCafeDtos = getCafesByUser(user.getIdx()).getCmapCafeDtos();
+        return new CmapListResponse(cmapCafeDtos, getThemeIdxAndName());
+    }
+
 
     public List<String> getMates(String userNickname) throws BaseException{
         User user = userRepository.findByNickname(userNickname)
@@ -50,6 +180,7 @@ public class CmapService {
         }
         return matesNicknameList;
     }
+
     /**
      * 젼 공간
      */
@@ -113,5 +244,4 @@ public class CmapService {
                 })
                 .collect(Collectors.toList());
     }
-
 }
