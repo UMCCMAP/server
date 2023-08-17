@@ -65,6 +65,8 @@ public class CmapService {
     /**
      * 데옹 공간
      */
+
+    // Cmap List를 받아옵니다. theme list가 선택되지 않았을 때 모든 cmap list 반환
     public CmapListResponse getCmapList(Type type, HttpServletRequest token) throws BaseException {
         User user = authService.getUser(token);
         List<Cmap> cmaps = cmapRepository.findByTypeAndUserIdx(type, user.getIdx())
@@ -77,7 +79,8 @@ public class CmapService {
         List<HashMap<Long, String>> themeList = getThemeIdxAndName();
         return new CmapListResponse(CmapCafeDtos, themeList);
     }
-    // 작업 중인 공간
+
+    // 선택한 테마들에 해당하는 Cmap list를 반환
     public CmapListResponse getCmapListWithThemeList(Type type, List<Long> themes, HttpServletRequest token) throws BaseException {
         User user = authService.getUser(token);
         List<Cmap> cmaps = cmapRepository.findByTypeAndUserIdx(type, user.getIdx())
@@ -92,7 +95,7 @@ public class CmapService {
         return new CmapListResponse(CmapCafeDtos, themeList);
     }
 
-
+    // 전체 테마 인덱스와 이름을 map으로 묶어서 반환
     private List<HashMap<Long, String>> getThemeIdxAndName() {
         List<Theme> themes = themeRepository.findAll();
         return themes.stream()
@@ -104,6 +107,7 @@ public class CmapService {
                 .collect(Collectors.toList());
     }
 
+    // 선택한 테마가 모두 포함되어야만 그 cafe를 반환해줌
     private List<Cafe> getCafeContainsThemeList(List<Cmap> cmaps, List<Long> themes) {
         List<Cafe> cafeList = cmaps.stream().map(Cmap::getCafe).toList();
         List<Cafe> result = new ArrayList<>();
