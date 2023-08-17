@@ -289,7 +289,7 @@ public class BoardService {
 
     public BoardListResponse getBoardByCafe(Pageable pageable, String cafeName) throws BaseException {
         Cafe cafe = cafeRepository.findByName(cafeName);
-        Page<Board> boardPage = boardRepository.findByCafeIdxAndRemovedAtIsNull(cafe.getIdx());
+        Page<Board> boardPage = boardRepository.findByCafeIdxAndRemovedAtIsNull(cafe.getIdx(), pageable);
         Long cntBoard = boardRepository.countByCafe(cafe);
         Long cntPage = (long) Math.ceil(cntBoard.doubleValue() / 5);
         List<TagDto> tagNames = tagRepository.findAllTags();
