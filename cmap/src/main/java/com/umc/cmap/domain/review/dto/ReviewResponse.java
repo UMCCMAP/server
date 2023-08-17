@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ReviewResponse {
     private ReviewWriterResponse userInfo;
+    private Long idx;
     private String content;
     private Integer score;
     private String title;
