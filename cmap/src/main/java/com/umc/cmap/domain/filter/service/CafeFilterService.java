@@ -1,37 +1,92 @@
 package com.umc.cmap.domain.filter.service;
 
+import com.umc.cmap.config.BaseException;
+import com.umc.cmap.config.BaseResponse;
+import com.umc.cmap.config.BaseResponseStatus;
+import com.umc.cmap.domain.cafe.controller.response.CafeResponse;
+import com.umc.cmap.domain.cafe.entity.Cafe;
+import com.umc.cmap.domain.cafe.service.CafeService;
 import com.umc.cmap.domain.filter.dto.CafeFilterDto;
 import com.umc.cmap.domain.filter.entity.CafeFilter;
 import com.umc.cmap.domain.filter.repository.CafeFilterRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class CafeFilterService {
 
     private final CafeFilterRepository cafefilterRepository;
+    private final CafeService cafeService;
 
-    public CafeFilterService(CafeFilterRepository cafefilterRepository) {
+
+    public CafeFilterService(CafeFilterRepository cafefilterRepository,CafeService cafeService) {
         this.cafefilterRepository = cafefilterRepository;
+        this.cafeService=cafeService;
     }
 
-    public CafeFilterDto getRandomCafeByTheme(String theme) {
-        List<CafeFilter> cafesWithTheme = cafefilterRepository.findByFilter_Name(theme);
-        if (cafesWithTheme.isEmpty()) {
-            return null;
+    public List<CafeResponse> getCafesByTheme(String theme) throws BaseException {
+        List<CafeResponse> cafeResponses = new ArrayList<>();
+
+        try {
+            List<Cafe> cafesWithTheme = cafeService.getCafesByThemes(Collections.singletonList(theme));
+
+            for (Cafe cafe : cafesWithTheme) {
+                cafeResponses.add(new CafeResponse(cafe));
+            }
+
+            return cafeResponses;
+        } catch (Exception e) {
+            throw new BaseException(BaseResponseStatus.THEME_CAFES_NOT_FOUND);
         }
+    }
 
-        int randomIndex = new Random().nextInt(cafesWithTheme.size());
-        CafeFilter randomCafeFilter = cafesWithTheme.get(randomIndex);
+    public List<CafeResponse> getRandomCafeByTheme(String city, String district, List<String> themeNames) throws BaseException {
+        List<CafeResponse> cafeResponses = new ArrayList<>();
 
-        return CafeFilterDto.builder()
-                .idx(randomCafeFilter.getIdx())
-                .name(randomCafeFilter.getCafe().getName())
-                .theme(randomCafeFilter.getCafe().getCafeThemes().isEmpty() ? null
-                        : randomCafeFilter.getCafe().getCafeThemes().get(0).getTheme().getName())
-                .cafeIdx(randomCafeFilter.getCafe().getIdx())
-                .build();
+        try {
+            if ((city != null && district != null) && (themeNames != null && themeNames.size() >= 1)) {
+                List<Cafe> cafes = cafeService.getCafesByCityAndDistrictAndThemes(city, district, themeNames);
+
+                for (Cafe cafe : cafes) {
+                    List<String> cafeThemeNames = cafe.getCafeThemes().stream()
+                            .map(cafeTheme -> cafeTheme.getTheme().getName())
+                            .collect(Collectors.toList());
+
+                    if (cafeThemeNames.containsAll(themeNames)) {
+                        cafeResponses.add(new CafeResponse(cafe));
+                    }
+                }
+            } else if ((city != null && district != null) && (themeNames == null || themeNames.isEmpty())) {
+                List<Cafe> cafes = cafeService.getCafesByCityAndDistrict(city, district);
+                cafeResponses = cafes.stream()
+                        .map(CafeResponse::new)
+                        .collect(Collectors.toList());
+            } else if (themeNames != null && themeNames.size() >= 1 && (city == null || district == null)) {
+                List<Cafe> cafesWithThemes = cafeService.getCafesByThemes(themeNames);
+
+                for (Cafe cafe : cafesWithThemes) {
+                    List<String> cafeThemeNames = cafe.getCafeThemes().stream()
+                            .map(cafeTheme -> cafeTheme.getTheme().getName())
+                            .collect(Collectors.toList());
+
+                    if (cafeThemeNames.containsAll(themeNames)) {
+                        cafeResponses.add(new CafeResponse(cafe));
+                    }
+                }
+            }
+            if (cafeResponses.isEmpty()) {
+                throw new BaseException(BaseResponseStatus.THEME_CAFES_NOT_FOUND);
+            }
+
+            return cafeResponses;
+        } catch (Exception e) {
+            throw new BaseException(BaseResponseStatus.THEME_CAFES_NOT_FOUND);
+        }
     }
 
 }
