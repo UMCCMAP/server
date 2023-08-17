@@ -27,7 +27,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Transactional
 @SpringBootTest
 class ReviewServiceTest {
 
@@ -117,9 +116,13 @@ class ReviewServiceTest {
         List<String> imageUrls = new ArrayList<>();
         imageUrls.add("https://image-url/1");
         Double score = 4.5;
+        String title = "this is title";
+        String keyword = "this is keyword";
 
         ReviewRequest request = ReviewRequest.builder()
                 .score(score)
+                .title(title)
+                .keyword(keyword)
                 .content(content)
                 .imageUrls(imageUrls)
                 .build();

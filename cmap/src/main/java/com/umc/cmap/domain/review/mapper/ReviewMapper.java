@@ -4,7 +4,6 @@ import com.umc.cmap.domain.review.dto.ReviewRequest;
 import com.umc.cmap.domain.review.dto.ReviewResponse;
 import com.umc.cmap.domain.review.dto.ReviewWriterResponse;
 import com.umc.cmap.domain.review.entity.Review;
-import com.umc.cmap.domain.review.entity.ReviewImage;
 import com.umc.cmap.domain.user.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
