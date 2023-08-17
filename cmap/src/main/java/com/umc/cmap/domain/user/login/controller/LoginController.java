@@ -67,7 +67,10 @@ public class LoginController {
         userService.setNickname(user.getEmail(), nicknameMap.get("nickname"));
 
         //프로필 생성
-        Profile profile = profileRepository.save(Profile.builder().user(user).build());
+        Profile profile = profileRepository.save(Profile.builder().user(user)
+                .userImg("https://cmap-bucket.s3.ap-northeast-2.amazonaws.com/d3522cb0-a73e-4e24-b918-69aa14665a7f.png")
+                .cafeImg("https://cmap-bucket.s3.ap-northeast-2.amazonaws.com/f25830b3-5a90-4715-ade4-8651a08c4e77.png")
+                .build());
 
         return "redirect:/main";
     }
