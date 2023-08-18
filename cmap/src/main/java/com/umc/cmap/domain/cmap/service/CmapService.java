@@ -63,14 +63,19 @@ public class CmapService {
         User user = authService.getUser(request);
         Cafe cafe = cafeRepository.findById(cmapRequest.getCafeIdx())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_NOT_FOUND));
+
         Type newType = Type.valueOf(cmapRequest.getType().toUpperCase());
 
-        List<Cmap> existingCmaps = cmapRepository.findByUserAndCafe(user, cafe);
+        List<Cmap> existingCmaps = cmapRepository.findByCafe(cafe);
 
         for (Cmap existingCmap : existingCmaps) {
-            if (existingCmap.getType() == newType) {
-                throw new BaseException(BaseResponseStatus.DUPLICATE_CMAP_TYPE);
+            if (existingCmap.getType() != newType) {
+                existingCmap.setType(newType);
+                cmapRepository.save(existingCmap);
+                return new CmapResponse(existingCmap);
             }
+            else
+                throw new BaseException(BaseResponseStatus.DUPLICATE_CMAP_TYPE);
         }
 
         Cmap cmap = Cmap.builder()
@@ -82,6 +87,8 @@ public class CmapService {
         cmap = cmapRepository.save(cmap);
         return new CmapResponse(cmap);
     }
+
+
 
 
     public List<String> getMates(String userNickname) throws BaseException{

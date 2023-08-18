@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface CmapRepository extends JpaRepository<Cmap, Long> {
     Optional<List<Cmap>> findByTypeAndUserIdx(Type type, Long userIdx);
-
     List<Cmap> findByUser(User user);
-    List<Cmap> findByUserAndCafe(User user, Cafe cafe);
+    List<Cmap> findByCafe(Cafe cafe);
+
 }
