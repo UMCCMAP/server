@@ -39,6 +39,7 @@ public enum BaseResponseStatus {
     LOCATION_NOT_INPUT(false,3112,"위치좌표를 입력하세요"),
     THEME_NOT_INPUT(false,3113,"검색 할 테마를 입력하세요"),
     CAFE_NOT_FOUND_FOR_USER(false,3114,"저장된 카페가 없습니다."),
+    DUPLICATE_CMAP_TYPE(false,3115,"동일한카페 동일한 type"),
 
 
 
