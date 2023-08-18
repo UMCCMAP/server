@@ -29,11 +29,18 @@ public class CmapController {
      * 노깨 공간
      */
 
-    @GetMapping("/user-default")
-    public ResponseEntity<List<CmapResponse>> getCafesByUser(HttpServletRequest request) throws BaseException {
-        List<CmapResponse> response = cmapService.getCafesByUser(request);
+    @GetMapping("/user-default")    //디폴트화면
+    public ResponseEntity<List<CmapResponse>> getDefaultCafesByUserDefault(HttpServletRequest request) throws BaseException {
+        List<CmapResponse> response = cmapService.getCafesByUserDefault(request);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/user-went")   //went화면
+    public ResponseEntity<List<CmapResponse>> getDefaultCafesByUserWENT(HttpServletRequest request) throws BaseException {
+        List<CmapResponse> response = cmapService.getCafesByUserWENT(request);
+        return ResponseEntity.ok(response);
+    }
+
 
     @PostMapping
     public ResponseEntity<CmapResponse> createOrUpdateCmap(@RequestBody CmapDto cmapRequest, HttpServletRequest request) throws BaseException {
@@ -41,16 +48,25 @@ public class CmapController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/mates-all")
+    @GetMapping("/mates-all")   //모든 mate검색
     public List<String> getAllMates(HttpServletRequest request) throws BaseException {
         return cmapService.getAllMates(request);
     }
 
-    @GetMapping("/mates")
-    public ResponseEntity<List<CmapResponse>> getMatesCafeList(@RequestParam String mateNickname) throws BaseException {
-        List<CmapResponse> response = cmapService.getMatesCafeList(mateNickname);
+    @GetMapping("/mates-default")   //mate의 cmap default화면
+    public ResponseEntity<List<CmapResponse>> getMatesCafeDefaultList(
+            @RequestParam String Nickname) throws BaseException {
+        List<CmapResponse> response = cmapService.getMatesDefaultCafeList(Nickname);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/mates-went")   //mate의 cmap went화면
+    public ResponseEntity<List<CmapResponse>> getMatesWentCafeList(
+            @RequestParam String Nickname) throws BaseException {
+        List<CmapResponse> response = cmapService.getMatesWentCafeList(Nickname);
+        return ResponseEntity.ok(response);
+    }
+
 
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<BaseResponse<BaseResponseStatus>> handleBaseException(BaseException ex) {

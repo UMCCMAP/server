@@ -44,16 +44,37 @@ public class CmapService {
      */
 
     @Transactional
-    public List<CmapResponse> getCafesByUser(HttpServletRequest request) throws BaseException {
+    public List<CmapResponse> getCafesByUserDefault(HttpServletRequest request) throws BaseException {
         User user = authService.getUser(request);
-        List<Cmap> cafes = cmapRepository.findByUser(user);
+        Type cmapType = Type.WANT;
+
+        List<Cmap> cafes = cmapRepository.findByUserAndType(user, cmapType);
+
         if (cafes.isEmpty()) {
             throw new BaseException(BaseResponseStatus.CAFE_NOT_FOUND_FOR_USER);
         }
+
         return cafes.stream()
                 .map(CmapResponse::new)
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public List<CmapResponse> getCafesByUserWENT(HttpServletRequest request) throws BaseException {
+        User user = authService.getUser(request);
+        Type cmapType = Type.WENT;
+
+        List<Cmap> cafes = cmapRepository.findByUserAndType(user, cmapType);
+
+        if (cafes.isEmpty()) {
+            throw new BaseException(BaseResponseStatus.CAFE_NOT_FOUND_FOR_USER);
+        }
+
+        return cafes.stream()
+                .map(CmapResponse::new)
+                .collect(Collectors.toList());
+    }
+
 
     @Transactional(readOnly = false)
     public CmapResponse createOrUpdateCmap(CmapDto cmapRequest, HttpServletRequest request) throws BaseException {
@@ -115,11 +136,13 @@ public class CmapService {
     }
 
     @Transactional
-    public List<CmapResponse> getMatesCafeList(String mateNickname) throws BaseException {
-        User mateUser = userRepository.findByNickname(mateNickname)
+    public List<CmapResponse> getMatesDefaultCafeList(String Nickname) throws BaseException {
+        User mateUser = userRepository.findByNickname(Nickname)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
 
-        List<Cmap> cafes = cmapRepository.findByUser(mateUser);
+        Type cmapType = Type.WANT;
+
+        List<Cmap> cafes = cmapRepository.findByUserAndType(mateUser, cmapType);
 
         if (cafes.isEmpty()) {
             throw new BaseException(BaseResponseStatus.CAFE_NOT_FOUND_FOR_USER);
@@ -129,6 +152,26 @@ public class CmapService {
                 .map(CmapResponse::new)
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public List<CmapResponse> getMatesWentCafeList(String Nickname) throws BaseException {
+        User mateUser = userRepository.findByNickname(Nickname)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
+
+        Type cmapType = Type.WENT;
+
+        List<Cmap> cafes = cmapRepository.findByUserAndType(mateUser, cmapType);
+
+        if (cafes.isEmpty()) {
+            throw new BaseException(BaseResponseStatus.CAFE_NOT_FOUND_FOR_USER);
+        }
+
+        return cafes.stream()
+                .map(CmapResponse::new)
+                .collect(Collectors.toList());
+    }
+
+
 
     /**
      * 젼 공간

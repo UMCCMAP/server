@@ -29,6 +29,8 @@ public class Cmap extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Type type;
 
+
+
     @Builder
     public Cmap(User user, Cafe cafe, Type type) {
         this.user = user;
