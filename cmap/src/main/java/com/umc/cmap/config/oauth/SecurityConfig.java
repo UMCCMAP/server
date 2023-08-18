@@ -33,7 +33,7 @@ public class SecurityConfig extends WebSecurityConfiguration {
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
                         .requestMatchers("/","/users/**","/token/**", "/map/place/**", "/board/**","/cmap/**","/cafes/**","/location/**","/cafes",
-                        "/cmap","/location").permitAll().anyRequest().authenticated())
+                        "/cmap","/location","/cmap/mates","/cmap/mates/**").permitAll().anyRequest().authenticated())
                 //.formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer.loginPage("/users/login").permitAll())
                 .httpBasic(httpSecurityHttpBasicConfigurer -> httpSecurityHttpBasicConfigurer.disable())
                 .logout(httpSecurityLogoutConfigurer -> httpSecurityLogoutConfigurer.logoutSuccessUrl("/"))
