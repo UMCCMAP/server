@@ -4,10 +4,7 @@ import com.umc.cmap.config.BaseException;
 import com.umc.cmap.config.BaseResponse;
 import com.umc.cmap.config.BaseResponseStatus;
 import com.umc.cmap.domain.cafe.entity.Cafe;
-import com.umc.cmap.domain.cmap.dto.CmapCafeDto;
-import com.umc.cmap.domain.cmap.dto.CmapDto;
-import com.umc.cmap.domain.cmap.dto.CmapListResponse;
-import com.umc.cmap.domain.cmap.dto.CmapResponse;
+import com.umc.cmap.domain.cmap.dto.*;
 import com.umc.cmap.domain.cmap.entity.Cmap;
 import com.umc.cmap.domain.cmap.entity.Type;
 import com.umc.cmap.domain.cmap.service.CmapService;
@@ -43,6 +40,18 @@ public class CmapController {
         CmapResponse response = cmapService.createOrUpdateCmap(cmapRequest, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    @GetMapping("/mates-all")
+    public List<String> getAllMates(HttpServletRequest request) throws BaseException {
+        return cmapService.getAllMates(request);
+    }
+
+    @GetMapping("/mates")
+    public ResponseEntity<List<CmapResponse>> getMatesCafeList(@RequestParam String mateNickname) throws BaseException {
+        List<CmapResponse> response = cmapService.getMatesCafeList(mateNickname);
+        return ResponseEntity.ok(response);
+    }
+
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<BaseResponse<BaseResponseStatus>> handleBaseException(BaseException ex) {
         BaseResponse<BaseResponseStatus> response = new BaseResponse<>(ex.getStatus());

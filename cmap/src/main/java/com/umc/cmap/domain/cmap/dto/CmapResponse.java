@@ -5,9 +5,9 @@ import lombok.Data;
 
 @Data
 public class CmapResponse {
-    private Long idx;
-    private String userNickname;
-    private Long cafeIdx;
+    //private Long idx;
+    //private String userNickname;
+    //private Long cafeIdx;
     private String type;
 
 
@@ -19,10 +19,10 @@ public class CmapResponse {
 
 
     public CmapResponse(Cmap cmap) {
-        this.idx = cmap.getIdx();
+        //this.idx = cmap.getIdx();
         //this.userId = cmap.getUser().getIdx();
-        this.userNickname = cmap.getUser().getNickname();
-        this.cafeIdx = cmap.getCafe().getIdx();
+        //this.userNickname = cmap.getUser().getNickname();
+        //this.cafeIdx = cmap.getCafe().getIdx();
         this.type = cmap.getType().toString();
 
         this.cafeName = cmap.getCafe().getName();

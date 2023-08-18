@@ -5,11 +5,8 @@ import com.umc.cmap.config.BaseResponse;
 import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.entity.Location;
 import com.umc.cmap.domain.cafe.repository.CafeRepository;
-import com.umc.cmap.domain.cmap.dto.CmapCafeDto;
-import com.umc.cmap.domain.cmap.dto.CmapDto;
-import com.umc.cmap.domain.cmap.dto.CmapListResponse;
+import com.umc.cmap.domain.cmap.dto.*;
 import com.umc.cmap.config.BaseResponseStatus;
-import com.umc.cmap.domain.cmap.dto.CmapResponse;
 import com.umc.cmap.domain.cmap.entity.Cmap;
 import com.umc.cmap.domain.cmap.entity.Type;
 import com.umc.cmap.domain.cmap.repository.CmapRepository;
@@ -58,7 +55,7 @@ public class CmapService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(readOnly = false)
     public CmapResponse createOrUpdateCmap(CmapDto cmapRequest, HttpServletRequest request) throws BaseException {
         User user = authService.getUser(request);
         Cafe cafe = cafeRepository.findById(cmapRequest.getCafeIdx())
@@ -88,9 +85,7 @@ public class CmapService {
         return new CmapResponse(cmap);
     }
 
-
-
-
+    @Transactional
     public List<String> getMates(String userNickname) throws BaseException{
         User user = userRepository.findByNickname(userNickname)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
@@ -102,6 +97,37 @@ public class CmapService {
             matesNicknameList.add(matesInfo);
         }
         return matesNicknameList;
+    }
+
+    @Transactional
+    public List<String> getAllMates(HttpServletRequest request) throws BaseException {
+        User loggedInUser = authService.getUser(request);
+
+        List<Mates> matesList = matesRepository.findAllByFromIdx(loggedInUser.getIdx());
+        List<String> matesNicknames = new ArrayList<>();
+
+        for (Mates mates : matesList) {
+            String matesNickname = mates.getTo().getNickname();
+            matesNicknames.add(matesNickname);
+        }
+
+        return matesNicknames;
+    }
+
+    @Transactional
+    public List<CmapResponse> getMatesCafeList(String mateNickname) throws BaseException {
+        User mateUser = userRepository.findByNickname(mateNickname)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
+
+        List<Cmap> cafes = cmapRepository.findByUser(mateUser);
+
+        if (cafes.isEmpty()) {
+            throw new BaseException(BaseResponseStatus.CAFE_NOT_FOUND_FOR_USER);
+        }
+
+        return cafes.stream()
+                .map(CmapResponse::new)
+                .collect(Collectors.toList());
     }
 
     /**
