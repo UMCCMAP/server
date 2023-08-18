@@ -13,5 +13,6 @@ public class ProfileRequest {
     private String userImg;
     private String userInfo;
     private String cafeImg;
+    private String cafeTitle;
     private String cafeInfo;
 }

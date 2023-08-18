@@ -17,6 +17,7 @@ public class ProfileResponse {
     private String userImg;
     private String userInfo;
     private String cafeImg;
+    private String cafeTitle;
     private String cafeInfo;
 
     //리뷰 수, 게시글 수

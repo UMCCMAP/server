@@ -1,6 +1,9 @@
 package com.umc.cmap.domain.user.profile.controller;
 
 import com.umc.cmap.config.BaseException;
+import com.umc.cmap.config.BaseResponseStatus;
+import com.umc.cmap.domain.board.entity.Board;
+import com.umc.cmap.domain.board.repository.BoardRepository;
 import com.umc.cmap.domain.review.dto.ReviewResponse;
 import com.umc.cmap.domain.review.service.ReviewService;
 import com.umc.cmap.domain.user.entity.User;
@@ -27,6 +30,7 @@ public class ProfileController {
     private final ProfileService profileService;
     private final AuthService authService;
     private final ReviewService reviewService;
+    private final BoardRepository boardRepository;
 
     @GetMapping("/users/profile/{userNickname}")
     public ProfileResponse profile(@PathVariable String userNickname) throws BaseException{
@@ -55,10 +59,9 @@ public class ProfileController {
         return "redirect:/users/profile/" + userNickname;
     }
 
-  
     @GetMapping("/users/profile/{userNickname}/reviews")
-    public List<ReviewResponse> userReview(HttpServletRequest request, @PageableDefault(sort = "createdAt", direction = DESC) Pageable pageable) throws BaseException{
-        User user = authService.getUser(request);
+    public List<ReviewResponse> userReview(@PathVariable String userNickname, @PageableDefault(sort = "createdAt", direction = DESC) Pageable pageable) throws BaseException{
+        User user = userRepository.findByNickname(userNickname).orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
         return reviewService.getAllUserReviews(user.getIdx(), pageable);
     }
 }

@@ -70,7 +70,8 @@ public class ProfileService {
                         .build()));
 
 
-        profile.update(request.getUserNickname(), request.getUserImg(), request.getUserInfo(), request.getCafeImg(), request.getCafeInfo());
+        profile.update(request.getUserNickname(), request.getUserImg(), request.getUserInfo(),
+                request.getCafeImg(), request.getCafeTitle(), request.getCafeInfo());
         profileRepository.save(profile);
 
         List<Mates> matesList = matesRepository.findAllByFromIdx(user.getIdx());
