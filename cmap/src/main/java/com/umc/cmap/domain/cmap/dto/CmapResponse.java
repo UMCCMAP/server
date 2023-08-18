@@ -14,7 +14,7 @@ public class CmapResponse {
     private String cafeName;
     private String cafeCity;
     private String cafeDistrict;
-    private Double cafeLatitude;  // 위도
+    private Double cafeLatitude;
     private Double cafeLongitude;
 
 
