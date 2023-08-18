@@ -30,7 +30,6 @@ public class ProfileController {
     private final ProfileService profileService;
     private final AuthService authService;
     private final ReviewService reviewService;
-    private final BoardRepository boardRepository;
 
     @GetMapping("/users/profile/{userNickname}")
     public ProfileResponse profile(@PathVariable String userNickname) throws BaseException{
