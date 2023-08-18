@@ -20,6 +20,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Long countByIdxInAndRemovedAtIsNull(List<Long> boardIdx);
     Long countByUserAndRemovedAtIsNull(User user);
 
-    Long countByCafe(Cafe cafe);
+    Long countByCafeAndRemovedAtIsNull(Cafe cafe);
     Long countByBoardTitleContainingOrBoardContentContainingAndRemovedAtIsNull(String boardTitle, String boardContent);
 }
