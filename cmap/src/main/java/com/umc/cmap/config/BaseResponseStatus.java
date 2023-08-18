@@ -40,6 +40,8 @@ public enum BaseResponseStatus {
     THEME_NOT_INPUT(false,3113,"검색 할 테마를 입력하세요"),
     CAFE_NOT_FOUND_FOR_USER(false,3114,"저장된 카페가 없습니다."),
     DUPLICATE_CMAP_TYPE(false,3115,"동일한카페 동일한 type"),
+    MATES_CMAP_NOT_FOUND(false,3116,"해당 유저의 cmap리스트가 없습니다"),
+
 
 
 
