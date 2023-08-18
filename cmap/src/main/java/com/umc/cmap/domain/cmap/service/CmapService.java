@@ -48,7 +48,7 @@ public class CmapService {
 
     @Transactional
     public List<CmapResponse> getCafesByUser(HttpServletRequest request) throws BaseException {
-        User user = authService.getUser(request); // 토큰으로부터 사용자 정보 추출
+        User user = authService.getUser(request);
         List<Cmap> cafes = cmapRepository.findByUser(user);
         if (cafes.isEmpty()) {
             throw new BaseException(BaseResponseStatus.CAFE_NOT_FOUND_FOR_USER);
