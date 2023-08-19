@@ -9,7 +9,7 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
-@Table(name = "cafe_filter")
+//@Table(name = "cafe_filter")
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class CafeFilter extends BaseTimeEntity {
 

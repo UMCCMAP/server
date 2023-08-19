@@ -112,4 +112,8 @@ public class ReviewService {
         review.delete();
     }
 
+    public List<Review> getCafeReviews(Cafe cafe) {
+        return reviewRepository.findByCafe(cafe);
+    }
+
 }

@@ -16,10 +16,16 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     List<Review> findAllByUserIdx(Long userIdx, Pageable pageable);
 
+    Long countByUserIdx(Long userIdx);
+
+    List<Review> findByCafe(Cafe cafe);
+
+
     Long countByUserIdxAndIsDeletedFalse(Long userIdx);
 
     @Query("select avg(r.score) from Review r where r.cafe.idx = :cafeIdx and r.isDeleted = false")
     Double getScoreAvgByCafe(@Param("cafeIdx") Long cafeIdx);
 
     Long countByCafeAndIsDeletedFalse(Cafe cafe);
+
 }

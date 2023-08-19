@@ -36,22 +36,20 @@ public class CafeThemeController {
     public ResponseEntity<List<CafeTheme>> createCafeThemes(@RequestBody List<CafeThemeRequest> requests) throws BaseException {
         List<CafeTheme> createdCafeThemes = new ArrayList<>();
         for (CafeThemeRequest request : requests) {
-            String themeName = request.getThemeName();
+            Long themeIdx = request.getThemeIdx();
             Long cafeIdx = request.getCafeIdx();
-            CafeTheme createdCafeTheme = cafeThemeService.createCafeTheme(themeName, cafeIdx);
+            CafeTheme createdCafeTheme = cafeThemeService.createCafeTheme(themeIdx, cafeIdx);
             createdCafeThemes.add(createdCafeTheme);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCafeThemes);
     }
 
-
-
     @PutMapping("/{cafeThemeId}")
-    public ResponseEntity<CafeTheme> updateCafeTheme(@PathVariable Long cafeThemeId, @RequestBody CafeThemeRequest cafeThemeRequest) throws BaseException {
-        CafeTheme updatedCafeTheme = cafeThemeService.updateCafeTheme(cafeThemeId, cafeThemeRequest);
+    public ResponseEntity<CafeTheme> updateCafeTheme(@PathVariable Long cafeThemeId, @RequestBody CafeThemeRequest request) throws BaseException {
+        Long themeIdx = request.getThemeIdx();
+        CafeTheme updatedCafeTheme = cafeThemeService.updateCafeTheme(cafeThemeId, themeIdx);
         return ResponseEntity.ok(updatedCafeTheme);
     }
-
     @DeleteMapping("/theme/{cafeThemeId}")
     public ResponseEntity<Void> deleteCafeTheme(@PathVariable Long cafeThemeId) throws BaseException {
         cafeThemeService.deleteCafeTheme(cafeThemeId);
