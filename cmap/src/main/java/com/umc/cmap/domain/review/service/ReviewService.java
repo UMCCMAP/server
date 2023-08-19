@@ -69,7 +69,7 @@ public class ReviewService {
     }
 
     public Long getUserReviewsCnt(Long userIdx) {
-        return reviewRepository.countByUserIdx(userIdx);
+        return reviewRepository.countByUserIdxAndIsDeletedFalse(userIdx);
     }
 
     @Transactional

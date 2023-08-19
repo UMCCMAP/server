@@ -11,10 +11,13 @@ import java.util.Optional;
 
 public interface CmapRepository extends JpaRepository<Cmap, Long> {
     Optional<List<Cmap>> findByTypeAndUserIdx(Type type, Long userIdx);
+
     List<Cmap> findByCafe(Cafe cafe);
+  
     List<Cmap> findByUserAndType(User user, Type type);
 
     List<Cmap> findByUserAndTypeAndCafeNameContainingIgnoreCase(User user, Type type, String cafeName);
 
+    Optional<Cmap> findByUserAndCafe(User user, Cafe cafe);
 
 }
