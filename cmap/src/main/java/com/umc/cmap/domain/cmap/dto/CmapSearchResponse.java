@@ -41,3 +41,4 @@ public class CmapSearchResponse {
         this.type = type;
     }
 }
+
