@@ -11,11 +11,11 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class CmapListResponse {
-    private List<CmapCafeDto> cmapCafeDtos;
+    private List<CmapCafeDto> cmapCafe;
     private List<HashMap<Long,String>> themeList;
 
-    public CmapListResponse(List<CmapCafeDto> cmapCafeDtos, List<HashMap<Long,String>> themeList) {
-        this.cmapCafeDtos = cmapCafeDtos;
+    public CmapListResponse(List<CmapCafeDto> cmapCafe, List<HashMap<Long,String>> themeList) {
+        this.cmapCafe = cmapCafe;
         this.themeList = themeList;
     }
 }
