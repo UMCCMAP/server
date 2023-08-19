@@ -3,7 +3,9 @@ package com.umc.cmap.domain.cmap.controller;
 import com.umc.cmap.config.BaseException;
 import com.umc.cmap.config.BaseResponse;
 import com.umc.cmap.config.BaseResponseStatus;
+import com.umc.cmap.domain.cafe.controller.response.CafeResponse;
 import com.umc.cmap.domain.cafe.entity.Cafe;
+import com.umc.cmap.domain.cafe.service.CafeService;
 import com.umc.cmap.domain.cmap.dto.*;
 import com.umc.cmap.domain.cmap.entity.Cmap;
 import com.umc.cmap.domain.cmap.entity.Type;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/cmap")
 public class CmapController {
     private final CmapService cmapService;
+    private final CafeService cafeService;
 
     /**
      * 노깨 공간
@@ -67,14 +70,36 @@ public class CmapController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/user-default/search") //유저 cmap검색(want)
+    public ResponseEntity<List<CafeResponse>> searchCafesByNameForUserDefault(@RequestParam String cafeName, HttpServletRequest request) throws BaseException {
+        List<CafeResponse> cafeResponses = cmapService.searchCafesByNameForUserDefault(cafeName, request);
+        return new ResponseEntity<>(cafeResponses, HttpStatus.OK);
+    }
+
+    @GetMapping("/user-went/search")    //유저 cmap검색(went)
+    public ResponseEntity<List<CafeResponse>> searchCafesByNameForUserWent(@RequestParam String cafeName, HttpServletRequest request) throws BaseException {
+        List<CafeResponse> cafeResponses = cmapService.searchCafesByNameForUserWent(cafeName, request);
+        return new ResponseEntity<>(cafeResponses, HttpStatus.OK);
+    }
+
+    @GetMapping("/mates-default/search")    ///메이트 cmap검색(want)
+    public ResponseEntity<List<CafeResponse>> searchMatesCafeDefaultListByName(@RequestParam String mateNickname, @RequestParam String cafeName) throws BaseException {
+        List<CafeResponse> cafeResponses = cmapService.searchMatesCafeDefaultListByName(mateNickname, cafeName);
+        return new ResponseEntity<>(cafeResponses, HttpStatus.OK);
+    }
+
+    @GetMapping("/mates-went/search")   ///메이트 cmap검색(went)
+    public ResponseEntity<List<CafeResponse>> searchMatesWentCafeListByName(@RequestParam String mateNickname, @RequestParam String cafeName) throws BaseException {
+        List<CafeResponse> cafeResponses = cmapService.searchMatesWentCafeListByName(mateNickname, cafeName);
+        return new ResponseEntity<>(cafeResponses, HttpStatus.OK);
+    }
+
 
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<BaseResponse<BaseResponseStatus>> handleBaseException(BaseException ex) {
         BaseResponse<BaseResponseStatus> response = new BaseResponse<>(ex.getStatus());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-
     /**
      * 젼 공간
      */

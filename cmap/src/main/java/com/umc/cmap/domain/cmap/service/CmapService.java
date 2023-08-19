@@ -2,6 +2,7 @@ package com.umc.cmap.domain.cmap.service;
 
 import com.umc.cmap.config.BaseException;
 import com.umc.cmap.config.BaseResponse;
+import com.umc.cmap.domain.cafe.controller.response.CafeResponse;
 import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.entity.Location;
 import com.umc.cmap.domain.cafe.repository.CafeRepository;
@@ -171,7 +172,73 @@ public class CmapService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<CafeResponse> searchCafesByNameForUserDefault(String cafeName, HttpServletRequest request) throws BaseException {
+        User user = authService.getUser(request);
+        Type cmapType = Type.WANT;
 
+        List<Cmap> cafes = cmapRepository.findByUserAndTypeAndCafeNameContainingIgnoreCase(user, cmapType, cafeName);
+
+        if (cafes.isEmpty()) {
+            throw new BaseException(BaseResponseStatus.CAFE_NOT_FOUND_FOR_USER);
+        }
+
+        return cafes.stream()
+                .map(cmap -> new CafeResponse(cmap.getCafe(), cmap.getCafe().getReviews()))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<CafeResponse> searchCafesByNameForUserWent(String cafeName, HttpServletRequest request) throws BaseException {
+        User user = authService.getUser(request);
+        Type cmapType = Type.WENT;
+
+        List<Cmap> cafes = cmapRepository.findByUserAndTypeAndCafeNameContainingIgnoreCase(user, cmapType, cafeName);
+
+        if (cafes.isEmpty()) {
+            throw new BaseException(BaseResponseStatus.CAFE_NOT_FOUND_FOR_USER);
+        }
+
+        return cafes.stream()
+                .map(cmap -> new CafeResponse(cmap.getCafe(), cmap.getCafe().getReviews()))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<CafeResponse> searchMatesCafeDefaultListByName(String mateNickname, String cafeName) throws BaseException {
+        User mateUser = userRepository.findByNickname(mateNickname)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
+
+        Type cmapType = Type.WANT;
+
+        List<Cmap> cafes = cmapRepository.findByUserAndTypeAndCafeNameContainingIgnoreCase(mateUser, cmapType, cafeName);
+
+        if (cafes.isEmpty()) {
+            throw new BaseException(BaseResponseStatus.CAFE_NOT_FOUND_FOR_USER);
+        }
+
+        return cafes.stream()
+                .map(cmap -> new CafeResponse(cmap.getCafe(), cmap.getCafe().getReviews()))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<CafeResponse> searchMatesWentCafeListByName(String mateNickname, String cafeName) throws BaseException {
+        User mateUser = userRepository.findByNickname(mateNickname)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
+
+        Type cmapType = Type.WENT;
+
+        List<Cmap> cafes = cmapRepository.findByUserAndTypeAndCafeNameContainingIgnoreCase(mateUser, cmapType, cafeName);
+
+        if (cafes.isEmpty()) {
+            throw new BaseException(BaseResponseStatus.CAFE_NOT_FOUND_FOR_USER);
+        }
+
+        return cafes.stream()
+                .map(cmap -> new CafeResponse(cmap.getCafe(), cmap.getCafe().getReviews()))
+                .collect(Collectors.toList());
+    }
 
     /**
      * 젼 공간

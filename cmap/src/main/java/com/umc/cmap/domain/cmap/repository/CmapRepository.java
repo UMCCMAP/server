@@ -14,4 +14,7 @@ public interface CmapRepository extends JpaRepository<Cmap, Long> {
     List<Cmap> findByCafe(Cafe cafe);
     List<Cmap> findByUserAndType(User user, Type type);
 
+    List<Cmap> findByUserAndTypeAndCafeNameContainingIgnoreCase(User user, Type type, String cafeName);
+
+
 }
