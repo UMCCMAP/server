@@ -43,7 +43,7 @@ public class CafeController {
     public ResponseEntity<List<CafeResponse>> getAllCafes() {
         List<Cafe> cafes = cafeService.getAllCafes();
         List<CafeResponse> cafeResponses = cafes.stream()
-                .map(cafe -> new CafeResponse(cafe, new ArrayList<>()))  // No reviews for now
+                .map(cafe -> new CafeResponse(cafe, new ArrayList<>()))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(cafeResponses);
     }
@@ -51,7 +51,7 @@ public class CafeController {
     @GetMapping("/{idx}")
     public ResponseEntity<CafeResponse> getCafeById(@PathVariable Long idx) throws BaseException {
         Cafe cafe = cafeService.getCafeById(idx);
-        List<Review> reviews = reviewService.getCafeReviews(cafe);  // 카페와 관련된 리뷰 목록을 가져오는 메서드 호출
+        List<Review> reviews = reviewService.getCafeReviews(cafe);
         CafeResponse cafeResponse = new CafeResponse(cafe, reviews);
         return ResponseEntity.ok(cafeResponse);
     }
@@ -62,7 +62,7 @@ public class CafeController {
 
         List<CafeResponse> cafeResponsesByName = new ArrayList<>();
         for (Cafe cafe : cafesByName) {
-            List<Review> reviews = reviewService.getCafeReviews(cafe);  // 카페와 관련된 리뷰 목록을 가져오는 메서드 호출
+            List<Review> reviews = reviewService.getCafeReviews(cafe);
             cafeResponsesByName.add(new CafeResponse(cafe, reviews));
         }
 

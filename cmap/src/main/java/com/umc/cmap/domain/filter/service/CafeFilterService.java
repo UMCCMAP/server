@@ -37,7 +37,7 @@ public class CafeFilterService {
             List<Cafe> cafesWithTheme = cafeService.getCafesByThemes(Collections.singletonList(theme));
 
             for (Cafe cafe : cafesWithTheme) {
-                cafeResponses.add(new CafeResponse(cafe, new ArrayList<>())); // Empty review list for now
+                cafeResponses.add(new CafeResponse(cafe, new ArrayList<>()));
             }
 
             return cafeResponses;
@@ -59,13 +59,13 @@ public class CafeFilterService {
                             .collect(Collectors.toList());
 
                     if (cafeThemeNames.containsAll(themeNames)) {
-                        cafeResponses.add(new CafeResponse(cafe, new ArrayList<>())); // Empty review list for now
+                        cafeResponses.add(new CafeResponse(cafe, new ArrayList<>()));
                     }
                 }
             } else if ((city != null && district != null) && (themeNames == null || themeNames.isEmpty())) {
                 List<Cafe> cafes = cafeService.getCafesByCityAndDistrict(city, district);
                 cafeResponses = cafes.stream()
-                        .map(cafe -> new CafeResponse(cafe, new ArrayList<>())) // Empty review list for now
+                        .map(cafe -> new CafeResponse(cafe, new ArrayList<>()))
                         .collect(Collectors.toList());
             } else if (themeNames != null && themeNames.size() >= 1 && (city == null || district == null)) {
                 List<Cafe> cafesWithThemes = cafeService.getCafesByThemes(themeNames);
@@ -76,7 +76,7 @@ public class CafeFilterService {
                             .collect(Collectors.toList());
 
                     if (cafeThemeNames.containsAll(themeNames)) {
-                        cafeResponses.add(new CafeResponse(cafe, new ArrayList<>())); // Empty review list for now
+                        cafeResponses.add(new CafeResponse(cafe, new ArrayList<>()));
                     }
                 }
             }

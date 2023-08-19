@@ -17,28 +17,6 @@ import java.util.stream.Collectors;
 @Setter
 @NoArgsConstructor
 public class CafeResponse {
-    /*private Long idx;
-    private String name;
-    private String city;
-    private String district;
-    private String info;
-    private List<CafeThemeResponse> cafeThemes;
-    private String image;
-    private Double cafeLatitude;
-    private Double cafeLongitude;
-
-    public CafeResponse(Cafe cafe) {
-        this.idx = cafe.getIdx();
-        this.name = cafe.getName();
-        this.city = cafe.getCity();
-        this.district = cafe.getDistrict();
-        this.cafeThemes = cafe.getCafeThemes().stream()
-                .map(CafeThemeResponse::new)
-                .collect(Collectors.toList());
-        this.image = cafe.getImage();
-        this.cafeLatitude = cafe.getLocation().getLatitude();
-        this.cafeLongitude = cafe.getLocation().getLongitude();
-    }*/
 
     private Long idx;
     private String name;
@@ -49,12 +27,12 @@ public class CafeResponse {
     private String image;
     private Double cafeLatitude;
     private Double cafeLongitude;
-    private List<ReviewResponse> reviews;  // New field: List of reviews
-    private Double averageRating;  // New field: Average rating
-    private Integer totalPosts;  // New field: Total posts
-    private Integer totalReviews;  // New field: Total reviews
+    private List<ReviewResponse> reviews;
+    private Double averageRating;
+    private Integer totalPosts;
+    private Integer totalReviews;
 
-    public CafeResponse(Cafe cafe, List<Review> reviews) {  // Updated constructor
+    public CafeResponse(Cafe cafe, List<Review> reviews) {
         this.idx = cafe.getIdx();
         this.name = cafe.getName();
         this.city = cafe.getCity();
@@ -63,15 +41,15 @@ public class CafeResponse {
                 .map(CafeThemeResponse::new)
                 .collect(Collectors.toList());
         this.reviews = reviews.stream()
-                .filter(review -> !review.getIsDeleted())  // Exclude deleted reviews
+                .filter(review -> !review.getIsDeleted())
                 .map(review -> new ReviewResponse(
-                        new ReviewWriterResponse(),  // You need to provide a valid ReviewWriterResponse instance here
+                        new ReviewWriterResponse(),
                         review.getIdx(),
                         review.getContent(),
                         review.getScore(),
                         review.getTitle(),
                         review.getKeyword(),
-                        null,  // Assuming no imageUrls for now
+                        null,
                         review.getCreatedAt()
                 ))
                 .collect(Collectors.toList());
@@ -79,9 +57,9 @@ public class CafeResponse {
         this.image = cafe.getImage();
         this.cafeLatitude = cafe.getLocation().getLatitude();
         this.cafeLongitude = cafe.getLocation().getLongitude();
-        this.averageRating = calculateAverageRating(reviews);  // Calculating average rating
-        this.totalPosts = calculateTotalPosts(reviews);  // Calculating total posts
-        this.totalReviews = reviews.size();  // Total number of reviews
+        this.averageRating = calculateAverageRating(reviews);
+        this.totalPosts = calculateTotalPosts(reviews);
+        this.totalReviews = reviews.size();
 
 
     }

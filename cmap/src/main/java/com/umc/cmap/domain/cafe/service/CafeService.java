@@ -131,7 +131,7 @@ public class CafeService {
     public List<Cafe> getCafesByCityAndDistrictAndThemes(String city, String district, List<String> themeNames) {
         List<Cafe> cafes = cafeRepository.findCafesByCityAndDistrict(city, district);
 
-        // Filter cafes by themes
+
         List<Cafe> cafesWithThemes = new ArrayList<>();
         for (Cafe cafe : cafes) {
             List<String> cafeThemeNames = cafe.getCafeThemes().stream()
