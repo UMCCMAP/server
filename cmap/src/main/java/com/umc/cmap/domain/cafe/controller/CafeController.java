@@ -11,6 +11,8 @@ import com.umc.cmap.domain.cafe.service.CafeService;
 import com.umc.cmap.domain.cafe.service.LocationService;
 import com.umc.cmap.domain.filter.entity.CafeFilter;
 import com.umc.cmap.domain.filter.service.CafeFilterService;
+import com.umc.cmap.domain.review.entity.Review;
+import com.umc.cmap.domain.review.service.ReviewService;
 import com.umc.cmap.domain.theme.repository.ThemeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,27 +37,37 @@ public class CafeController {
     private final CafeFilterService cafeFilterService;
     private final ThemeRepository themeRepository;
     private final LocationService locationService;
+    private final ReviewService reviewService;
 
     @GetMapping
-    public List<Cafe> getAllCafes() {
-        return cafeService.getAllCafes();
+    public ResponseEntity<List<CafeResponse>> getAllCafes() {
+        List<Cafe> cafes = cafeService.getAllCafes();
+        List<CafeResponse> cafeResponses = cafes.stream()
+                .map(cafe -> new CafeResponse(cafe, new ArrayList<>()))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(cafeResponses);
     }
 
     @GetMapping("/{idx}")
-    public ResponseEntity<Cafe> getCafeById(@PathVariable Long idx) throws BaseException {
+    public ResponseEntity<CafeResponse> getCafeById(@PathVariable Long idx) throws BaseException {
         Cafe cafe = cafeService.getCafeById(idx);
-        return ResponseEntity.ok(cafe);
+        List<Review> reviews = reviewService.getCafeReviews(cafe);
+        CafeResponse cafeResponse = new CafeResponse(cafe, reviews);
+        return ResponseEntity.ok(cafeResponse);
     }
 
     @GetMapping("/name")
     public ResponseEntity<List<CafeResponse>> getCafesByName(@RequestParam(name = "name") String cafeName) throws BaseException {
         List<Cafe> cafesByName = cafeService.getCafesByName(cafeName);
-        List<CafeResponse> cafeResponsesByName = cafesByName.stream()
-                .map(CafeResponse::new)
-                .collect(Collectors.toList());
+
+        List<CafeResponse> cafeResponsesByName = new ArrayList<>();
+        for (Cafe cafe : cafesByName) {
+            List<Review> reviews = reviewService.getCafeReviews(cafe);
+            cafeResponsesByName.add(new CafeResponse(cafe, reviews));
+        }
+
         return ResponseEntity.ok(cafeResponsesByName);
     }
-
 
     @PostMapping
     public ResponseEntity<Cafe> createCafe(@RequestBody CafeRequest cafeRequest) throws BaseException {
@@ -98,18 +110,19 @@ public class CafeController {
         return ResponseEntity.ok(randomCafeResponse);
     }
 
+    @PostMapping("/{idx}/image")
+    public ResponseEntity<String> uploadCafeImage(@PathVariable Long idx, @RequestParam("imageUrl") String imageUrl) throws BaseException {
+        cafeService.uploadCafeImage(idx, imageUrl);
+        return ResponseEntity.ok("성공적으로 이미지 업로드");
+    }
 
     @GetMapping("/{idx}/image")
     public ResponseEntity<String> getCafeImage(@PathVariable Long idx) throws BaseException {
-        String imageBytes = cafeService.getCafeImage(idx);
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageBytes);
-    }
-
-
-    @PostMapping("/{idx}/image")
-    public ResponseEntity<String> uploadCafeImage(@PathVariable Long idx, @RequestParam("imageFile") MultipartFile imageFile) throws BaseException {
-        cafeService.uploadCafeImage(idx, imageFile);
-        return ResponseEntity.ok("성공적으로 이미지 업로드");
+        String imageUrl = cafeService.getCafeImage(idx);
+        if (imageUrl == null) {
+            throw new BaseException(BaseResponseStatus.CAFE_IMAGE_NOT_FOUND);
+        }
+        return ResponseEntity.ok(imageUrl);
     }
 
 

@@ -69,7 +69,7 @@ public class ReviewService {
     }
 
     public Long getUserReviewsCnt(Long userIdx) {
-        return reviewRepository.countByUserIdx(userIdx);
+        return reviewRepository.countByUserIdxAndIsDeletedFalse(userIdx);
     }
 
     @Transactional
@@ -110,6 +110,10 @@ public class ReviewService {
             throw new BaseException(DONT_HAVE_ACCESS);
         }
         review.delete();
+    }
+
+    public List<Review> getCafeReviews(Cafe cafe) {
+        return reviewRepository.findByCafe(cafe);
     }
 
 }

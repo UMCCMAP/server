@@ -1,9 +1,7 @@
 package com.umc.cmap.domain.cmap.dto;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 @Getter
 @Setter
 @NoArgsConstructor
