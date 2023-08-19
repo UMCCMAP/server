@@ -1,6 +1,7 @@
 package com.umc.cmap.domain.cmap.controller;
 
 import com.umc.cmap.config.BaseException;
+import com.umc.cmap.domain.cmap.dto.CmapCafeResponse;
 import com.umc.cmap.domain.cmap.dto.CmapStateRequest;
 import com.umc.cmap.domain.cmap.service.CafeStateService;
 import jakarta.servlet.ServletRequest;
@@ -30,5 +31,11 @@ public class CafeStateController {
                        @RequestBody @Valid CmapStateRequest dto, ServletRequest request) throws BaseException {
         service.update(nickname, cafeIdx, dto, request);
 
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/map/place/{cafeIdx}/info")
+    public CmapCafeResponse getCafeInfo(@PathVariable Long cafeIdx, ServletRequest request) throws BaseException{
+        return service.getCafeInfo(cafeIdx, request);
     }
 }
