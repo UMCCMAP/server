@@ -113,7 +113,7 @@ public class ReviewService {
     }
 
     public List<Review> getCafeReviews(Cafe cafe) {
-        return reviewRepository.findByCafe(cafe);  // reviewRepository는 Review 엔티티의 JpaRepository입니다.
+        return reviewRepository.findByCafe(cafe);
     }
 
 }
