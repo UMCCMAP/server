@@ -1,5 +1,6 @@
 package com.umc.cmap.domain.review.repository;
 
+import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.review.entity.Review;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findAllByCafeIdx(Long cafeIdx, Pageable pageable);
     List<Review> findAllByUserIdx(Long userIdx, Pageable pageable);
     Long countByUserIdx(Long userIdx);
+
+    List<Review> findByCafe(Cafe cafe);
 }

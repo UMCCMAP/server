@@ -3,6 +3,7 @@ package com.umc.cmap.domain.cafe.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.umc.cmap.config.BaseTimeEntity;
+import com.umc.cmap.domain.review.entity.Review;
 import com.umc.cmap.domain.theme.entity.CafeTheme;
 import jakarta.persistence.*;
 import lombok.*;
@@ -41,29 +42,22 @@ public class Cafe extends BaseTimeEntity {
     @Column(name="cafe_info")
     private String info;
 
-
     @JsonManagedReference
     @OneToMany(mappedBy = "cafe", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<CafeTheme> cafeThemes = new ArrayList<>();
 
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "theme_id")
-    private CafeTheme theme;
-
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "location_idx")
     private Location location;
+
+    @OneToMany(mappedBy = "cafe", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Review> reviews = new ArrayList<>();
 
     @JsonIgnore
     public LocalDateTime getCreatedAt() {
         return super.getCreatedAt();
     }
 
-    public String getThemeName() {
-        return this.cafeThemes != null && !this.cafeThemes.isEmpty() && this.cafeThemes.get(0).getTheme() != null
-                ? this.cafeThemes.get(0).getTheme().getName() : null;
-    }
 
     @Builder
     public Cafe(Long idx, String name, String city, String district, String info,

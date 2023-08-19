@@ -11,6 +11,8 @@ import com.umc.cmap.domain.cafe.service.CafeService;
 import com.umc.cmap.domain.cafe.service.LocationService;
 import com.umc.cmap.domain.filter.entity.CafeFilter;
 import com.umc.cmap.domain.filter.service.CafeFilterService;
+import com.umc.cmap.domain.review.entity.Review;
+import com.umc.cmap.domain.review.service.ReviewService;
 import com.umc.cmap.domain.theme.repository.ThemeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,27 +37,37 @@ public class CafeController {
     private final CafeFilterService cafeFilterService;
     private final ThemeRepository themeRepository;
     private final LocationService locationService;
+    private final ReviewService reviewService;
 
     @GetMapping
-    public List<Cafe> getAllCafes() {
-        return cafeService.getAllCafes();
+    public ResponseEntity<List<CafeResponse>> getAllCafes() {
+        List<Cafe> cafes = cafeService.getAllCafes();
+        List<CafeResponse> cafeResponses = cafes.stream()
+                .map(cafe -> new CafeResponse(cafe, new ArrayList<>()))  // No reviews for now
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(cafeResponses);
     }
 
     @GetMapping("/{idx}")
-    public ResponseEntity<Cafe> getCafeById(@PathVariable Long idx) throws BaseException {
+    public ResponseEntity<CafeResponse> getCafeById(@PathVariable Long idx) throws BaseException {
         Cafe cafe = cafeService.getCafeById(idx);
-        return ResponseEntity.ok(cafe);
+        List<Review> reviews = reviewService.getCafeReviews(cafe);  // 카페와 관련된 리뷰 목록을 가져오는 메서드 호출
+        CafeResponse cafeResponse = new CafeResponse(cafe, reviews);
+        return ResponseEntity.ok(cafeResponse);
     }
 
     @GetMapping("/name")
     public ResponseEntity<List<CafeResponse>> getCafesByName(@RequestParam(name = "name") String cafeName) throws BaseException {
         List<Cafe> cafesByName = cafeService.getCafesByName(cafeName);
-        List<CafeResponse> cafeResponsesByName = cafesByName.stream()
-                .map(CafeResponse::new)
-                .collect(Collectors.toList());
+
+        List<CafeResponse> cafeResponsesByName = new ArrayList<>();
+        for (Cafe cafe : cafesByName) {
+            List<Review> reviews = reviewService.getCafeReviews(cafe);  // 카페와 관련된 리뷰 목록을 가져오는 메서드 호출
+            cafeResponsesByName.add(new CafeResponse(cafe, reviews));
+        }
+
         return ResponseEntity.ok(cafeResponsesByName);
     }
-
 
     @PostMapping
     public ResponseEntity<Cafe> createCafe(@RequestBody CafeRequest cafeRequest) throws BaseException {

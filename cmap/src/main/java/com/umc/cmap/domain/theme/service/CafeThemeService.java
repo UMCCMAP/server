@@ -47,8 +47,8 @@ public class CafeThemeService {
 
     }
 
-    public CafeTheme createCafeTheme(String themeName, Long cafeIdx) throws BaseException {
-        Theme theme = themeRepository.findByName(themeName)
+    public CafeTheme createCafeTheme(Long themeIdx, Long cafeIdx) throws BaseException {
+        Theme theme = themeRepository.findById(themeIdx)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.THEME_NOT_FOUND));
 
         Cafe cafe = cafeRepository.findById(cafeIdx)
@@ -68,12 +68,11 @@ public class CafeThemeService {
     }
 
     @Transactional
-    public CafeTheme updateCafeTheme(Long cafeThemeId, CafeThemeRequest cafeThemeRequest) throws BaseException {
-
+    public CafeTheme updateCafeTheme(Long cafeThemeId, Long themeIdx) throws BaseException {
         CafeTheme existingCafeTheme = cafeThemeRepository.findById(cafeThemeId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_THEME_NOT_FOUND));
 
-        Theme newTheme = themeRepository.findByName(cafeThemeRequest.getThemeName())
+        Theme newTheme = themeRepository.findById(themeIdx)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.THEME_NOT_FOUND));
 
         Cafe cafe = existingCafeTheme.getCafe();

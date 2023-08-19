@@ -112,4 +112,8 @@ public class ReviewService {
         review.delete();
     }
 
+    public List<Review> getCafeReviews(Cafe cafe) {
+        return reviewRepository.findByCafe(cafe);  // reviewRepository는 Review 엔티티의 JpaRepository입니다.
+    }
+
 }
