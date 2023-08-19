@@ -103,30 +103,28 @@ public class CafeService {
         return cafeRepository.findByNameContaining(cafeName);
     }
 
-    public void uploadCafeImage(Long idx, MultipartFile imageFile) throws BaseException {
+    public String getCafeImage(Long idx) throws BaseException {
+        Cafe cafe = getCafeById(idx);
+        String imageUrl = cafe.getImage();
+        if (imageUrl == null) {
+            throw new BaseException(BaseResponseStatus.CAFE_IMAGE_NOT_FOUND);
+        }
+        return imageUrl;
+    }
+
+    public void uploadCafeImage(Long idx, String imageUrl) throws BaseException {
         Cafe cafe = getCafeById(idx);
 
-        if (imageFile != null) {
-            try {
-                String imageData = Base64.getEncoder().encodeToString(imageFile.getBytes());
-                cafe.setImage(imageData);
-                cafeRepository.save(cafe);
-            } catch (IOException e) {
-                throw new BaseException((BaseResponseStatus.CAFE_IMAGE_NOT_UPLOADED2));
-            }
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            cafe.setImage(imageUrl);
+            cafeRepository.save(cafe);
         } else {
             throw new BaseException(BaseResponseStatus.CAFE_IMAGE_NOT_UPLOADED);
         }
     }
 
-    public String getCafeImage(Long idx) throws BaseException {
-        Cafe cafe = getCafeById(idx);
-        String image = cafe.getImage();
-        if (image == null) {
-            throw new BaseException(BaseResponseStatus.CAFE_IMAGE_NOT_FOUND);
-        }
-        return image;
-    }
+
+
 
     public List<Cafe> getCafesByCityAndDistrictAndThemes(String city, String district, List<String> themeNames) {
         List<Cafe> cafes = cafeRepository.findCafesByCityAndDistrict(city, district);

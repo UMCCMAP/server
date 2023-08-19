@@ -110,18 +110,19 @@ public class CafeController {
         return ResponseEntity.ok(randomCafeResponse);
     }
 
+    @PostMapping("/{idx}/image")
+    public ResponseEntity<String> uploadCafeImage(@PathVariable Long idx, @RequestParam("imageUrl") String imageUrl) throws BaseException {
+        cafeService.uploadCafeImage(idx, imageUrl);
+        return ResponseEntity.ok("성공적으로 이미지 업로드");
+    }
 
     @GetMapping("/{idx}/image")
     public ResponseEntity<String> getCafeImage(@PathVariable Long idx) throws BaseException {
-        String imageBytes = cafeService.getCafeImage(idx);
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageBytes);
-    }
-
-
-    @PostMapping("/{idx}/image")
-    public ResponseEntity<String> uploadCafeImage(@PathVariable Long idx, @RequestParam("imageFile") MultipartFile imageFile) throws BaseException {
-        cafeService.uploadCafeImage(idx, imageFile);
-        return ResponseEntity.ok("성공적으로 이미지 업로드");
+        String imageUrl = cafeService.getCafeImage(idx);
+        if (imageUrl == null) {
+            throw new BaseException(BaseResponseStatus.CAFE_IMAGE_NOT_FOUND);
+        }
+        return ResponseEntity.ok(imageUrl);
     }
 
 

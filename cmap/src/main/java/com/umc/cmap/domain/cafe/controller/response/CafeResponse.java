@@ -27,7 +27,7 @@ public class CafeResponse {
     private String image;
     private Double cafeLatitude;
     private Double cafeLongitude;
-    private List<ReviewResponse> reviews;
+    //private List<ReviewResponse> reviews;
     private Double averageRating;
     private Integer totalPosts;
     private Integer totalReviews;
@@ -40,7 +40,7 @@ public class CafeResponse {
         this.cafeThemes = cafe.getCafeThemes().stream()
                 .map(CafeThemeResponse::new)
                 .collect(Collectors.toList());
-        this.reviews = reviews.stream()
+       /* this.reviews = reviews.stream()
                 .filter(review -> !review.getIsDeleted())
                 .map(review -> new ReviewResponse(
                         new ReviewWriterResponse(),
@@ -52,7 +52,7 @@ public class CafeResponse {
                         null,
                         review.getCreatedAt()
                 ))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
 
         this.image = cafe.getImage();
         this.cafeLatitude = cafe.getLocation().getLatitude();
