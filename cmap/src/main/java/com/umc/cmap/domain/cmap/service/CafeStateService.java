@@ -23,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.umc.cmap.config.BaseResponseStatus.DONT_HAVE_ACCESS;
 
 @Slf4j
 @Service
@@ -82,19 +81,12 @@ public class CafeStateService {
 
 
     @Transactional
-    public void update(String nickname, Long cafeIdx, CmapStateRequest dto, ServletRequest request) throws BaseException {
+    public void update(Long cafeIdx, CmapStateRequest dto, ServletRequest request) throws BaseException {
         User user = authService.getUser(request);
-        if (!isEqualUser(nickname, user)) {
-            throw new BaseException(DONT_HAVE_ACCESS);
-        }
-
         Cmap cmap = cmapRepository.findByUserAndCafe(user, cafeRepository.findById(cafeIdx).orElseThrow(EntityNotFoundException::new)).orElseThrow(EntityNotFoundException::new);
         log.info("[cmap-update] cafe [" + cmap.getCafe().getIdx() + "] user [" + cmap.getUser().getIdx() + "] type [" + dto.getType() + "]");
-        cmap.update(dto.getType());
-    }
 
-    private boolean isEqualUser(String nickname, User param) {
-        return param.getNickname().equals(nickname);
+        cmap.update(dto.getType());
     }
 
 }

@@ -26,16 +26,15 @@ public class CafeStateController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PutMapping("/map/{nickname}/place/{cafeIdx}")
-    public void update(@PathVariable String nickname, @PathVariable Long cafeIdx,
-                       @RequestBody @Valid CmapStateRequest dto, ServletRequest request) throws BaseException {
-        service.update(nickname, cafeIdx, dto, request);
+    @PutMapping("/map/place/{cafeIdx}")
+    public void update(@PathVariable Long cafeIdx, @RequestBody @Valid CmapStateRequest dto, ServletRequest request) throws BaseException {
+        service.update(cafeIdx, dto, request);
 
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/map/place/{cafeIdx}/info")
-    public CmapCafeResponse getCafeInfo(@PathVariable Long cafeIdx, ServletRequest request) throws BaseException{
+    public CmapCafeResponse getCafeInfo(@PathVariable Long cafeIdx, ServletRequest request) throws BaseException {
         return service.getCafeInfo(cafeIdx, request);
     }
 }
