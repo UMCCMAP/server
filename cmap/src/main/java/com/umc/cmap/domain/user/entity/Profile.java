@@ -23,6 +23,8 @@ public class Profile {
 
     private String cafeImg;
 
+    private String cafeTitle;
+
     private String cafeInfo;
 
     @OneToOne(fetch = FetchType.EAGER)
@@ -31,20 +33,22 @@ public class Profile {
 
 
     @Builder
-    public Profile(String userImg, String userInfo, String cafeImg, String cafeInfo, User user){
+    public Profile(String userImg, String userInfo, String cafeImg, String cafeTitle, String cafeInfo, User user){
         this.user = user;
         this.userImg = userImg;
         this.userInfo = userInfo;
         this.cafeImg = cafeImg;
+        this.cafeTitle=cafeTitle;
         this.cafeInfo = cafeInfo;
     }
 
 
-    public void update(String userNickname, String userImg, String userInfo, String cafeImg, String cafeInfo){
+    public void update(String userNickname, String userImg, String userInfo, String cafeImg, String cafeTitle, String cafeInfo){
         this.user.setNickname(userNickname);
         this.userImg = userImg;
         this.userInfo = userInfo;
         this.cafeImg = cafeImg;
+        this.cafeTitle=cafeTitle;
         this.cafeInfo = cafeInfo;
     }
 }
