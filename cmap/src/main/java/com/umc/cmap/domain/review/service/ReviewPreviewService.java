@@ -30,13 +30,13 @@ public class ReviewPreviewService {
 
     public List<ReviewPreviewResponse> get(Long cafeIdx, Pageable pageable) {
         List<Review> reviews = reviewRepository.findAllByCafeIdx(cafeIdx, pageable).stream().filter(r -> !r.getIsDeleted()).toList();
-        log.info("[review] review-preview list of cafe(idx = " + cafeIdx + ") is selected");
+        log.info("[review] review-preview list of cafe(idx = {}) is selected", cafeIdx);
         return reviews.stream().map(this::toResponse).toList();
     }
 
     private ReviewPreviewResponse toResponse(final Review review) {
         log.info("[review] call preview response");
-        log.info("[review] review preview info: review idx: " + review.getIdx());
+        log.info("[review] review preview info: review idx: {}", review.getIdx());
         return ReviewPreviewResponse.builder()
                 .idx(review.getIdx())
                 .userInfo(reviewService.getWriter(review.getUser()))

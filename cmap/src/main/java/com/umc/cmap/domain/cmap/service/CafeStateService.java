@@ -44,14 +44,15 @@ public class CafeStateService {
         dto.setCafe(cafe);
         if (getCmap(user, cafe) == null) {
             cmapRepository.save(cmapMapper.toEntity(dto, user));
+            log.info("[cmap-save] user: {}, cafe: {}", user.getIdx(), cafe.getIdx());
         }
     }
 
     public CmapCafeResponse getCafeInfo(Long cafeIdx, ServletRequest request) throws BaseException {
         User user = authService.getUser(request);
         Cafe cafe = getCafe(cafeIdx);
+        log.info("");
         return getCmapCafeResponse(user, cafe);
-
     }
 
     private CmapCafeResponse getCmapCafeResponse(User user, Cafe cafe) {
@@ -84,7 +85,7 @@ public class CafeStateService {
     public void update(Long cafeIdx, CmapStateRequest dto, ServletRequest request) throws BaseException {
         User user = authService.getUser(request);
         Cmap cmap = cmapRepository.findByUserAndCafe(user, cafeRepository.findById(cafeIdx).orElseThrow(EntityNotFoundException::new)).orElseThrow(EntityNotFoundException::new);
-        log.info("[cmap-update] cafe [" + cmap.getCafe().getIdx() + "] user [" + cmap.getUser().getIdx() + "] type [" + dto.getType() + "]");
+        log.info("[cmap-update] cafe: {}, user: {}, type: {}", cmap.getCafe().getIdx(), cmap.getUser().getIdx(), dto.getType());
 
         cmap.update(dto.getType());
     }
