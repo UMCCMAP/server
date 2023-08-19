@@ -1,5 +1,6 @@
 package com.umc.cmap.domain.review.service;
 
+import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.review.dto.ReviewPreviewResponse;
 import com.umc.cmap.domain.review.entity.Review;
 import com.umc.cmap.domain.review.entity.ReviewImage;
@@ -34,6 +35,8 @@ public class ReviewPreviewService {
     }
 
     private ReviewPreviewResponse toResponse(final Review review) {
+        log.info("[review] call preview response");
+        log.info("[review] review preview info: review idx: " + review.getIdx());
         return ReviewPreviewResponse.builder()
                 .idx(review.getIdx())
                 .userInfo(reviewService.getWriter(review.getUser()))
@@ -51,5 +54,13 @@ public class ReviewPreviewService {
     private String getOneImageUrl(Long reviewIdx) {
         Optional<ReviewImage> image = imageRepository.findFirstByReviewIdx(reviewIdx);
         return image.map(ReviewImage::getImageUrl).orElse(null);
+    }
+
+    public Double getScoreAvg(final Long cafeIdx) {
+        return reviewRepository.getScoreAvgByCafe(cafeIdx);
+    }
+
+    public Long getReviewCntByCafe(final Cafe cafe) {
+        return reviewRepository.countByCafeAndIsDeletedFalse(cafe);
     }
 }
