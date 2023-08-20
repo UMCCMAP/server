@@ -2,9 +2,7 @@ package com.umc.cmap.domain.cmap.service;
 
 import com.umc.cmap.config.BaseException;
 import com.umc.cmap.domain.cafe.entity.Cafe;
-import com.umc.cmap.config.BaseResponse;
 import com.umc.cmap.domain.cafe.controller.response.CafeResponse;
-import com.umc.cmap.domain.cafe.entity.Location;
 import com.umc.cmap.domain.cafe.repository.CafeRepository;
 import com.umc.cmap.domain.cmap.dto.*;
 import com.umc.cmap.config.BaseResponseStatus;
