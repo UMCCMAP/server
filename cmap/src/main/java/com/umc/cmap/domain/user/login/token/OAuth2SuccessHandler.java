@@ -29,7 +29,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         UserRequest userRequest = userRequestMapper.toRequest(oAuth2User);
 
         Token token = tokenService.generateToken(userRequest.getEmail(), "USER");
-        log.info("{}",token);
 
         writeTokenResponse(httpServletResponse, token);
     }
@@ -38,12 +37,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             throws IOException {
         response.setContentType("text/html;charset=UTF-8");
 
-        response.addHeader("Authorization", token.getToken());
-        response.addHeader("RefreshToken", token.getRefreshToken());
+        response.addHeader("Authorization","Bearer " + token.getToken());
+        response.addHeader("RefreshToken","Bearer " + token.getRefreshToken());
         response.setContentType("application/json;charset=UTF-8");
 
-        var writer = response.getWriter();
-        writer.println(objectMapper.writeValueAsString(token));
-        writer.flush();
+        response.sendRedirect("http://localhost:3000/oauth2/redirect");
     }
 }
