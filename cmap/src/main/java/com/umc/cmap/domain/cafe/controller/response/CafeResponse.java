@@ -73,7 +73,10 @@ public class CafeResponse {
         for (Review review : reviews) {
             totalScore += review.getScore();
         }
-        return totalScore / reviews.size();
+        double average = totalScore / reviews.size();
+        double roundAverage = Math.round(average * 10.0) / 10.0;
+        return roundAverage;
+
     }
 
     private Integer calculateTotalPosts(List<Review> reviews) {

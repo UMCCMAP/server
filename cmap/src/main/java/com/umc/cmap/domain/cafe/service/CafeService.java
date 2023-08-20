@@ -3,21 +3,28 @@ package com.umc.cmap.domain.cafe.service;
 import com.umc.cmap.config.BaseException;
 import com.umc.cmap.config.BaseResponseStatus;
 import com.umc.cmap.domain.cafe.controller.request.CafeRequest;
+import com.umc.cmap.domain.cafe.controller.response.CafeTypeResponse;
 import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.entity.Location;
 import com.umc.cmap.domain.cafe.repository.CafeRepository;
 import com.umc.cmap.domain.cafe.repository.LocationRepository;
+import com.umc.cmap.domain.cmap.entity.Cmap;
+import com.umc.cmap.domain.cmap.entity.Type;
+import com.umc.cmap.domain.cmap.repository.CmapRepository;
+import com.umc.cmap.domain.review.entity.Review;
+import com.umc.cmap.domain.review.service.ReviewService;
 import com.umc.cmap.domain.theme.repository.ThemeRepository;
+import com.umc.cmap.domain.user.entity.User;
+import com.umc.cmap.domain.user.login.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,11 +34,57 @@ public class CafeService {
     private final CafeRepository cafeRepository;
     private final ThemeRepository themeRepository;
     private final LocationRepository locationRepository;
+    private final AuthService authService;
+    private final CmapRepository cmapRepository;
+    private final ReviewService reviewService;
 
     public Cafe getCafeById(Long idx) throws BaseException {
         return cafeRepository.findById(idx)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.CAFE_NOT_FOUND));
     }
+
+    public List<Cafe> getCafesByName(String cafeName) {
+        return cafeRepository.findByNameContaining(cafeName);
+    }
+    public CafeTypeResponse getCafeWithUserType(Long cafeIdx, HttpServletRequest request) throws BaseException {
+        User user = authService.getUser(request);
+
+        Cafe cafe = getCafeById(cafeIdx);
+        if (cafe == null) {
+            throw new BaseException(BaseResponseStatus.CAFE_NOT_FOUND);
+        }
+
+        List<Review> reviews = reviewService.getCafeReviews(cafe);
+
+        Optional<Cmap> cmapOptional = cmapRepository.findByUserAndCafe(user, cafe);
+        if (cmapOptional.isPresent()) {
+            Type userType = cmapOptional.get().getType();
+            return new CafeTypeResponse(cafe, reviews, userType);
+        } else {
+            return new CafeTypeResponse(cafe, reviews, null);
+        }
+    }
+
+    public CafeTypeResponse getCafeWithUserTypeByName(String name, HttpServletRequest request) throws BaseException {
+        User user = authService.getUser(request);
+
+        List<Cafe> cafes = getCafesByName(name);
+        if (cafes.isEmpty()) {
+            throw new BaseException(BaseResponseStatus.CAFE_NOT_FOUND);
+        }
+
+        Cafe cafe = cafes.get(0);
+        List<Review> reviews = reviewService.getCafeReviews(cafe);
+
+        Optional<Cmap> cmapOptional = cmapRepository.findByUserAndCafe(user, cafe);
+        if (cmapOptional.isPresent()) {
+            Type userType = cmapOptional.get().getType();
+            return new CafeTypeResponse(cafe, reviews, userType);
+        } else {
+            return new CafeTypeResponse(cafe, reviews, null);
+        }
+    }
+
 
     public List<Cafe> getAllCafes() {
         return cafeRepository.findAll();
@@ -98,10 +151,6 @@ public class CafeService {
         return cafeRepository.findByCityAndDistrict(city, district);
     }
 
-    public List<Cafe> getCafesByName(String cafeName) {
-        return cafeRepository.findByNameContaining(cafeName);
-    }
-
     public String getCafeImage(Long idx) throws BaseException {
         Cafe cafe = getCafeById(idx);
         String imageUrl = cafe.getImage();
@@ -122,25 +171,29 @@ public class CafeService {
         }
     }
 
+    public List<CafeTypeResponse> getCafesByCityAndDistrictAndThemes(
+            String city, String district, List<String> themeNames, HttpServletRequest request) throws BaseException {
+        User user = authService.getUser(request);
 
-
-
-    public List<Cafe> getCafesByCityAndDistrictAndThemes(String city, String district, List<String> themeNames) {
         List<Cafe> cafes = cafeRepository.findCafesByCityAndDistrict(city, district);
+        List<CafeTypeResponse> cafeTypeResponses = new ArrayList<>();
 
-
-        List<Cafe> cafesWithThemes = new ArrayList<>();
         for (Cafe cafe : cafes) {
             List<String> cafeThemeNames = cafe.getCafeThemes().stream()
                     .map(cafeTheme -> cafeTheme.getTheme().getName())
                     .collect(Collectors.toList());
 
             if (cafeThemeNames.containsAll(themeNames)) {
-                cafesWithThemes.add(cafe);
+                List<Review> reviews = reviewService.getCafeReviews(cafe);
+
+                Optional<Cmap> cmapOptional = cmapRepository.findByUserAndCafe(user, cafe);
+                Type userType = cmapOptional.map(Cmap::getType).orElse(null);
+
+                cafeTypeResponses.add(new CafeTypeResponse(cafe, reviews, userType));
             }
         }
 
-        return cafesWithThemes;
+        return cafeTypeResponses;
     }
 
 }
