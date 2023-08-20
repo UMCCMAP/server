@@ -43,10 +43,6 @@ public class CmapService {
     private final CafeRepository cafeRepository;
 
 
-    /**
-     * 노깨 공간
-     */
-
     @Transactional
     public List<CmapResponse> getCafesByUserDefault(HttpServletRequest request) throws BaseException {
         User user = authService.getUser(request);
@@ -79,8 +75,7 @@ public class CmapService {
                 .collect(Collectors.toList());
     }
 
-
-    @Transactional(readOnly = false)
+    @Transactional
     public CmapResponse createOrUpdateCmap(CmapDto cmapRequest, HttpServletRequest request) throws BaseException {
         User user = authService.getUser(request);
         Cafe cafe = cafeRepository.findById(cmapRequest.getCafeIdx())
@@ -259,19 +254,6 @@ public class CmapService {
 
         return resultMap;
     }
-
-
-    /**
-     * 젼 공간
-     */
-
-    /**
-     * 션 공간
-     */
-
-    /**
-     * 데옹 공간
-     */
 
     public CmapListResponse getCmapList(Type type, HttpServletRequest token) throws BaseException {
         User user = authService.getUser(token);

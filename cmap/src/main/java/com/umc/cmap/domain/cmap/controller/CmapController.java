@@ -2,35 +2,22 @@ package com.umc.cmap.domain.cmap.controller;
 
 import com.umc.cmap.config.BaseException;
 import com.umc.cmap.config.BaseResponse;
-import com.umc.cmap.config.BaseResponseStatus;
-import com.umc.cmap.domain.cafe.controller.response.CafeResponse;
-import com.umc.cmap.domain.cafe.entity.Cafe;
-import com.umc.cmap.domain.cafe.service.CafeService;
 import com.umc.cmap.domain.cmap.dto.*;
-import com.umc.cmap.domain.cmap.entity.Cmap;
 import com.umc.cmap.domain.cmap.entity.Type;
 import com.umc.cmap.domain.cmap.service.CmapService;
-import com.umc.cmap.domain.user.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/cmap")
 public class CmapController {
     private final CmapService cmapService;
-    private final CafeService cafeService;
-
-    /**
-     * 노깨 공간
-     */
 
     @GetMapping("/user-default")    //디폴트화면
     public ResponseEntity<List<CmapResponse>> getDefaultCafesByUserDefault(HttpServletRequest request) throws BaseException {
@@ -43,7 +30,6 @@ public class CmapController {
         List<CmapResponse> response = cmapService.getCafesByUserWENT(request);
         return ResponseEntity.ok(response);
     }
-
 
     @PostMapping
     public ResponseEntity<CmapResponse> createOrUpdateCmap(@RequestBody CmapDto cmapRequest, HttpServletRequest request) throws BaseException {
@@ -93,19 +79,6 @@ public class CmapController {
         return new ResponseEntity<>(cmapSearchResponses, HttpStatus.OK);
     }
 
-
-
-    /**
-     * 젼 공간
-     */
-
-    /**
-     * 션 공간
-     */
-
-    /**
-     * 데옹 공간
-     */
     @GetMapping("/want")
     public BaseResponse<CmapListResponse> getCmapWantList(@RequestParam(required = false) List<Long> themeIdx, HttpServletRequest token) throws BaseException {
         if (themeIdx != null && !themeIdx.isEmpty()) {
