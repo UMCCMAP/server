@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.umc.cmap.config.BaseTimeEntity;
 import com.umc.cmap.domain.board.entity.Board;
+import com.umc.cmap.domain.cmap.entity.Cmap;
 import com.umc.cmap.domain.review.entity.Review;
 import com.umc.cmap.domain.theme.entity.CafeTheme;
 import jakarta.persistence.*;
@@ -45,15 +46,21 @@ public class Cafe extends BaseTimeEntity {
     private String info;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "cafe", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "cafe", cascade = CascadeType.ALL, fetch = FetchType.EAGER,orphanRemoval = true)
     private List<CafeTheme> cafeThemes = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "location_idx")
     private Location location;
 
-    @OneToMany(mappedBy = "cafe", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "cafe", cascade = CascadeType.ALL, fetch = FetchType.EAGER,orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "cafe", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private List<Board> boards = new ArrayList<>();
+
+    @OneToMany(mappedBy = "cafe", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private List<Cmap> cmaps = new ArrayList<>();
 
 
     @JsonIgnore
