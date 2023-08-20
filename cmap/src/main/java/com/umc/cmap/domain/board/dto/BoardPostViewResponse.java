@@ -17,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class BoardPostViewResponse {
     private Long idx;
+    private Long cafeIdx;
     private String cafeName;
     private String nickName;
     private String profileImg;
@@ -34,6 +35,7 @@ public class BoardPostViewResponse {
 
     public BoardPostViewResponse(Board board, String profileImg, Long cntLike, Long cntComment, List<HashMap<Long, String>> tagList, boolean like, boolean canModifyPost) {
         this.idx = board.getIdx();
+        this.cafeIdx = board.getCafe().getIdx();
         this.cafeName = board.getCafe().getName();
         this.nickName = board.getUser().getNickname();
         this.profileImg = profileImg;
