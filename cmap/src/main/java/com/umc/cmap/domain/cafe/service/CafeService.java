@@ -65,25 +65,27 @@ public class CafeService {
         }
     }
 
-    public CafeTypeResponse getCafeWithUserTypeByName(String name, HttpServletRequest request) throws BaseException {
+    public List<CafeTypeResponse> getCafesWithUserTypeContainingName(String name, HttpServletRequest request) throws BaseException {
         User user = authService.getUser(request);
 
-        List<Cafe> cafes = getCafesByName(name);
-        if (cafes.isEmpty()) {
-            throw new BaseException(BaseResponseStatus.CAFE_NOT_FOUND);
+        List<Cafe> cafesContainingName = cafeRepository.findByNameContaining(name);
+        List<CafeTypeResponse> cafeTypeResponses = new ArrayList<>();
+
+        for (Cafe cafe : cafesContainingName) {
+            List<Review> reviews = reviewService.getCafeReviews(cafe);
+
+            Optional<Cmap> cmapOptional = cmapRepository.findByUserAndCafe(user, cafe);
+            if (cmapOptional.isPresent()) {
+                Type userType = cmapOptional.get().getType();
+                cafeTypeResponses.add(new CafeTypeResponse(cafe, reviews, userType));
+            } else {
+                cafeTypeResponses.add(new CafeTypeResponse(cafe, reviews, null));
+            }
         }
 
-        Cafe cafe = cafes.get(0);
-        List<Review> reviews = reviewService.getCafeReviews(cafe);
-
-        Optional<Cmap> cmapOptional = cmapRepository.findByUserAndCafe(user, cafe);
-        if (cmapOptional.isPresent()) {
-            Type userType = cmapOptional.get().getType();
-            return new CafeTypeResponse(cafe, reviews, userType);
-        } else {
-            return new CafeTypeResponse(cafe, reviews, null);
-        }
+        return cafeTypeResponses;
     }
+
 
 
     public List<Cafe> getAllCafes() {
@@ -195,5 +197,6 @@ public class CafeService {
 
         return cafeTypeResponses;
     }
+
 
 }

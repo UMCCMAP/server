@@ -67,15 +67,16 @@ public class CmapController {
         List<CmapSearchResponse> cmapSearchResponses = cmapService.searchCafesByNameForUserWent(cafeName, request);
         return new ResponseEntity<>(cmapSearchResponses, HttpStatus.OK);
     }
+
     @GetMapping("/mates-default/search")
-    public ResponseEntity<List<CmapSearchResponse>> searchMatesCafeDefaultListByName(@RequestParam String Nickname, @RequestParam String cafeName) throws BaseException {
-        List<CmapSearchResponse> cmapSearchResponses = cmapService.searchMatesCafeDefaultListByName(Nickname, cafeName);
+    public ResponseEntity<List<CmapSearchResponse>> searchMatesCafeDefaultListByName(@RequestParam String mateNickname, @RequestParam String cafeName) throws BaseException {
+        List<CmapSearchResponse> cmapSearchResponses = cmapService.searchMatesCafeDefaultListByName(mateNickname, cafeName);
         return new ResponseEntity<>(cmapSearchResponses, HttpStatus.OK);
     }
 
     @GetMapping("/mates-went/search")
-    public ResponseEntity<List<CmapSearchResponse>> searchMatesWentCafeListByName(@RequestParam String Nickname, @RequestParam String cafeName) throws BaseException {
-        List<CmapSearchResponse> cmapSearchResponses = cmapService.searchMatesWentCafeListByName(Nickname, cafeName);
+    public ResponseEntity<List<CmapSearchResponse>> searchMatesWentCafeListByName(@RequestParam String mateNickname, @RequestParam String cafeName) throws BaseException {
+        List<CmapSearchResponse> cmapSearchResponses = cmapService.searchMatesWentCafeListByName(mateNickname, cafeName);
         return new ResponseEntity<>(cmapSearchResponses, HttpStatus.OK);
     }
 
@@ -96,4 +97,5 @@ public class CmapController {
         return new BaseResponse<>(cmapService.getCmapList(Type.WENT, nickName));
         }
     }
+
 }
