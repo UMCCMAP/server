@@ -26,6 +26,7 @@ public class BoardPostViewResponse {
     private Long cntLike;
     private Long cntComment;
     private List<HashMap<Long, String>> tagList;
+    private List<TagDto> tagNames;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
@@ -33,7 +34,7 @@ public class BoardPostViewResponse {
     private boolean like;
     private boolean canModifyPost;
 
-    public BoardPostViewResponse(Board board, String profileImg, Long cntLike, Long cntComment, List<HashMap<Long, String>> tagList, boolean like, boolean canModifyPost) {
+    public BoardPostViewResponse(Board board, String profileImg, Long cntLike, Long cntComment, List<HashMap<Long, String>> tagList, List<TagDto> tagNames, boolean like, boolean canModifyPost) {
         this.idx = board.getIdx();
         this.cafeIdx = board.getCafe().getIdx();
         this.cafeName = board.getCafe().getName();
@@ -44,6 +45,7 @@ public class BoardPostViewResponse {
         this.cntLike = cntLike;
         this.cntComment = cntComment;
         this.tagList = tagList;
+        this.tagNames = tagNames;
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
         this.like = like;
