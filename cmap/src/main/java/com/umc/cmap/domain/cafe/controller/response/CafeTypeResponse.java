@@ -1,6 +1,7 @@
 package com.umc.cmap.domain.cafe.controller.response;
 
 import com.umc.cmap.domain.cafe.entity.Cafe;
+import com.umc.cmap.domain.cmap.entity.Type;
 import com.umc.cmap.domain.review.dto.ReviewResponse;
 import com.umc.cmap.domain.review.dto.ReviewWriterResponse;
 import com.umc.cmap.domain.review.entity.Review;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CafeResponse {
+public class CafeTypeResponse {
 
     private Long idx;
     private String name;
@@ -27,12 +28,13 @@ public class CafeResponse {
     private String image;
     private Double cafeLatitude;
     private Double cafeLongitude;
-    //private List<ReviewResponse> reviews;
+
     private Double averageRating;
     private Integer totalPosts;
     private Integer totalReviews;
+    private Type cafeType;
 
-    public CafeResponse(Cafe cafe, List<Review> reviews) {
+    public CafeTypeResponse(Cafe cafe, List<Review> reviews,Type cafeType) {
         this.idx = cafe.getIdx();
         this.name = cafe.getName();
         this.city = cafe.getCity();
@@ -40,26 +42,13 @@ public class CafeResponse {
         this.cafeThemes = cafe.getCafeThemes().stream()
                 .map(CafeThemeResponse::new)
                 .collect(Collectors.toList());
-       /* this.reviews = reviews.stream()
-                .filter(review -> !review.getIsDeleted())
-                .map(review -> new ReviewResponse(
-                        new ReviewWriterResponse(),
-                        review.getIdx(),
-                        review.getContent(),
-                        review.getScore(),
-                        review.getTitle(),
-                        review.getKeyword(),
-                        null,
-                        review.getCreatedAt()
-                ))
-                .collect(Collectors.toList());*/
-
         this.image = cafe.getImage();
         this.cafeLatitude = cafe.getLocation().getLatitude();
         this.cafeLongitude = cafe.getLocation().getLongitude();
         this.averageRating = calculateAverageRating(reviews);
         this.totalPosts = calculateTotalPosts(reviews);
         this.totalReviews = reviews.size();
+        this.cafeType = cafeType;
 
 
     }

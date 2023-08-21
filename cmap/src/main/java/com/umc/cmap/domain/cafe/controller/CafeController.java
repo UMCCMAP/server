@@ -5,15 +5,18 @@ import com.umc.cmap.config.BaseResponse;
 import com.umc.cmap.config.BaseResponseStatus;
 import com.umc.cmap.domain.cafe.controller.request.CafeRequest;
 import com.umc.cmap.domain.cafe.controller.response.CafeResponse;
+import com.umc.cmap.domain.cafe.controller.response.CafeTypeResponse;
 import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.entity.Location;
 import com.umc.cmap.domain.cafe.service.CafeService;
 import com.umc.cmap.domain.cafe.service.LocationService;
+import com.umc.cmap.domain.cmap.dto.CmapSearchResponse;
 import com.umc.cmap.domain.filter.entity.CafeFilter;
 import com.umc.cmap.domain.filter.service.CafeFilterService;
 import com.umc.cmap.domain.review.entity.Review;
 import com.umc.cmap.domain.review.service.ReviewService;
 import com.umc.cmap.domain.theme.repository.ThemeRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -48,25 +51,16 @@ public class CafeController {
         return ResponseEntity.ok(cafeResponses);
     }
 
-    @GetMapping("/{idx}")
-    public ResponseEntity<CafeResponse> getCafeById(@PathVariable Long idx) throws BaseException {
-        Cafe cafe = cafeService.getCafeById(idx);
-        List<Review> reviews = reviewService.getCafeReviews(cafe);
-        CafeResponse cafeResponse = new CafeResponse(cafe, reviews);
-        return ResponseEntity.ok(cafeResponse);
+    @GetMapping("/{cafeIdx}")
+    public ResponseEntity<CafeTypeResponse> getCafeWithUserType(@PathVariable Long cafeIdx,HttpServletRequest request) throws BaseException {
+        CafeTypeResponse cafeTypeResponse = cafeService.getCafeWithUserType(cafeIdx,request);
+        return ResponseEntity.ok(cafeTypeResponse);
     }
 
     @GetMapping("/name")
-    public ResponseEntity<List<CafeResponse>> getCafesByName(@RequestParam(name = "name") String cafeName) throws BaseException {
-        List<Cafe> cafesByName = cafeService.getCafesByName(cafeName);
-
-        List<CafeResponse> cafeResponsesByName = new ArrayList<>();
-        for (Cafe cafe : cafesByName) {
-            List<Review> reviews = reviewService.getCafeReviews(cafe);
-            cafeResponsesByName.add(new CafeResponse(cafe, reviews));
-        }
-
-        return ResponseEntity.ok(cafeResponsesByName);
+    public ResponseEntity<CafeTypeResponse> getCafeWithUserTypeByName(@RequestParam String name,HttpServletRequest request) throws BaseException {
+        CafeTypeResponse cafeTypeResponse = cafeService.getCafeWithUserTypeByName(name,request);
+        return ResponseEntity.ok(cafeTypeResponse);
     }
 
     @PostMapping
@@ -81,13 +75,11 @@ public class CafeController {
         return ResponseEntity.ok(updatedCafe);
     }
 
-
     @DeleteMapping("/{idx}")
     public ResponseEntity<Void> deleteCafe(@PathVariable Long idx) throws BaseException {
         cafeService.deleteCafe(idx);
         return ResponseEntity.noContent().build();
     }
-
 
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<BaseResponse<BaseResponseStatus>> handleBaseException(BaseException ex) {
@@ -96,18 +88,18 @@ public class CafeController {
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<CafeResponse> getCafesByFilter(
+    public ResponseEntity<CafeTypeResponse> getCafesByFilter(
             @RequestParam(name = "city", required = false) String city,
             @RequestParam(name = "district", required = false) String district,
-            @RequestParam(name = "theme", required = false) List<String> themeNames) throws BaseException {
+            @RequestParam(name = "theme", required = false) List<String> themeNames,
+            HttpServletRequest request) throws BaseException {
 
-        List<CafeResponse> cafeResponses = cafeFilterService.getRandomCafeByTheme(city, district, themeNames);
+        List<CafeTypeResponse> cafeTypeResponses = cafeFilterService.getRandomCafeByTheme(city, district, themeNames, request);
 
+        int randomIndex = new Random().nextInt(cafeTypeResponses.size());
+        CafeTypeResponse randomCafeTypeResponse = cafeTypeResponses.get(randomIndex);
 
-        int randomIndex = new Random().nextInt(cafeResponses.size());
-        CafeResponse randomCafeResponse = cafeResponses.get(randomIndex);
-
-        return ResponseEntity.ok(randomCafeResponse);
+        return ResponseEntity.ok(randomCafeTypeResponse);
     }
 
     @PostMapping("/{idx}/image")
@@ -125,13 +117,17 @@ public class CafeController {
         return ResponseEntity.ok(imageUrl);
     }
 
-
     @GetMapping("/theme-all")
-    public ResponseEntity<List<CafeResponse>> getCafesByTheme(
-            @RequestParam(name = "themeName") String themeName) throws BaseException {
-        List<CafeResponse> cafeResponses = cafeFilterService.getCafesByTheme(themeName);
-        return ResponseEntity.ok(cafeResponses);
+    public ResponseEntity<List<CafeTypeResponse>> getCafesByThemeAll(
+            @RequestParam(name = "theme") List<String> themeNames,
+            HttpServletRequest request) throws BaseException {
+
+        List<CafeTypeResponse> cafeTypeResponses = cafeFilterService.getCafesByThemes(themeNames, request);
+
+        return ResponseEntity.ok(cafeTypeResponses);
     }
+
+
 
 
 }
