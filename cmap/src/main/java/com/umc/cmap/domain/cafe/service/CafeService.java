@@ -198,4 +198,5 @@ public class CafeService {
         return cafeTypeResponses;
     }
 
+
 }

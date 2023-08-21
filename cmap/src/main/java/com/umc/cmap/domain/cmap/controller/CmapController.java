@@ -97,4 +97,5 @@ public class CmapController {
         return new BaseResponse<>(cmapService.getCmapList(Type.WENT, nickName));
         }
     }
+
 }
