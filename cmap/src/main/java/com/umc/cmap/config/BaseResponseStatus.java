@@ -38,9 +38,6 @@ public enum BaseResponseStatus {
     LOCATION_NOT_FOUND(false,3111,"존재하지 않는 위치좌표"),
     LOCATION_NOT_INPUT(false,3112,"위치좌표를 입력하세요"),
     THEME_NOT_INPUT(false,3113,"검색 할 테마를 입력하세요"),
-    CAFE_NOT_FOUND_FOR_USER(false,3114,"저장된 카페가 없습니다."),
-    DUPLICATE_CMAP_TYPE(false,3115,"동일한카페 동일한 type"),
-    MATES_CMAP_NOT_FOUND(false,3116,"해당 유저의 cmap리스트가 없습니다"),
 
 
 
@@ -50,12 +47,16 @@ public enum BaseResponseStatus {
     POST_DELETED(false, 3202, "삭제된 게시글입니다."),
     TAG_NOT_FOUND(false, 3203, "태그를 찾을 수 없습니다."),
     DONT_HAVE_ACCESS(false, 3204, "접근 권한이 없습니다."),
+    LIKE_BOARD_EXIST_DATA(false, 3205, "이미 처리된 요청입니다."),
 
     /**
      * 3500 : Cmap 오류
      */
     CMAP_WANT_NOT_FOUND(false, 3500, "Cmap - WANT 를 찾을 수 없습니다."),
     CMAP_WENT_NOT_FOUND(false, 3501, "Cmap - WENT 를 찾을 수 없습니다."),
+    CAFE_NOT_FOUND_FOR_USER(false,3502,"저장된 카페가 없습니다."),
+    DUPLICATE_CMAP_TYPE(false,3503,"동일한카페 동일한 type"),
+    MATES_CMAP_NOT_FOUND(false,3504,"해당 유저의 cmap리스트가 없습니다"),
 
 
     /**
