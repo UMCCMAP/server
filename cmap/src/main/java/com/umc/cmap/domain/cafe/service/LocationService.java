@@ -1,7 +1,6 @@
 package com.umc.cmap.domain.cafe.service;
 
 import com.umc.cmap.config.BaseException;
-import com.umc.cmap.config.BaseResponse;
 import com.umc.cmap.domain.cafe.entity.Location;
 import com.umc.cmap.domain.cafe.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;

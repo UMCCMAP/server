@@ -3,7 +3,6 @@ package com.umc.cmap.domain.cafe.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.umc.cmap.config.BaseTimeEntity;
-import com.umc.cmap.domain.board.entity.Board;
 import com.umc.cmap.domain.review.entity.Review;
 import com.umc.cmap.domain.theme.entity.CafeTheme;
 import jakarta.persistence.*;

@@ -1,21 +1,16 @@
 package com.umc.cmap.domain.filter.service;
 
 import com.umc.cmap.config.BaseException;
-import com.umc.cmap.config.BaseResponse;
 import com.umc.cmap.config.BaseResponseStatus;
 import com.umc.cmap.domain.cafe.controller.response.CafeResponse;
 import com.umc.cmap.domain.cafe.entity.Cafe;
 import com.umc.cmap.domain.cafe.service.CafeService;
-import com.umc.cmap.domain.filter.dto.CafeFilterDto;
-import com.umc.cmap.domain.filter.entity.CafeFilter;
 import com.umc.cmap.domain.filter.repository.CafeFilterRepository;
-import com.umc.cmap.domain.review.entity.Review;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
