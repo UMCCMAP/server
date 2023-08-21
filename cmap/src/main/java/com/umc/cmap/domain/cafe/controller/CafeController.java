@@ -58,10 +58,11 @@ public class CafeController {
     }
 
     @GetMapping("/name")
-    public ResponseEntity<CafeTypeResponse> getCafeWithUserTypeByName(@RequestParam String name,HttpServletRequest request) throws BaseException {
-        CafeTypeResponse cafeTypeResponse = cafeService.getCafeWithUserTypeByName(name,request);
-        return ResponseEntity.ok(cafeTypeResponse);
+    public ResponseEntity<List<CafeTypeResponse>> getCafesWithUserTypeContainingName(@RequestParam String name, HttpServletRequest request) throws BaseException {
+        List<CafeTypeResponse> matchingCafes = cafeService.getCafesWithUserTypeContainingName(name, request);
+        return ResponseEntity.ok(matchingCafes);
     }
+
 
     @PostMapping
     public ResponseEntity<Cafe> createCafe(@RequestBody CafeRequest cafeRequest) throws BaseException {

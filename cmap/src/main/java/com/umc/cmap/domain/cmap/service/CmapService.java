@@ -177,9 +177,7 @@ public class CmapService {
         List<CmapSearchResponse> resultMap = new ArrayList<>();
 
         for (Cmap cmap : cafes) {
-            if (cmap.getCafe().getName().equalsIgnoreCase(cafeName)) {
-                resultMap.add(new CmapSearchResponse(new CafeResponse(cmap.getCafe(), cmap.getCafe().getReviews()), cmap.getType()));
-            }
+            resultMap.add(new CmapSearchResponse(new CafeResponse(cmap.getCafe(), cmap.getCafe().getReviews()), cmap.getType()));
         }
 
         if (resultMap.isEmpty()) {
@@ -198,9 +196,7 @@ public class CmapService {
         List<CmapSearchResponse> resultMap = new ArrayList<>();
 
         for (Cmap cmap : cafes) {
-            if (cmap.getCafe().getName().equalsIgnoreCase(cafeName)) {
-                resultMap.add(new CmapSearchResponse(new CafeResponse(cmap.getCafe(), cmap.getCafe().getReviews()), cmap.getType()));
-            }
+            resultMap.add(new CmapSearchResponse(new CafeResponse(cmap.getCafe(), cmap.getCafe().getReviews()), cmap.getType()));
         }
 
         if (resultMap.isEmpty()) {
@@ -209,7 +205,6 @@ public class CmapService {
 
         return resultMap;
     }
-
 
     public List<CmapSearchResponse> searchMatesCafeDefaultListByName(String mateNickname, String cafeName) throws BaseException {
         User mateUser = userRepository.findByNickname(mateNickname)
@@ -220,9 +215,7 @@ public class CmapService {
         List<CmapSearchResponse> resultMap = new ArrayList<>();
 
         for (Cmap cmap : cafes) {
-            if (cmap.getCafe().getName().equalsIgnoreCase(cafeName)) {
-                resultMap.add(new CmapSearchResponse(new CafeResponse(cmap.getCafe(), cmap.getCafe().getReviews()), cmap.getType()));
-            }
+            resultMap.add(new CmapSearchResponse(new CafeResponse(cmap.getCafe(), cmap.getCafe().getReviews()), cmap.getType()));
         }
 
         if (resultMap.isEmpty()) {
@@ -241,9 +234,7 @@ public class CmapService {
         List<CmapSearchResponse> resultMap = new ArrayList<>();
 
         for (Cmap cmap : cafes) {
-            if (cmap.getCafe().getName().equalsIgnoreCase(cafeName)) {
-                resultMap.add(new CmapSearchResponse(new CafeResponse(cmap.getCafe(), cmap.getCafe().getReviews()), cmap.getType()));
-            }
+            resultMap.add(new CmapSearchResponse(new CafeResponse(cmap.getCafe(), cmap.getCafe().getReviews()), cmap.getType()));
         }
 
         if (resultMap.isEmpty()) {
