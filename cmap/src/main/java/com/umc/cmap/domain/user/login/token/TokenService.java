@@ -5,11 +5,13 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
 import java.util.Date;
 
+@Slf4j
 @Service
 public class TokenService {
     private String secretKey = "7a852f04e7227fb6dfdc8cca32b920ef230b59181e8b71c80263fd7a8135287a6710d61a8cbbb8ff4bf5145ead8c947e";

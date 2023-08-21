@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,21 +30,26 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         UserRequest userRequest = userRequestMapper.toRequest(oAuth2User);
 
         Token token = tokenService.generateToken(userRequest.getEmail(), "USER");
-        log.info("{}",token);
 
-        writeTokenResponse(httpServletResponse, token);
+        String url = makeRedirectUrl(token);
+        httpServletResponse.sendRedirect(url);
     }
 
     private void writeTokenResponse(HttpServletResponse response, Token token)
             throws IOException {
         response.setContentType("text/html;charset=UTF-8");
 
-        response.addHeader("Authorization", token.getToken());
-        response.addHeader("RefreshToken", token.getRefreshToken());
+        response.addHeader("Authorization",token.getToken());
+        response.addHeader("RefreshToken",token.getRefreshToken());
         response.setContentType("application/json;charset=UTF-8");
 
-        var writer = response.getWriter();
-        writer.println(objectMapper.writeValueAsString(token));
-        writer.flush();
+        response.sendRedirect("http://localhost:3000/oauth2/redirect");
+    }
+
+    private String makeRedirectUrl(Token token){
+        return UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/redirect")
+                .queryParam("Authorization", token.getToken())
+                .queryParam("RefreshToken", token.getRefreshToken())
+                .build().toUriString();
     }
 }
