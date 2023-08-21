@@ -38,6 +38,9 @@ public class LoginController {
             //새로 가입한 유저는 닉네임을 받기 위해 이동
             return "redirect:/users/nickname";
         }
+        else if(user!=null && user.getNickname() != null){
+            return user.getNickname();
+        }
 
         return "redirect:/";
     }
@@ -51,14 +54,12 @@ public class LoginController {
     public String nickname(@NotNull @RequestBody Map<String, String> nicknameMap, HttpServletRequest request, RedirectAttributes redirectAttributes) throws BaseException {
         if (nicknameMap.get("nickname").trim().isEmpty()) {
             // 닉네임이 비어있는 경우
-            redirectAttributes.addFlashAttribute("errorMessage", "닉네임을 입력해주세요.");
-            return "redirect:/users/nickname";
+            return "닉네임을 입력해주세요.";
         }
         else if(userRepository.findByNickname(nicknameMap.get("nickname")).isPresent()){
             if(userRepository.findByNickname(nicknameMap.get("nickname")).get().getNickname().toLowerCase().equals(nicknameMap.get("nickname").toLowerCase())){
                 //중복 처리
-                redirectAttributes.addFlashAttribute("errorMessage", "이미 사용 중인 닉네임입니다.");
-                return "redirect:/users/nickname";
+                return "이미 사용 중인 닉네임입니다.";
             }
         }
 
