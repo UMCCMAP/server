@@ -1,12 +1,15 @@
 package com.umc.cmap.domain.cafe.controller.response;
 
 import com.umc.cmap.domain.cafe.entity.Cafe;
+import com.umc.cmap.domain.review.dto.ReviewResponse;
+import com.umc.cmap.domain.review.dto.ReviewWriterResponse;
 import com.umc.cmap.domain.review.entity.Review;
 import com.umc.cmap.domain.theme.controller.response.CafeThemeResponse;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,6 +40,19 @@ public class CafeResponse {
         this.cafeThemes = cafe.getCafeThemes().stream()
                 .map(CafeThemeResponse::new)
                 .collect(Collectors.toList());
+       /* this.reviews = reviews.stream()
+                .filter(review -> !review.getIsDeleted())
+                .map(review -> new ReviewResponse(
+                        new ReviewWriterResponse(),
+                        review.getIdx(),
+                        review.getContent(),
+                        review.getScore(),
+                        review.getTitle(),
+                        review.getKeyword(),
+                        null,
+                        review.getCreatedAt()
+                ))
+                .collect(Collectors.toList());*/
 
         this.image = cafe.getImage();
         this.cafeLatitude = cafe.getLocation().getLatitude();

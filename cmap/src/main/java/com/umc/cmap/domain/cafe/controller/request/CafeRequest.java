@@ -2,6 +2,8 @@ package com.umc.cmap.domain.cafe.controller.request;
 
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Data
 

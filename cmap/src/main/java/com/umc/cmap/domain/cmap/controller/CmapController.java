@@ -80,20 +80,20 @@ public class CmapController {
     }
 
     @GetMapping("/want")
-    public BaseResponse<CmapListResponse> getCmapWantList(@RequestParam(required = false) List<Long> themeIdx, String nickName) throws BaseException {
+    public BaseResponse<CmapListResponse> getCmapWantList(@RequestParam(required = false) List<Long> themeIdx, HttpServletRequest token) throws BaseException {
         if (themeIdx != null && !themeIdx.isEmpty()) {
-            return new BaseResponse<>(cmapService.getCmapListWithThemeList(Type.WANT, themeIdx, nickName));
+            return new BaseResponse<>(cmapService.getCmapListWithThemeList(Type.WANT, themeIdx, token));
         } else {
-        return new BaseResponse<>(cmapService.getCmapList(Type.WANT, nickName));
+        return new BaseResponse<>(cmapService.getCmapList(Type.WANT, token));
         }
     }
 
     @GetMapping("/went")
-    public BaseResponse<CmapListResponse> getCmapWentList(@RequestParam(required = false) List<Long> themeIdx, String nickName) throws BaseException {
+    public BaseResponse<CmapListResponse> getCmapWentList(@RequestParam(required = false) List<Long> themeIdx, HttpServletRequest token) throws BaseException {
         if (themeIdx != null && !themeIdx.isEmpty()) {
-            return new BaseResponse<>(cmapService.getCmapListWithThemeList(Type.WENT, themeIdx, nickName));
+            return new BaseResponse<>(cmapService.getCmapListWithThemeList(Type.WENT, themeIdx, token));
         } else {
-        return new BaseResponse<>(cmapService.getCmapList(Type.WENT, nickName));
+        return new BaseResponse<>(cmapService.getCmapList(Type.WENT, token));
         }
     }
 }

@@ -253,8 +253,8 @@ public class CmapService {
         return resultMap;
     }
 
-    public CmapListResponse getCmapList(Type type, String nickName) throws BaseException {
-        User user = userRepository.findByNickname(nickName).orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
+    public CmapListResponse getCmapList(Type type, HttpServletRequest token) throws BaseException {
+        User user = authService.getUser(token);
         List<Cmap> cmaps = cmapRepository.findByTypeAndUserIdx(type, user.getIdx())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.CMAP_WANT_NOT_FOUND));
         List<CmapCafeDto> CmapCafeDtos = new ArrayList<>();
@@ -266,8 +266,8 @@ public class CmapService {
         return new CmapListResponse(CmapCafeDtos, themeList);
     }
 
-    public CmapListResponse getCmapListWithThemeList(Type type, List<Long> themes, String nickName) throws BaseException {
-        User user = userRepository.findByNickname(nickName).orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
+    public CmapListResponse getCmapListWithThemeList(Type type, List<Long> themes, HttpServletRequest token) throws BaseException {
+        User user = authService.getUser(token);
         List<Cmap> cmaps = cmapRepository.findByTypeAndUserIdx(type, user.getIdx())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.CMAP_WANT_NOT_FOUND));
         List<Cafe> cafes = getCafeContainsThemeList(cmaps, themes);
