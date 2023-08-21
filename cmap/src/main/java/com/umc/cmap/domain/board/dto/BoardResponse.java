@@ -23,8 +23,8 @@ public class BoardResponse {
 
     public BoardResponse(Long idx, String boardTitle, String boardContent, List<HashMap<Long, String>> tagList, List<String> imgList, LocalDateTime createdAt) {
         this.idx = idx;
-        this.boardTitle = generatePreview(boardTitle, 10);
-        this.boardContent = generatePreview(boardContent, 20);
+        this.boardTitle = generatePreview(boardTitle, 20);
+        this.boardContent = generatePreview(boardContent, 100);
         this.tagList = tagList;
         this.imgList = imgList;
         this.createdAt = createdAt;

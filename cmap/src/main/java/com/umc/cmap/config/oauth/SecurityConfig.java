@@ -28,12 +28,12 @@ public class SecurityConfig extends WebSecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http
-                .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.disable())
+                //.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.disable())
                 .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable())
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
                         .requestMatchers("/","/users/**","/token/**", "/map/**", "/board/**","/cmap/**","/cafes/**","/location/**","/cafes",
-                        "/cmap","/location","/cmap/mates","/cmap/mates/**").permitAll().anyRequest().authenticated())
+                        "/cmap","/location","/cmap/mates","/cmap/mates/**", "/s3/**", "/home").permitAll().anyRequest().authenticated())
                 //.formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer.loginPage("/users/login").permitAll())
                 .httpBasic(httpSecurityHttpBasicConfigurer -> httpSecurityHttpBasicConfigurer.disable())
                 .logout(httpSecurityLogoutConfigurer -> httpSecurityLogoutConfigurer.logoutSuccessUrl("/"))

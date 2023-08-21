@@ -155,8 +155,9 @@ public class BoardService {
         boolean like = likeBoardRepository.existsByBoardIdxAndUserIdx(boardIdx, authService.getUser(token).getIdx());
         Long cntLike = likeBoardRepository.countByBoardIdx(boardIdx);
         Long cntComment = commentRepository.countByUserIdx(board.getUser().getIdx());
+        List<TagDto> tagNames = tagRepository.findAllTags();
         List<HashMap<Long, String>> tagList = getTagsForBoard(boardIdx);
-        return new BoardPostViewResponse(board, profileImg, cntLike, cntComment, tagList, like, canModifyPost);
+        return new BoardPostViewResponse(board, profileImg, cntLike, cntComment, tagList, tagNames, like, canModifyPost);
     }
 
     private String getProfileImg(HttpServletRequest token) throws BaseException {

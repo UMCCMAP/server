@@ -5,7 +5,6 @@ import com.umc.cmap.config.BaseResponse;
 import com.umc.cmap.config.BaseResponseStatus;
 import com.umc.cmap.domain.theme.controller.request.CafeThemeRequest;
 import com.umc.cmap.domain.theme.entity.CafeTheme;
-import com.umc.cmap.domain.theme.entity.Theme;
 import com.umc.cmap.domain.theme.service.CafeThemeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
