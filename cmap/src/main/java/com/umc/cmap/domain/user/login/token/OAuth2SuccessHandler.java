@@ -43,11 +43,11 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         response.addHeader("RefreshToken",token.getRefreshToken());
         response.setContentType("application/json;charset=UTF-8");
 
-        response.sendRedirect("http://localhost:3000/oauth2/redirect");
+        response.sendRedirect("http://localhost/oauth2/redirect");
     }
 
     private String makeRedirectUrl(Token token){
-        return UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/redirect")
+        return UriComponentsBuilder.fromUriString("http://localhost/oauth2/redirect")
                 .queryParam("Authorization", token.getToken())
                 .queryParam("RefreshToken", token.getRefreshToken())
                 .build().toUriString();
