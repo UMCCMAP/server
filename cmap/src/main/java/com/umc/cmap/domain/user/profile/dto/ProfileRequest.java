@@ -3,7 +3,6 @@ package com.umc.cmap.domain.user.profile.dto;
 import lombok.*;
 
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

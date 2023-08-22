@@ -9,10 +9,11 @@ import lombok.Setter;
 import java.util.List;
 
 @Getter
-@Setter
 @AllArgsConstructor
 public class ProfileResponse {
     private String userNickname;
+    private String userName;
+    private String userEmail;
 
     private String userImg;
     private String userInfo;

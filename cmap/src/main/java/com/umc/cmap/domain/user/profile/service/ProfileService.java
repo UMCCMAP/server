@@ -54,7 +54,8 @@ public class ProfileService {
         Long reviewNo = reviewService.getUserReviewsCnt(user.getIdx());
         Long boardNo = boardRepository.countByUserIdxAndRemovedAtIsNull(user.getIdx());
 
-        return profileMapper.toResponse(profile, profile.getUser().getNickname(), reviewNo, boardNo, matesInfoList);
+        return profileMapper.toResponse(profile, profile.getUser().getNickname(), profile.getUser().getName(),
+                profile.getUser().getEmail(), reviewNo, boardNo, matesInfoList);
     }
 
 
@@ -86,6 +87,7 @@ public class ProfileService {
         Long reviewNo = reviewService.getUserReviewsCnt(user.getIdx());
         Long boardNo = boardRepository.countByUserIdxAndRemovedAtIsNull(user.getIdx());
 
-        return profileMapper.toResponse(profile, profile.getUser().getNickname(), reviewNo, boardNo, matesInfoList);
+        return profileMapper.toResponse(profile, profile.getUser().getNickname(), profile.getUser().getName(),
+                profile.getUser().getEmail(), reviewNo, boardNo, matesInfoList);
     }
 }
