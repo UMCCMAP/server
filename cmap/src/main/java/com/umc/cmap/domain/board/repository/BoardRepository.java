@@ -3,7 +3,6 @@ package com.umc.cmap.domain.board.repository;
 import com.umc.cmap.domain.board.entity.Board;
 import com.umc.cmap.domain.board.entity.Role;
 import com.umc.cmap.domain.cafe.entity.Cafe;
-import com.umc.cmap.domain.cmap.entity.Type;
 import com.umc.cmap.domain.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
