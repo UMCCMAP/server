@@ -12,6 +12,7 @@ import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.login.service.AuthService;
 import com.umc.cmap.domain.user.repository.ProfileRepository;
 import com.umc.cmap.domain.user.repository.UserRepository;
+import com.umc.cmap.file.AwsS3Service;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
@@ -38,6 +39,7 @@ public class BoardService {
     private final BoardImageRepository boardImageRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
+    private final AwsS3Service awsS3Service;
 
 
 
@@ -202,6 +204,7 @@ public class BoardService {
         for (BoardImage existingImg : existingImgs) {
             if(!imgList.contains(existingImg.getImageUrl())) {
                 boardImageRepository.delete(existingImg);
+                awsS3Service.deleteFile(existingImg.getImageUrl());
             }
         }
     }
