@@ -7,10 +7,12 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CmapCafeDto {
     private Long cafeIdx;
+    private String cafeName;
     private String cafeImg;
 
-    public CmapCafeDto(Long cafeIdx, String cafeImg) {
+    public CmapCafeDto(Long cafeIdx, String cafeName, String cafeImg) {
         this.cafeIdx = cafeIdx;
+        this.cafeName = cafeName;
         this.cafeImg = cafeImg;
     }
 }

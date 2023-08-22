@@ -250,7 +250,7 @@ public class CmapService {
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.CMAP_WANT_NOT_FOUND));
         List<CmapCafeDto> CmapCafeDtos = new ArrayList<>();
         for (Cmap cmap : cmaps) {
-            CmapCafeDto cmapCafeDto =  new CmapCafeDto(cmap.getCafe().getIdx(), cmap.getCafe().getImage());
+            CmapCafeDto cmapCafeDto =  new CmapCafeDto(cmap.getCafe().getIdx(), cmap.getCafe().getName(), cmap.getCafe().getImage());
             CmapCafeDtos.add(cmapCafeDto);
         }
         List<HashMap<Long, String>> themeList = getThemeIdxAndName();
@@ -264,7 +264,7 @@ public class CmapService {
         List<Cafe> cafes = getCafeContainsThemeList(cmaps, themes);
         List<CmapCafeDto> CmapCafeDtos = new ArrayList<>();
         for (Cafe cafe : cafes) {
-            CmapCafeDto cmapCafeDto =  new CmapCafeDto(cafe.getIdx(), cafe.getImage());
+            CmapCafeDto cmapCafeDto =  new CmapCafeDto(cafe.getIdx(), cafe.getName(), cafe.getImage());
             CmapCafeDtos.add(cmapCafeDto);
         }
         List<HashMap<Long, String>> themeList = getThemeIdxAndName();
