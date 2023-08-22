@@ -18,7 +18,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     Page<Board> findByIdxInAndRemovedAtIsNull(List<Long> boardIdx, Pageable pageable);
 
-    Page<Board> findByCafeIdxAndRemovedAtIsNull(Long cafeIdx, Pageable pageable);
+    Page<Board> findByCafeInAndRemovedAtIsNull(List<Cafe> cafe, Pageable pageable);
 
     Page<Board> findByBoardTitleContainingOrBoardContentContainingAndRemovedAtIsNull(String boardTitle, String boardContent, Pageable pageable);
 
@@ -29,6 +29,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Long countByIdxInAndRemovedAtIsNull(List<Long> boardIdx);
 
     Long countByUserAndRemovedAtIsNull(User user);
+
+    Long countByCafeInAndRemovedAtIsNull(List<Cafe> cafe);
 
     Long countByCafeAndRemovedAtIsNull(Cafe cafe);
 
