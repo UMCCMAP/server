@@ -151,7 +151,7 @@ public class BoardService {
                 .orElseThrow(() -> new BaseException(POST_NOT_FOUND));
         if(board.isDeleted()) { throw new BaseException(POST_DELETED); }
         boolean canModifyPost = checkUser(board.getUser().getIdx(),token);
-        String profileImg = getProfileImg(token);
+        String profileImg = getProfileImg(board.getUser().getIdx());
         boolean like = likeBoardRepository.existsByBoardIdxAndUserIdx(boardIdx, authService.getUser(token).getIdx());
         Long cntLike = likeBoardRepository.countByBoardIdx(boardIdx);
         Long cntComment = commentRepository.countByUserIdx(board.getUser().getIdx());
@@ -160,8 +160,8 @@ public class BoardService {
         return new BoardPostViewResponse(board, profileImg, cntLike, cntComment, tagList, tagNames, like, canModifyPost);
     }
 
-    private String getProfileImg(HttpServletRequest token) throws BaseException {
-        Optional<Profile> profile = profileRepository.findByUserIdx(authService.getUser(token).getIdx());
+    private String getProfileImg(Long userIdx) throws BaseException {
+        Optional<Profile> profile = profileRepository.findByUserIdx(userIdx);
         return profile.get().getUserImg();
     }
 
