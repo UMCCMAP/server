@@ -11,6 +11,22 @@
 ---
 ## 핵심 기능 소개
 ### 소셜 로그인
+![image](https://github.com/UMCCMAP/server/assets/89764169/8581268b-3f57-452f-8036-c5ddfeda379c)
+- 소셜 로그인은 네이버 / 구글 로그인이 있습니다.
+### 메인 지도 / 검색
+![image](https://github.com/UMCCMAP/server/assets/89764169/d59b686c-3c38-4ecf-b24c-cf06d011c366)
+- 메인 화면에서 `카페 둘러보기`를 클릭하면 메인 지도로 넘어갑니다.
+
+![image](https://github.com/UMCCMAP/server/assets/89764169/273478e8-cf05-4f6d-aaec-f47c4ef2f0d1)
+- 검색 창으로 카페를 검색할 수 있습니다.
+- 검색 후 엔터를 누르지 않아도 실시간으로 연관된 카페들이 화면에 표시됩니다.
+
+![image](https://github.com/UMCCMAP/server/assets/89764169/e780dfc8-9117-484d-a251-a6afc8ed93f9)
+- 지도에 카페 데이터를 핀으로 나타냅니다.
+- 이 핀을 누르면 아래 사진과 같이 카페 정보를 불러올 수 있습니다.
+
+![image](https://github.com/UMCCMAP/server/assets/89764169/5742d059-614e-4bb5-8d9f-f67bffc28261)
+- 이 곳에서 CMAP에 저장 및 리뷰 작성 / 수정을 할 수 있습니다.
 
 ---
 ## 사용한 기술
