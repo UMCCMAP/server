@@ -2,8 +2,6 @@ package com.umc.cmap.domain.user.profile.controller;
 
 import com.umc.cmap.config.BaseException;
 import com.umc.cmap.config.BaseResponseStatus;
-import com.umc.cmap.domain.board.entity.Board;
-import com.umc.cmap.domain.board.repository.BoardRepository;
 import com.umc.cmap.domain.review.dto.ReviewResponse;
 import com.umc.cmap.domain.review.service.ReviewService;
 import com.umc.cmap.domain.user.entity.User;
@@ -38,24 +36,7 @@ public class ProfileController {
 
     @PatchMapping("/users/profile/{userNickname}")
     public String editProfile(@PathVariable String userNickname, HttpServletRequest request, @RequestBody ProfileRequest profileRequest) throws BaseException {
-        User user = authService.getUser(request);
-        if(user.getNickname().equals(userNickname)){
-            if (profileRequest.getUserNickname().trim().isEmpty()) {
-                // 닉네임이 비어있는 경우
-                return "닉네임을 입력해주세요.";
-            }
-            else if(userRepository.findByNickname(profileRequest.getUserNickname()).isPresent() && !profileRequest.getUserNickname().equals(userNickname)){
-                if(userRepository.findByNickname(profileRequest.getUserNickname()).get().getNickname().toLowerCase().equals(profileRequest.getUserNickname().toLowerCase())){
-                    //중복 처리
-                    return "이미 사용 중인 닉네임입니다.";
-                }
-            }
-
-            ProfileResponse profileResponse = profileService.update(userNickname, profileRequest);
-            return "redirect:/users/profile/" + profileResponse.getUserNickname();
-        }
-
-        return "redirect:/users/profile/" + userNickname;
+        return profileService.editProfile(userNickname,request,profileRequest);
     }
 
     @GetMapping("/users/profile/{userNickname}/reviews")

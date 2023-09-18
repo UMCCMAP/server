@@ -1,8 +1,6 @@
 package com.umc.cmap.domain.user.mates.controller;
 
 import com.umc.cmap.config.BaseException;
-import com.umc.cmap.config.BaseResponseStatus;
-import com.umc.cmap.domain.user.entity.User;
 import com.umc.cmap.domain.user.login.service.AuthService;
 import com.umc.cmap.domain.user.mates.service.MatesService;
 import com.umc.cmap.domain.user.repository.MatesRepository;
@@ -26,19 +24,6 @@ public class MatesController {
 
     @PutMapping("/users/profile/{userNickname}")
     public void follow(@PathVariable String userNickname, HttpServletRequest request, @RequestBody Map<String, String> checkFollow) throws BaseException{
-        User from = authService.getUser(request);
-        User to = userRepository.findByNickname(userNickname)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
-
-        if(checkFollow.get("checkFollow").trim().equals("follow")){
-            if(matesRepository.findByFromIdxAndToIdx(from.getIdx(), to.getIdx()).isEmpty()){
-                matesService.follow(from, to);
-            }
-        }
-        else if(checkFollow.get("checkFollow").trim().equals("unfollow")){
-            if(matesRepository.findByFromIdxAndToIdx(from.getIdx(), to.getIdx()).isPresent()){
-                matesService.deleteByFromIdxAndToIdx(from.getIdx(), to.getIdx());
-            }
-        }
+        matesService.followRequest(userNickname,request,checkFollow.get("checkFollow").trim());
     }
 }

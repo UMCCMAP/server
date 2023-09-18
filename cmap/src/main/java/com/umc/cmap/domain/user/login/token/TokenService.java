@@ -63,4 +63,8 @@ public class TokenService {
     public String getUserEmail(String token){
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
+
+    public void expToken(String token){
+        //
+    }
 }
