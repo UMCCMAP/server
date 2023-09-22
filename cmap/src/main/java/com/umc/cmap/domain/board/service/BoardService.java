@@ -323,4 +323,15 @@ public class BoardService {
         }
         return new PageImpl<>(boardResponses, pageable, boardPage.getTotalElements());
     }
+
+    private boolean checkUserRole(HttpServletRequest token) throws BaseException {
+        User user = authService.getUser(token);
+        if (Role.ADMIN.equals(user.getRole())) {
+            return true;
+        } else if (Role.USER.equals(user.getRole())) {
+            return false;
+        } else {
+            throw new BaseException(USER_NOT_FOUND);
+        }
+    }
 }
