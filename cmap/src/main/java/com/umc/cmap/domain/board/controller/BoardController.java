@@ -38,7 +38,7 @@ public class BoardController {
     }
 
     @GetMapping("/{boardIdx}")
-    public BaseResponse<BoardPostViewResponse> getMyPost(@PathVariable Long boardIdx, HttpServletRequest token) throws BaseException {
+    public BaseResponse<BoardPostViewResponse> getPostView(@PathVariable Long boardIdx, HttpServletRequest token) throws BaseException {
         return new BaseResponse<>(boardService.getPostView(boardIdx, token));
     }
 
