@@ -7,6 +7,7 @@ import com.umc.cmap.domain.review.service.ReviewService;
 import com.umc.cmap.domain.user.entity.Mates;
 import com.umc.cmap.domain.user.entity.Profile;
 import com.umc.cmap.domain.user.entity.User;
+import com.umc.cmap.domain.user.login.service.AuthService;
 import com.umc.cmap.domain.user.profile.dto.MatesInfoMapping;
 import com.umc.cmap.domain.user.profile.dto.ProfileRequest;
 import com.umc.cmap.domain.user.profile.dto.ProfileResponse;
@@ -14,6 +15,7 @@ import com.umc.cmap.domain.user.profile.mapper.ProfileMapper;
 import com.umc.cmap.domain.user.repository.MatesRepository;
 import com.umc.cmap.domain.user.repository.ProfileRepository;
 import com.umc.cmap.domain.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,7 @@ public class ProfileService {
     private final ProfileMapper profileMapper;
     private final ReviewService reviewService;
     private final BoardRepository boardRepository;
+    private final AuthService authService;
 
     public ProfileResponse getOne(String userNickname) throws BaseException{
         User user = userRepository.findByNickname(userNickname)
@@ -89,5 +92,23 @@ public class ProfileService {
 
         return profileMapper.toResponse(profile, profile.getUser().getNickname(), profile.getUser().getName(),
                 profile.getUser().getEmail(), reviewNo, boardNo, matesInfoList);
+    }
+
+    public String editProfile(String userNickname, HttpServletRequest request, ProfileRequest profileRequest) throws BaseException{
+        User user = authService.getUser(request);
+        if(user.getNickname().equals(userNickname)){
+            if (profileRequest.getUserNickname().trim().isEmpty()) {
+                return "닉네임을 입력해주세요.";
+            }
+            else if(userRepository.findByNickname(profileRequest.getUserNickname()).isPresent() && !profileRequest.getUserNickname().equals(userNickname)){
+                if(userRepository.findByNickname(profileRequest.getUserNickname()).get().getNickname().toLowerCase().equals(profileRequest.getUserNickname().toLowerCase())){
+                    return "이미 사용 중인 닉네임입니다.";
+                }
+            }
+
+            ProfileResponse profileResponse = update(userNickname, profileRequest);
+            return "redirect:/users/profile/" + profileResponse.getUserNickname();
+        }
+        return "redirect:/users/profile/" + userNickname;
     }
 }
